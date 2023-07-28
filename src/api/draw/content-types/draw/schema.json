@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "draws",
+  "info": {
+    "singularName": "draw",
+    "pluralName": "draws",
+    "displayName": "Draw",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "currency_type": {
+      "type": "enumeration",
+      "enum": [
+        "freebie",
+        "diamond",
+        "ticket"
+      ]
+    },
+    "currency_cost": {
+      "type": "integer"
+    },
+    "draw_probabilities": {
+      "type": "json"
+    },
+    "desc": {
+      "type": "text"
+    },
+    "draw_pools": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::draw-pool.draw-pool",
+      "mappedBy": "draw"
+    },
+    "room": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::room.room",
+      "inversedBy": "draws"
+    }
+  }
+}

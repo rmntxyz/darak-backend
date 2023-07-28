@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quest_progresses",
+  "info": {
+    "singularName": "quest-progress",
+    "pluralName": "quest-progresses",
+    "displayName": "QuestProgress"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "completed_date": {
+      "type": "datetime"
+    },
+    "progress": {
+      "type": "integer"
+    },
+    "quest": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::quest.quest",
+      "inversedBy": "quest_progress"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "quest_progresses"
+    }
+  }
+}

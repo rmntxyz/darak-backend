@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "draw_pools",
+  "info": {
+    "singularName": "draw-pool",
+    "pluralName": "draw-pools",
+    "displayName": "DrawPool",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::item.item"
+    },
+    "draw": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::draw.draw",
+      "inversedBy": "draw_pools"
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

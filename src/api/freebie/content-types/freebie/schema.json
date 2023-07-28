@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "freebies",
+  "info": {
+    "singularName": "freebie",
+    "pluralName": "freebies",
+    "displayName": "Freebie",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "current": {
+      "type": "integer",
+      "default": 5
+    },
+    "max": {
+      "type": "integer",
+      "required": false,
+      "default": 5
+    },
+    "last_charged_at": {
+      "type": "integer"
+    },
+    "next_charge_at": {
+      "type": "integer"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "freebie"
+    },
+    "charge_interval_mins": {
+      "type": "integer"
+    }
+  }
+}

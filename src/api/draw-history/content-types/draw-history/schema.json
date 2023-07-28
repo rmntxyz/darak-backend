@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "draw_histories",
+  "info": {
+    "singularName": "draw-history",
+    "pluralName": "draw-histories",
+    "displayName": "DrawHistory",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "draw": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::draw.draw"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "draw_result": {
+      "type": "json"
+    }
+  }
+}
