@@ -18,9 +18,6 @@
     "desc": {
       "type": "text"
     },
-    "probability_table": {
-      "type": "json"
-    },
     "users": {
       "type": "relation",
       "relation": "manyToMany",
