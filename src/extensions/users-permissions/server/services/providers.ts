@@ -84,6 +84,21 @@ export default ({ strapi }) => {
       throw new Error("Email is already taken.");
     }
 
+    const now = (Date.now() / 1000) | 0;
+    const createdFreebie = await strapi.entityService.create(
+      "api::freebie.freebie",
+      {
+        data: {
+          max: 5,
+          current: 5,
+          last_charged_at: now,
+          next_charge_at: now + 60 * 60,
+          charge_interval_mins: 60,
+          publishedAt: new Date(),
+        },
+      }
+    );
+
     // Retrieve default role.
     const defaultRole = await strapi
       .query("plugin::users-permissions.role")
@@ -96,6 +111,7 @@ export default ({ strapi }) => {
       provider,
       role: defaultRole.id,
       confirmed: true,
+      freebie: createdFreebie.id,
     };
 
     const createdUser = await strapi
