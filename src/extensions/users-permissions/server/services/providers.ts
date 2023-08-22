@@ -8,7 +8,7 @@
 import _ from "lodash";
 import urlJoin from "url-join";
 
-import { getAbsoluteServerUrl } from "@strapi/utils";
+import getAbsoluteServerUrl from "@strapi/utils";
 import { getService } from "@strapi/plugin-users-permissions/server/utils";
 
 export default ({ strapi }) => {
