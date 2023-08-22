@@ -27,7 +27,7 @@
       "type": "enumeration",
       "enum": [
         "decoration",
-        "expendable"
+        "built-in"
       ]
     },
     "rarity": {
@@ -41,7 +41,8 @@
       ]
     },
     "price": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
     },
     "inventory": {
       "type": "relation",
@@ -61,17 +62,28 @@
       ]
     },
     "current_serial_number": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
     },
     "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "room": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::room.room",
+      "inversedBy": "items"
+    },
+    "attribute": {
+      "type": "json"
     }
   }
 }

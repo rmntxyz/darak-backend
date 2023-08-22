@@ -39,6 +39,15 @@
       "relation": "manyToOne",
       "target": "api::creator.creator",
       "inversedBy": "rooms"
+    },
+    "item_info": {
+      "type": "json"
+    },
+    "items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::item.item",
+      "mappedBy": "room"
     }
   }
 }

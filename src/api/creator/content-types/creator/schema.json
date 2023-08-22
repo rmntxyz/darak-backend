@@ -49,6 +49,16 @@
       "relation": "oneToMany",
       "target": "api::room.room",
       "mappedBy": "creator"
+    },
+    "cover_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
