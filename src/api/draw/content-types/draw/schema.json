@@ -23,11 +23,8 @@
     "cost": {
       "type": "integer"
     },
-    "draw_probabilities": {
+    "draw_info": {
       "type": "json"
-    },
-    "desc": {
-      "type": "text"
     },
     "room": {
       "type": "relation",
