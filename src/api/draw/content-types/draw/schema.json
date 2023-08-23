@@ -20,7 +20,7 @@
         "ticket"
       ]
     },
-    "currency_cost": {
+    "cost": {
       "type": "integer"
     },
     "draw_probabilities": {
@@ -28,12 +28,6 @@
     },
     "desc": {
       "type": "text"
-    },
-    "draw_pools": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::draw-pool.draw-pool",
-      "mappedBy": "draw"
     },
     "room": {
       "type": "relation",
