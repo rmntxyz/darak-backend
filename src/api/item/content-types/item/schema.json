@@ -33,12 +33,15 @@
     "rarity": {
       "type": "enumeration",
       "enum": [
+        "none",
         "common",
         "uncommon",
         "rare",
         "super rare",
         "unique"
-      ]
+      ],
+      "default": "none",
+      "required": false
     },
     "price": {
       "type": "integer",
@@ -84,6 +87,11 @@
     },
     "attribute": {
       "type": "json"
+    },
+    "pre_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::item.item"
     }
   }
 }
