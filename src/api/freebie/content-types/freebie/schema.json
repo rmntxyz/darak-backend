@@ -24,9 +24,6 @@
     "last_charged_at": {
       "type": "integer"
     },
-    "next_charge_at": {
-      "type": "integer"
-    },
     "users_permissions_user": {
       "type": "relation",
       "relation": "oneToOne",

@@ -37,7 +37,7 @@
         "common",
         "uncommon",
         "rare",
-        "super rare",
+        "super_rare",
         "unique"
       ],
       "default": "none",

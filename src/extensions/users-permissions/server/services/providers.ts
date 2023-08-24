@@ -86,17 +86,16 @@ export default ({ strapi }) => {
       throw new Error("Email is already taken.");
     }
 
-    const now = (Date.now() / 1000) | 0;
+    const date = new Date();
     const createdFreebie = await strapi.entityService.create(
       "api::freebie.freebie",
       {
         data: {
           max: 5,
           current: 5,
-          last_charged_at: now,
-          next_charge_at: now + 60 * 60,
-          charge_interval_mins: 60,
-          publishedAt: new Date(),
+          last_charged_at: (date.getTime() / 1000) | 0,
+          charge_interval: 3600,
+          publishedAt: date,
         },
       }
     );
