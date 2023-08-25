@@ -14,9 +14,9 @@
   "attributes": {
     "users_permissions_user": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "inventory"
+      "inversedBy": "items"
     },
     "serial_number": {
       "type": "integer"

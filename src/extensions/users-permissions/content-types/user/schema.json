@@ -65,12 +65,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "inventory": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::inventory.inventory",
-      "mappedBy": "users_permissions_user"
-    },
     "freebie": {
       "type": "relation",
       "relation": "oneToOne",
@@ -101,6 +95,12 @@
       "relation": "manyToMany",
       "target": "api::creator.creator",
       "inversedBy": "followers"
+    },
+    "items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inventory.inventory",
+      "mappedBy": "users_permissions_user"
     }
   }
 }

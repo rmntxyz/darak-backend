@@ -61,7 +61,7 @@ function drawItem(info: DrawInfo) {
   }
 }
 
-async function deductFreebie(user: User, draw: Draw) {
+async function deductFreebie(user: User) {
   const freebieId = user.freebie.id;
 
   await strapi.db.transaction(async () => {
@@ -87,45 +87,68 @@ async function deductFreebie(user: User, draw: Draw) {
 
 export default ({ strapi }) => ({
   async drawRandom(userId: number, drawId: number) {
-    const draw = await strapi.entityService.findOne("api::draw.draw", drawId);
+    let drawResult = null;
 
-    const { currency_type } = draw;
+    await strapi.db.transaction(async () => {
+      const draw = await strapi.entityService.findOne("api::draw.draw", drawId);
 
-    const user = await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      userId,
-      {
-        populate: ["freebie" /*, "star"*/],
+      const { currency_type } = draw;
+
+      const user = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        userId,
+        {
+          populate: ["freebie" /*, "star"*/],
+        }
+      );
+
+      if (currency_type === "freebie") {
+        try {
+          await deductFreebie(user);
+        } catch (err) {
+          throw err;
+        }
+      } else {
+        // TODO: star
+        throw new Error("not supported currency type");
       }
-    );
 
-    if (currency_type === "freebie") {
-      try {
-        await deductFreebie(user, draw);
-      } catch (err) {
-        throw err;
+      // draw
+      drawResult = getRandomItems(draw);
+
+      for (const itemId of drawResult) {
+        const item = await strapi.entityService.findOne(
+          "api::item.item",
+          itemId
+        );
+        const { current_serial_number } = item;
+
+        await strapi.entityService.update("api::item.item", itemId, {
+          data: { current_serial_number: current_serial_number + 1 },
+        });
+
+        // create inventory
+        await strapi.entityService.create("api::inventory.inventory", {
+          data: {
+            users_permissions_user: userId,
+            serial_number: current_serial_number + 1,
+            item: itemId,
+            publishedAt: new Date(),
+          },
+        });
       }
-    } else {
-      // TODO: star
-      throw new Error("not supported currency type");
-    }
 
-    // draw
-    const draw_result = getRandomItems(draw);
-
-    // record draw history
-    const draw_history = await strapi.entityService.create(
-      "api::draw-history.draw-history",
-      {
+      // record draw history
+      await strapi.entityService.create("api::draw-history.draw-history", {
         data: {
           draw: drawId,
           users_permissions_user: userId,
-          draw_result,
+          draw_result: drawResult,
           publishedAt: new Date(),
         },
-      }
-    );
+      });
+    });
 
-    return draw_history;
+    return drawResult;
   },
 });

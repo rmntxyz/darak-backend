@@ -5,7 +5,18 @@
 export default {
   "random-item": async (ctx, next) => {
     try {
-      const { userId, drawId } = ctx.params;
+      const { drawId } = ctx.params;
+
+      if (!drawId) {
+        return ctx.badRequest("drawId is required");
+      }
+
+      const { id: userId } = ctx.state.user;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
       const result = await strapi
         .service("api::random-item.random-item")
         .drawRandom(userId, drawId);
