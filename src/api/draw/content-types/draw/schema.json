@@ -34,7 +34,7 @@
     },
     "draws_per_cost": {
       "type": "integer",
-      "required": true,
+      "required": false,
       "default": 1
     }
   }

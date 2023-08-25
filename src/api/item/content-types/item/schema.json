@@ -92,6 +92,16 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::item.item"
+    },
+    "additional_images": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
     }
   }
 }
