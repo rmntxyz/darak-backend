@@ -88,20 +88,16 @@
     "attribute": {
       "type": "json"
     },
-    "pre_items": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::item.item"
-    },
     "additional_images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": true
+      ]
     }
   }
 }
