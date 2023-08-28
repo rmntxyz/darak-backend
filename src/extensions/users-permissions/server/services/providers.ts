@@ -91,8 +91,8 @@ export default ({ strapi }) => {
       "api::freebie.freebie",
       {
         data: {
-          max: 5,
-          current: 5,
+          max: 7,
+          current: 7,
           last_charged_at: (date.getTime() / 1000) | 0,
           charge_interval: 3600,
           publishedAt: date,
@@ -113,6 +113,8 @@ export default ({ strapi }) => {
       role: defaultRole.id,
       confirmed: true,
       freebie: createdFreebie.id,
+      level: 1,
+      experience: 0,
     };
 
     const createdUser = await strapi

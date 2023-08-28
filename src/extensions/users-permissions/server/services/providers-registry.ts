@@ -127,21 +127,23 @@ const getInitialProviders = ({ purest }) => ({
       },
     });
 
-    return kakao
-      .get("user/me")
-      .auth(accessToken)
-      .request()
-      .then(({ body }) => {
-        console.log(body);
-        return { body };
-      })
-      .then(({ body }) => ({
-        username: body.kakao_account.profile.nickname,
-        picture: body.kakao_account.profile.profile_image_url,
-        email: body.kakao_account.has_email
-          ? body.kakao_account.email
-          : `${body.kakao_account.profile.nickname}@kakao.com`,
-      }));
+    return (
+      kakao
+        .get("user/me")
+        .auth(accessToken)
+        .request()
+        // .then(({ body }) => {
+        //   console.log(body);
+        //   return { body };
+        // })
+        .then(({ body }) => ({
+          username: body.kakao_account.profile.nickname,
+          picture: body.kakao_account.profile.profile_image_url,
+          email: body.kakao_account.has_email
+            ? body.kakao_account.email
+            : `${body.kakao_account.profile.nickname}@kakao.com`,
+        }))
+    );
   },
   async github({ accessToken }) {
     const github = purest({

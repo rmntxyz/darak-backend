@@ -22,6 +22,7 @@ module.exports = (plugin) => {
     if (!ctx.state.user) {
       return ctx.unauthorized();
     }
+
     const user = await strapi.entityService.findOne(
       "plugin::users-permissions.user",
       ctx.state.user.id,
@@ -30,7 +31,11 @@ module.exports = (plugin) => {
       }
     );
 
-    ctx.body = sanitizeOutput(user);
+    const freebie = await strapi
+      .service("api::freebie.freebie")
+      .refresh(user.freebie.id);
+
+    ctx.body = sanitizeOutput({ ...user, freebie });
   };
 
   return plugin;
