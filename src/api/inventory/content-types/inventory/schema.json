@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "users_permissions_user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "items"
-    },
     "serial_number": {
       "type": "integer"
     },
@@ -30,6 +24,12 @@
       "relation": "oneToOne",
       "target": "api::item.item",
       "mappedBy": "inventory"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "inventory"
     }
   }
 }

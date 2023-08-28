@@ -27,7 +27,17 @@ module.exports = (plugin) => {
       "plugin::users-permissions.user",
       ctx.state.user.id,
       {
-        populate: ["items", "freebie", "rooms", "quest_progress", "followings"],
+        populate: {
+          inventory: {
+            populate: {
+              item: { fields: ["id"] },
+            },
+          },
+          freebie: true,
+          rooms: true,
+          quest_progress: true,
+          followings: true,
+        },
       }
     );
 

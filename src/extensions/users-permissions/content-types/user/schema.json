@@ -96,7 +96,7 @@
       "target": "api::creator.creator",
       "inversedBy": "followers"
     },
-    "items": {
+    "inventory": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::inventory.inventory",
