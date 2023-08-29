@@ -9,6 +9,8 @@ type Freebie = {
   charge_interval: number;
 };
 
+type FreebieData = Partial<Freebie>;
+
 type User = {
   id: number;
   freebie: Freebie;
@@ -70,15 +72,18 @@ async function deductFreebie(user: User) {
       .service("api::freebie.freebie")
       .refresh(freebieId);
 
-    // check quantity of freebie
-    if (freebie.current > 0) {
-      const date = new Date();
+    const { current, max } = freebie;
 
-      // freebie 1개 차감하고 update
-      const current = freebie.current - 1;
-      await strapi.service("api::freebie.freebie").update(freebieId, {
-        data: { current, last_charged_at: Math.floor(date.getTime() / 1000) },
-      });
+    // check quantity of freebie
+    if (current > 0) {
+      const after = current - 1;
+      const data: FreebieData = { current: after };
+
+      if (current === max) {
+        data.last_charged_at = Math.floor(new Date().getTime() / 1000);
+      }
+
+      await strapi.service("api::freebie.freebie").update(freebieId, { data });
     } else {
       throw new Error("freebie is not enough");
     }
