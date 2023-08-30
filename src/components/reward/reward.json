@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_reward_rewards",
+  "info": {
+    "displayName": "reward",
+    "icon": "oneToMany",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "rewards": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::reward.reward"
+    }
+  }
+}

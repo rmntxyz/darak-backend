@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "daily_quests",
+  "info": {
+    "singularName": "daily-quest",
+    "pluralName": "daily-quests",
+    "displayName": "DailyQuest",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "daily_quest_progress": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::daily-quest-progress.daily-quest-progress",
+      "mappedBy": "daily_quest"
+    },
+    "name": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "richtext"
+    },
+    "level_requirement": {
+      "type": "integer"
+    },
+    "streak_rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.reward"
+    },
+    "total": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

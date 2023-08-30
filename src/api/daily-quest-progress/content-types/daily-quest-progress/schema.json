@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "daily_quest_progresses",
+  "info": {
+    "singularName": "daily-quest-progress",
+    "pluralName": "daily-quest-progresses",
+    "displayName": "DailyQuestProgress",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "daily_quest": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::daily-quest.daily-quest",
+      "inversedBy": "daily_quest_progress"
+    },
+    "progress": {
+      "type": "integer"
+    },
+    "is_reward_claimed": {
+      "type": "boolean",
+      "default": false
+    },
+    "completed_date": {
+      "type": "datetime"
+    },
+    "is_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "daily_quest_progresses"
+    }
+  }
+}

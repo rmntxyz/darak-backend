@@ -100,6 +100,18 @@ export default ({ strapi }) => {
       }
     );
 
+    const createdStreak = await strapi.entityService.create(
+      "api::streak.streak",
+      {
+        data: {
+          current_streak: 0,
+          longest_streak: 0,
+          last_login_date: new Date(0),
+          publishedAt: date,
+        },
+      }
+    );
+
     // Retrieve default role.
     const defaultRole = await strapi
       .query("plugin::users-permissions.role")
@@ -113,6 +125,7 @@ export default ({ strapi }) => {
       role: defaultRole.id,
       confirmed: true,
       freebie: createdFreebie.id,
+      streak: createdStreak.id,
       level: 1,
       experience: 0,
     };

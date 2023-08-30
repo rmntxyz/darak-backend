@@ -101,6 +101,18 @@
       "relation": "oneToMany",
       "target": "api::inventory.inventory",
       "mappedBy": "users_permissions_user"
+    },
+    "daily_quest_progresses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::daily-quest-progress.daily-quest-progress",
+      "mappedBy": "users_permissions_user"
+    },
+    "streak": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::streak.streak",
+      "mappedBy": "users_permissions_user"
     }
   }
 }

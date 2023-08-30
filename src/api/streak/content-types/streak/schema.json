@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "streaks",
+  "info": {
+    "singularName": "streak",
+    "pluralName": "streaks",
+    "displayName": "Streak"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "current_streak": {
+      "type": "integer"
+    },
+    "longest_streak": {
+      "type": "integer"
+    },
+    "last_login_date": {
+      "type": "datetime",
+      "default": "1969-12-31T15:00:00.000Z"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "streak"
+    }
+  }
+}

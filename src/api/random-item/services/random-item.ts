@@ -1,41 +1,6 @@
 /**
  * random-item service
  */
-type Freebie = {
-  id: number;
-  current: number;
-  max: number;
-  last_charged_at: number;
-  charge_interval: number;
-};
-
-type FreebieData = Partial<Freebie>;
-
-type User = {
-  id: number;
-  freebie: Freebie;
-};
-
-type Draw = {
-  cost: number;
-  currency_type: string;
-  draws_per_cost: number;
-  draw_info: DrawInfo;
-  room?: any;
-};
-
-type RarityData = {
-  items: number[];
-  probability: number;
-};
-
-type DrawInfo = {
-  common: RarityData;
-  uncommon: RarityData;
-  rare: RarityData;
-  super_rare: RarityData;
-  unique: RarityData;
-};
 
 function getRandomItems(draw: Draw) {
   const { draw_info, draws_per_cost } = draw;

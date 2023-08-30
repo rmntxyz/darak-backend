@@ -34,8 +34,13 @@ module.exports = (plugin) => {
             },
           },
           freebie: true,
+          streak: true,
           rooms: true,
-          quest_progress: true,
+          daily_quest_progress: {
+            populate: {
+              streak_rewards: true,
+            },
+          },
           followings: true,
         },
       }
@@ -43,7 +48,13 @@ module.exports = (plugin) => {
 
     const freebie = await strapi
       .service("api::freebie.freebie")
-      .refresh(user.freebie.id);
+      .refresh(user.freebie);
+
+    // check streak
+    const streak = await strapi
+      .service("api::streak.streak")
+      .refresh(user.streak);
+    // cosnt daily_quest_progress = await strapi
 
     ctx.body = sanitizeOutput({ ...user, freebie });
   };

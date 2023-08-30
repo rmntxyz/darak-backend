@@ -4,7 +4,8 @@
   "info": {
     "singularName": "quest",
     "pluralName": "quests",
-    "displayName": "Quest"
+    "displayName": "Quest",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -17,29 +18,20 @@
     "desc": {
       "type": "richtext"
     },
-    "type": {
-      "type": "enumeration",
-      "enum": [
-        "main",
-        "sub",
-        "daily"
-      ]
-    },
     "level_requirement": {
       "type": "integer",
       "default": 1
-    },
-    "reward_point": {
-      "type": "integer"
-    },
-    "reward_experience": {
-      "type": "integer"
     },
     "quest_progress": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::quest-progress.quest-progress",
       "mappedBy": "quest"
+    },
+    "rewards": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::reward.reward"
     }
   }
 }

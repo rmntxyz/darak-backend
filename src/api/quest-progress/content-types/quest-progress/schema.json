@@ -4,7 +4,8 @@
   "info": {
     "singularName": "quest-progress",
     "pluralName": "quest-progresses",
-    "displayName": "QuestProgress"
+    "displayName": "QuestProgress",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -28,6 +29,14 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "quest_progresses"
+    },
+    "is_reward_claimed": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_completed": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

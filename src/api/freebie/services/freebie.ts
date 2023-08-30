@@ -7,11 +7,8 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreService(
   "api::freebie.freebie",
   ({ strapi }) => ({
-    async refresh(freebieId: number) {
-      const freebie = await strapi
-        .service("api::freebie.freebie")
-        .findOne(freebieId);
-      let { current, max, last_charged_at, charge_interval } = freebie;
+    async refresh(freebie: Freebie) {
+      let { id, current, max, last_charged_at, charge_interval } = freebie;
 
       if (current < max) {
         // 현재 시간
@@ -31,7 +28,7 @@ export default factories.createCoreService(
 
           return await strapi
             .service("api::freebie.freebie")
-            .update(freebieId, { data: { current, last_charged_at } });
+            .update(id, { data: { current, last_charged_at } });
         }
       }
 
