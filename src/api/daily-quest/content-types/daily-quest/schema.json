@@ -35,6 +35,9 @@
     "total_progress": {
       "type": "integer",
       "default": 1
+    },
+    "qid": {
+      "type": "uid"
     }
   }
 }

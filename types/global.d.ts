@@ -38,6 +38,7 @@ type DailyQuest = {
   total_progress: number;
   desc: string;
   level_requirement: number;
+  qid: string;
   streak_rewards: [
     {
       id: number;

@@ -11,7 +11,7 @@ export default {
         return ctx.badRequest("drawId is required");
       }
 
-      const { id: userId } = ctx.state.user;
+      const userId = ctx.state.user?.id;
 
       if (!userId) {
         return ctx.unauthorized("user is not authenticated");
