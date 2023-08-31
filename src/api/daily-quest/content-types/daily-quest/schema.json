@@ -12,9 +12,9 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "daily_quest_progress": {
+    "daily_quest_progresses": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::daily-quest-progress.daily-quest-progress",
       "mappedBy": "daily_quest"
     },
@@ -32,7 +32,7 @@
       "repeatable": true,
       "component": "reward.reward"
     },
-    "total": {
+    "total_progress": {
       "type": "integer",
       "default": 1
     }

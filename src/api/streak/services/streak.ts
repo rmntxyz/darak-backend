@@ -3,16 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-
-// 04:00:00 am
-const getRefTimestamp = (date) => {
-  const refDate = new Date(date);
-  if (refDate.getHours() < 4) {
-    refDate.setDate(refDate.getDate() - 1);
-  }
-  refDate.setHours(4, 0, 0, 0);
-  return refDate.getTime();
-};
+import { getRefTimestamp } from "../../../utils";
 
 export default factories.createCoreService(
   "api::streak.streak",

@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "daily_quest": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::daily-quest.daily-quest",
-      "inversedBy": "daily_quest_progress"
-    },
     "progress": {
       "type": "integer"
     },
@@ -36,6 +30,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
+      "inversedBy": "daily_quest_progresses"
+    },
+    "daily_quest": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::daily-quest.daily-quest",
       "inversedBy": "daily_quest_progresses"
     }
   }
