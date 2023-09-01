@@ -86,6 +86,10 @@ export default factories.createCoreService(
           (quest) => quest.daily_quest.qid === qid
         );
 
+        if (!progress.is_completed) {
+          throw new Error("not completed");
+        }
+
         if (progress.is_reward_claimed) {
           throw new Error("already claimed");
         }
