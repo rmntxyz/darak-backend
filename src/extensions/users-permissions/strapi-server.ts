@@ -55,7 +55,18 @@ module.exports = (plugin) => {
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);
 
-    console.log(dailyQuestProgresses);
+    // qid ==- 'login'
+    const loginQuest = dailyQuestProgresses.find(
+      (quest) => quest.daily_quest.qid === "login"
+    );
+
+    if (loginQuest.is_completed === false) {
+      const result = await strapi
+        .service("api::daily-quest-progress.daily-quest-progress")
+        .verifyDailyQuest(loginQuest.id);
+
+      // console.log(result);
+    }
     // check streak
     // const streak = await strapi
     //   .service("api::streak.streak")

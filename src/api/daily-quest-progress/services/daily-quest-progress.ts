@@ -59,13 +59,13 @@ export default factories.createCoreService(
       return quests;
     },
 
-    async verifyDailyQuest(user: User) {
+    async verifyDailyQuest(id: number) {
       // get all daily quests
       const dailyQuests = await strapi.db
         .query("api::daily-quest.daily-quest")
         .findMany({});
 
-      console.log(dailyQuests);
+      // console.log(dailyQuests);
 
       const progresses = [];
 

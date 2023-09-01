@@ -29,15 +29,13 @@ function drawItem(info: DrawInfo) {
 }
 
 async function deductFreebie(user: User) {
-  const freebieId = user.freebie.id;
+  const { freebie } = user;
 
   await strapi.db.transaction(async () => {
     // refresh freebie
-    const freebie = await strapi
+    const { current, max } = await strapi
       .service("api::freebie.freebie")
-      .refresh(freebieId);
-
-    const { current, max } = freebie;
+      .refresh(freebie);
 
     // check quantity of freebie
     if (current > 0) {
@@ -48,7 +46,7 @@ async function deductFreebie(user: User) {
         data.last_charged_at = Math.floor(new Date().getTime() / 1000);
       }
 
-      await strapi.service("api::freebie.freebie").update(freebieId, { data });
+      await strapi.service("api::freebie.freebie").update(freebie.id, { data });
     } else {
       throw new Error("freebie is not enough");
     }
