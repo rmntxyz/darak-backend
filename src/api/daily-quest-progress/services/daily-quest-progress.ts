@@ -6,23 +6,31 @@ import { factories } from "@strapi/strapi";
 import { getRefTimestamp } from "../../../utils";
 import verifier from "./verifier";
 
+async function getDailyQuestProgresses(userId: number) {
+  const now = new Date();
+  const refTimestamp = getRefTimestamp(now);
+
+  return await strapi.entityService.findMany(
+    "api::daily-quest-progress.daily-quest-progress",
+    {
+      populate: {
+        daily_quest: {
+          populate: { streak_rewards: { populate: ["rewards"] } },
+        },
+      },
+      filters: {
+        users_permissions_user: { id: userId },
+        createdAt: { $gte: new Date(refTimestamp).toISOString() },
+      },
+    }
+  );
+}
+
 export default factories.createCoreService(
   "api::daily-quest-progress.daily-quest-progress",
   ({ strapi }) => ({
     async getTodayQuest(userId: number) {
-      const now = new Date();
-      const refTimestamp = getRefTimestamp(now);
-
-      const inProgresses = await strapi.entityService.findMany(
-        "api::daily-quest-progress.daily-quest-progress",
-        {
-          populate: ["daily_quest"],
-          filters: {
-            users_permissions_user: { id: userId },
-            createdAt: { $gte: new Date(refTimestamp).toISOString() },
-          },
-        }
-      );
+      const inProgresses = await getDailyQuestProgresses(userId);
 
       if (inProgresses.length > 0) {
         return inProgresses;
@@ -47,7 +55,7 @@ export default factories.createCoreService(
               users_permissions_user: {
                 id: userId,
               },
-              publishedAt: now,
+              publishedAt: new Date(),
             },
           }
         );
@@ -59,32 +67,71 @@ export default factories.createCoreService(
       return quests;
     },
 
-    async verifyDailyQuest(id: number) {
+    async verifyAll(user: User, dailyQuestProgresses: DailyQuestProgress[]) {
       // get all daily quests
-      const dailyQuests = await strapi.db
-        .query("api::daily-quest.daily-quest")
-        .findMany({});
 
-      // console.log(dailyQuests);
-
-      const progresses = [];
-
-      for (const dailyQuest of dailyQuests) {
-        const { qid } = dailyQuest;
-
-        switch (qid) {
-          case "login":
-            // const result = await verifyLogin(dailyQuest, user);
-            // progresses.push(result);
-            break;
-          default:
-            break;
+      for (const progress of dailyQuestProgresses) {
+        if (!progress.is_completed) {
+          verifier.verify(user, progress);
         }
       }
 
-      return progresses;
+      return dailyQuestProgresses;
     },
 
-    async claimRewards(user: User) {},
+    async claimRewards(userId: number, qid: number) {
+      await strapi.db.transaction(async () => {
+        const progressess = await getDailyQuestProgresses(userId);
+        const progress = progressess.find(
+          (quest) => quest.daily_quest.qid === qid
+        );
+
+        if (progress.is_reward_claimed) {
+          throw new Error("already claimed");
+        }
+
+        const user = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          userId,
+          {
+            fields: ["id"],
+            populate: {
+              streak: true,
+              freebie: true,
+            },
+          }
+        );
+
+        const { current_streak } = user.streak;
+        const { streak_rewards } = progress.daily_quest;
+
+        const { rewards } =
+          streak_rewards[Math.min(current_streak, streak_rewards.length) - 1];
+
+        for (const reward of rewards) {
+          if (reward.type === "freebie") {
+            await strapi.entityService.update(
+              "api::freebie.freebie",
+              user.freebie.id,
+              {
+                data: {
+                  current: user.freebie.current + reward.amount,
+                },
+              }
+            );
+          }
+        }
+
+        await strapi.entityService.update(
+          "api::daily-quest-progress.daily-quest-progress",
+          progress.id,
+          {
+            data: {
+              is_reward_claimed: true,
+            },
+          }
+        );
+      });
+    },
   })
 );

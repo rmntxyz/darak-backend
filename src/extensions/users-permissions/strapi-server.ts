@@ -2,6 +2,7 @@ import bootstrap from "./server/bootstrap";
 import providersRegistry from "./server/services/providers-registry";
 import providers from "./server/services/providers";
 import { getRefTimestamp } from "../../utils";
+import quest from "../../api/quest/controllers/quest";
 
 module.exports = (plugin) => {
   // for kakao login
@@ -37,11 +38,6 @@ module.exports = (plugin) => {
           freebie: true,
           streak: true,
           rooms: true,
-          daily_quest_progress: {
-            populate: {
-              streak_rewards: true,
-            },
-          },
           followings: true,
         },
       }
@@ -55,26 +51,15 @@ module.exports = (plugin) => {
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);
 
-    // qid ==- 'login'
-    const loginQuest = dailyQuestProgresses.find(
-      (quest) => quest.daily_quest.qid === "login"
-    );
+    await strapi
+      .service("api::daily-quest-progress.daily-quest-progress")
+      .verifyAll(user, dailyQuestProgresses);
 
-    if (loginQuest.is_completed === false) {
-      const result = await strapi
-        .service("api::daily-quest-progress.daily-quest-progress")
-        .verifyDailyQuest(loginQuest.id);
-
-      // console.log(result);
-    }
-    // check streak
-    // const streak = await strapi
-    //   .service("api::streak.streak")
-    //   .refresh(user.streak);
-
-    // cosnt daily_quest_progress = await strapi
-
-    ctx.body = sanitizeOutput({ ...user, freebie });
+    ctx.body = sanitizeOutput({
+      ...user,
+      freebie,
+      daily_quest_progress: dailyQuestProgresses,
+    });
   };
 
   return plugin;
