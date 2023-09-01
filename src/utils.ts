@@ -1,10 +1,12 @@
-// 04:00:00 am
+// 05:00:00 am
+const REF_TIME = 5; // 0 ~ 23
+
 function getRefTimestamp(date) {
   const refDate = new Date(date);
-  if (refDate.getHours() < 4) {
+  if (refDate.getHours() < REF_TIME) {
     refDate.setDate(refDate.getDate() - 1);
   }
-  refDate.setHours(4, 0, 0, 0);
+  refDate.setHours(REF_TIME, 0, 0, 0);
   return refDate.getTime();
 }
 

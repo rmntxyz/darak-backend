@@ -8,8 +8,7 @@ export default factories.createCoreController(
   "api::daily-quest-progress.daily-quest-progress",
   ({ strapi }) => ({
     "get-quest-progress": async (ctx) => {
-      // const userId = ctx.state.user?.id;
-      const userId = 51;
+      const userId = ctx.state.user?.id;
 
       if (!userId) {
         return ctx.unauthorized("user is not authenticated");
@@ -22,7 +21,7 @@ export default factories.createCoreController(
 
       const result = await strapi
         .service("api::daily-quest-progress.daily-quest-progress")
-        .getTodayQuest(user);
+        .getTodayQuest(userId);
 
       return result;
     },

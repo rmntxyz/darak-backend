@@ -9,28 +9,20 @@ import verifier from "./verifier";
 export default factories.createCoreService(
   "api::daily-quest-progress.daily-quest-progress",
   ({ strapi }) => ({
-    async getTodayQuest(user: User) {
+    async getTodayQuest(userId: number) {
       const now = new Date();
       const refTimestamp = getRefTimestamp(now);
 
       const inProgresses = await strapi.entityService.findMany(
         "api::daily-quest-progress.daily-quest-progress",
         {
+          populate: ["daily_quest"],
           filters: {
-            $and: [
-              {
-                users_permissions_user: user.id,
-              },
-              {
-                createdAt: { $gte: refTimestamp },
-              },
-            ],
+            users_permissions_user: { id: userId },
+            createdAt: { $gte: new Date(refTimestamp).toISOString() },
           },
         }
       );
-
-      console.log("inProgresses", inProgresses);
-      console.log("verifier", verifier);
 
       if (inProgresses.length > 0) {
         return inProgresses;
@@ -40,12 +32,10 @@ export default factories.createCoreService(
         .query("api::daily-quest.daily-quest")
         .findMany({});
 
-      console.log(dailyQuests);
-
       const quests = [];
 
       for (const dailyQuest of dailyQuests) {
-        const quest = strapi.entityService.create(
+        const quest = await strapi.entityService.create(
           "api::daily-quest-progress.daily-quest-progress",
           {
             data: {
@@ -55,17 +45,18 @@ export default factories.createCoreService(
               is_completed: false,
               completed_date: null,
               users_permissions_user: {
-                id: user.id,
+                id: userId,
               },
-              published_at: now,
+              publishedAt: now,
             },
           }
         );
 
-        quests.push(quest);
+        // 쿼리 한 결과랑 같은 폼을 만들어 준다.
+        quests.push({ ...quest, daily_quest: dailyQuest });
       }
 
-      return await Promise.all(quests);
+      return quests;
     },
 
     async verifyDailyQuest(user: User) {
