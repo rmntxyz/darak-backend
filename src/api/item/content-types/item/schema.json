@@ -47,11 +47,11 @@
       "type": "integer",
       "required": true
     },
-    "inventory": {
+    "inventories": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::inventory.inventory",
-      "inversedBy": "item"
+      "mappedBy": "item"
     },
     "image": {
       "type": "media",

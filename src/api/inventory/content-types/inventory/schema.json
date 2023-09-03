@@ -19,17 +19,17 @@
       "type": "boolean",
       "default": false
     },
-    "item": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::item.item",
-      "mappedBy": "inventory"
-    },
     "users_permissions_user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "inventory"
+    },
+    "item": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::item.item",
+      "inversedBy": "inventories"
     }
   }
 }
