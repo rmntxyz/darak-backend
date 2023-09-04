@@ -47,18 +47,21 @@ module.exports = (plugin) => {
       .service("api::freebie.freebie")
       .refresh(user.freebie);
 
+    //refresh streak
+    await strapi.service("api::streak.streak").refresh(user.streak);
+
+    // const dailyQuestProgresses = await strapi
+    //   .service("api::daily-quest-progress.daily-quest-progress")
+    //   .getTodayQuest(user.id);
+
     const dailyQuestProgresses = await strapi
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);
 
-    await strapi
-      .service("api::daily-quest-progress.daily-quest-progress")
-      .verifyAll(user, dailyQuestProgresses);
-
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
-      daily_quest_progress: dailyQuestProgresses,
+      daily_quest_progresses: dailyQuestProgresses,
     });
   };
 

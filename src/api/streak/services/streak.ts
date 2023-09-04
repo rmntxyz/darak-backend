@@ -21,10 +21,11 @@ export default factories.createCoreService(
 
       if (lastRefTimestamp === refTimestamp - 86400000) {
         current_streak += 1;
-        longest_streak = Math.max(current_streak, longest_streak);
       } else {
         current_streak = 1;
       }
+
+      longest_streak = Math.max(current_streak, longest_streak);
 
       return await strapi.service("api::streak.streak").update(id, {
         data: {

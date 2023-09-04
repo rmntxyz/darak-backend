@@ -11,7 +11,16 @@ export default {
     },
     {
       method: "GET",
-      path: "/daily-quest-progress/claim-rewards/:qid",
+      path: "/daily-quest-progress/verify/:progressId",
+      handler: "daily-quest-progress.verify",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
+      path: "/daily-quest-progress/claim-rewards/:progressId",
       handler: "daily-quest-progress.claim-rewards",
       config: {
         policies: [],

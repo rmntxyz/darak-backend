@@ -67,23 +67,63 @@ export default factories.createCoreService(
       return quests;
     },
 
-    async verifyAll(user: User, dailyQuestProgresses: DailyQuestProgress[]) {
-      // get all daily quests
+    async verify(userId: number, progressId: number) {
+      let dailyQuestProgress = null;
 
-      for (const progress of dailyQuestProgresses) {
-        if (!progress.is_completed) {
-          verifier.verify(user, progress);
+      await strapi.db.transaction(async () => {
+        dailyQuestProgress = await strapi.entityService.findOne(
+          "api::daily-quest-progress.daily-quest-progress",
+          progressId,
+          {
+            populate: ["daily_quest"],
+          }
+        );
+
+        if (!dailyQuestProgress.is_completed) {
+          verifier.verify(userId, dailyQuestProgress);
         }
-      }
+      });
+
+      return dailyQuestProgress;
+    },
+
+    async verifyAll(userId: number) {
+      // get all daily quests
+      let dailyQuestProgresses = null;
+
+      await strapi.db.transaction(async () => {
+        dailyQuestProgresses = await strapi
+          .service("api::daily-quest-progress.daily-quest-progress")
+          .getTodayQuest(userId);
+
+        for (const progress of dailyQuestProgresses) {
+          if (!progress.is_completed) {
+            verifier.verify(userId, progress);
+          }
+        }
+      });
 
       return dailyQuestProgresses;
     },
 
-    async claimRewards(userId: number, qid: number) {
+    async claimRewards(userId: number, progressId: number) {
+      let results = null;
+
       await strapi.db.transaction(async () => {
-        const progressess = await getDailyQuestProgresses(userId);
-        const progress = progressess.find(
-          (quest) => quest.daily_quest.qid === qid
+        const progress = await strapi.entityService.findOne(
+          "api::daily-quest-progress.daily-quest-progress",
+          progressId,
+          {
+            populate: {
+              daily_quest: {
+                populate: {
+                  streak_rewards: {
+                    populate: ["rewards"],
+                  },
+                },
+              },
+            },
+          }
         );
 
         if (!progress.is_completed) {
@@ -135,7 +175,11 @@ export default factories.createCoreService(
             },
           }
         );
+
+        results = rewards;
       });
+
+      return results;
     },
   })
 );

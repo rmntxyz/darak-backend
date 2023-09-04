@@ -5,7 +5,7 @@ const VERIFIRE = {
 };
 
 export default {
-  verify: async (user: User, progress: DailyQuestProgress) => {
+  verify: async (userId: number, progress: DailyQuestProgress) => {
     const { qid } = progress.daily_quest;
     const verifier = VERIFIRE[qid];
 
@@ -13,6 +13,6 @@ export default {
       return;
     }
 
-    return await verifier(user, progress);
+    return await verifier(userId, progress);
   },
 };

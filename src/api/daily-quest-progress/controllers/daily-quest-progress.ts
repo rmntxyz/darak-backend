@@ -20,11 +20,11 @@ export default factories.createCoreController(
 
       return result;
     },
-    "claim-rewards": async (ctx) => {
-      const { qid } = ctx.params;
+    verify: async (ctx) => {
+      const { progressId } = ctx.params;
 
-      if (!qid) {
-        return ctx.badRequest("qid is required");
+      if (!progressId) {
+        return ctx.badRequest("Daily Quest Progress ID is required");
       }
 
       const userId = ctx.state.user?.id;
@@ -35,7 +35,28 @@ export default factories.createCoreController(
 
       const result = await strapi
         .service("api::daily-quest-progress.daily-quest-progress")
-        .claimRewards(userId, qid);
+        .verify(userId, progressId);
+
+      return result;
+    },
+    "claim-rewards": async (ctx) => {
+      const { progressId } = ctx.params;
+
+      if (!progressId) {
+        return ctx.badRequest("Daily Quest Progress ID is required");
+      }
+
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
+      const result = await strapi
+        .service("api::daily-quest-progress.daily-quest-progress")
+        .claimRewards(userId, progressId);
+
+      return result;
     },
   })
 );
