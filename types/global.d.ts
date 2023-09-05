@@ -10,9 +10,12 @@ type FreebieData = Partial<Freebie>;
 
 type Streak = {
   id: number;
-  current_streak: number;
-  longest_streak: number;
+  current_login: number;
+  longest_login: number;
   last_login_date: Date;
+  current_draw: number;
+  longest_draw: number;
+  last_draw_date: Date;
 };
 
 type User = {

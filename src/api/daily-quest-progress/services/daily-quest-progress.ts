@@ -4,7 +4,7 @@
 
 import { factories } from "@strapi/strapi";
 import { getRefTimestamp } from "../../../utils";
-import verifier from "./verifier";
+import progressHandler from "./handler";
 
 async function getDailyQuestProgresses(userId: number) {
   const now = new Date();
@@ -84,7 +84,18 @@ export default factories.createCoreService(
         }
 
         if (!dailyQuestProgress.is_completed) {
-          progress = verifier.verify(userId, dailyQuestProgress);
+          const user = await strapi.entityService.findOne(
+            "plugin::users-permissions.user",
+            userId,
+            {
+              fields: ["id"],
+              populate: {
+                streak: true,
+              },
+            }
+          );
+
+          progress = await progressHandler.verify(user, dailyQuestProgress);
         }
 
         if (!progress) {
@@ -104,11 +115,22 @@ export default factories.createCoreService(
           .service("api::daily-quest-progress.daily-quest-progress")
           .getTodayQuest(userId);
 
+        const user = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          userId,
+          {
+            fields: ["id"],
+            populate: {
+              streak: true,
+            },
+          }
+        );
+
         for (const dailyQuestProgress of dailyQuestProgresses) {
           let progress = null;
 
           if (!dailyQuestProgress.is_completed) {
-            progress = verifier.verify(userId, dailyQuestProgress);
+            progress = await progressHandler.verify(user, dailyQuestProgress);
           }
 
           if (!progress) {
@@ -162,11 +184,10 @@ export default factories.createCoreService(
           }
         );
 
-        const { current_streak } = user.streak;
-        const { streak_rewards } = progress.daily_quest;
-
-        const { rewards } =
-          streak_rewards[Math.min(current_streak, streak_rewards.length) - 1];
+        const { streak, rewards } = await progressHandler.claimRewards(
+          user,
+          progress
+        );
 
         for (const reward of rewards) {
           if (reward.type === "freebie") {
@@ -192,7 +213,7 @@ export default factories.createCoreService(
           }
         );
 
-        results = rewards;
+        results = { streak, rewards };
       });
 
       return results;

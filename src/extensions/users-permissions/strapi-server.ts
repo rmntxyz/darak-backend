@@ -1,8 +1,6 @@
 import bootstrap from "./server/bootstrap";
 import providersRegistry from "./server/services/providers-registry";
 import providers from "./server/services/providers";
-import { getRefTimestamp } from "../../utils";
-import quest from "../../api/quest/controllers/quest";
 
 module.exports = (plugin) => {
   // for kakao login
@@ -48,7 +46,7 @@ module.exports = (plugin) => {
       .refresh(user.freebie);
 
     //refresh streak
-    await strapi.service("api::streak.streak").refresh(user.streak);
+    // await strapi.service("api::streak.streak").refresh(user.streak);
 
     // const dailyQuestProgresses = await strapi
     //   .service("api::daily-quest-progress.daily-quest-progress")

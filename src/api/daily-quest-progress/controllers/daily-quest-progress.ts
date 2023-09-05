@@ -33,11 +33,15 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const result = await strapi
-        .service("api::daily-quest-progress.daily-quest-progress")
-        .verify(userId, progressId);
+      try {
+        const result = await strapi
+          .service("api::daily-quest-progress.daily-quest-progress")
+          .verify(userId, progressId);
 
-      return result;
+        return result;
+      } catch (error) {
+        return ctx.badRequest(error.message);
+      }
     },
     "claim-rewards": async (ctx) => {
       const { progressId } = ctx.params;
@@ -52,11 +56,15 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const result = await strapi
-        .service("api::daily-quest-progress.daily-quest-progress")
-        .claimRewards(userId, progressId);
+      try {
+        const result = await strapi
+          .service("api::daily-quest-progress.daily-quest-progress")
+          .claimRewards(userId, progressId);
 
-      return result;
+        return result;
+      } catch (error) {
+        return ctx.badRequest(error.message);
+      }
     },
   })
 );
