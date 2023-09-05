@@ -68,10 +68,10 @@ export default factories.createCoreService(
     },
 
     async verify(userId: number, progressId: number) {
-      let dailyQuestProgress = null;
+      let progress = null;
 
       await strapi.db.transaction(async () => {
-        dailyQuestProgress = await strapi.entityService.findOne(
+        const dailyQuestProgress = await strapi.entityService.findOne(
           "api::daily-quest-progress.daily-quest-progress",
           progressId,
           {
@@ -79,31 +79,47 @@ export default factories.createCoreService(
           }
         );
 
+        if (!dailyQuestProgress) {
+          throw new Error("daily quest progress not found");
+        }
+
         if (!dailyQuestProgress.is_completed) {
-          verifier.verify(userId, dailyQuestProgress);
+          progress = verifier.verify(userId, dailyQuestProgress);
+        }
+
+        if (!progress) {
+          progress = dailyQuestProgress;
         }
       });
 
-      return dailyQuestProgress;
+      return progress;
     },
 
     async verifyAll(userId: number) {
       // get all daily quests
-      let dailyQuestProgresses = null;
+      let progresses = [];
 
       await strapi.db.transaction(async () => {
-        dailyQuestProgresses = await strapi
+        const dailyQuestProgresses = await strapi
           .service("api::daily-quest-progress.daily-quest-progress")
           .getTodayQuest(userId);
 
-        for (const progress of dailyQuestProgresses) {
-          if (!progress.is_completed) {
-            verifier.verify(userId, progress);
+        for (const dailyQuestProgress of dailyQuestProgresses) {
+          let progress = null;
+
+          if (!dailyQuestProgress.is_completed) {
+            progress = verifier.verify(userId, dailyQuestProgress);
           }
+
+          if (!progress) {
+            progress = dailyQuestProgress;
+          }
+
+          progresses.push(progress);
         }
       });
 
-      return dailyQuestProgresses;
+      return progresses;
     },
 
     async claimRewards(userId: number, progressId: number) {

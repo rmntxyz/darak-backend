@@ -10,7 +10,7 @@ export default {
     const verifier = VERIFIRE[qid];
 
     if (!verifier) {
-      return;
+      return null;
     }
 
     return await verifier(userId, progress);
