@@ -57,7 +57,7 @@ async function verify(user: User, quest: DailyQuestProgress) {
 }
 
 async function claimRewards(user: User, quest: DailyQuestProgress) {
-  const { current_draw } = user.streak;
+  const { current_draw, longest_draw } = user.streak;
   const { streak_rewards } = quest.daily_quest;
 
   const { rewards } =
@@ -67,6 +67,7 @@ async function claimRewards(user: User, quest: DailyQuestProgress) {
     streak: {
       type: "draw",
       current: current_draw,
+      longest: longest_draw,
     },
     rewards,
   };
