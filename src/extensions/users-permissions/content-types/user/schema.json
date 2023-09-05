@@ -90,12 +90,6 @@
       "target": "api::room.room",
       "inversedBy": "users"
     },
-    "followings": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::creator.creator",
-      "inversedBy": "followers"
-    },
     "inventory": {
       "type": "relation",
       "relation": "oneToMany",
@@ -113,6 +107,12 @@
       "relation": "oneToOne",
       "target": "api::streak.streak",
       "mappedBy": "users_permissions_user"
+    },
+    "followings": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::creator.creator",
+      "inversedBy": "followers"
     }
   }
 }
