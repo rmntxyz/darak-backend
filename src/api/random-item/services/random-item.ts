@@ -55,7 +55,7 @@ async function deductFreebie(user: User) {
 
 export default ({ strapi }) => ({
   async drawRandom(userId: number, drawId: number) {
-    let drawResult = null;
+    let items = [];
 
     await strapi.db.transaction(async () => {
       const draw = await strapi.entityService.findOne("api::draw.draw", drawId);
@@ -82,18 +82,31 @@ export default ({ strapi }) => ({
       }
 
       // draw
-      drawResult = getRandomItems(draw);
+      const itemIds = getRandomItems(draw);
 
-      for (const itemId of drawResult) {
+      for (const itemId of itemIds) {
         const item = await strapi.entityService.findOne(
           "api::item.item",
           itemId
         );
         const { current_serial_number } = item;
 
-        await strapi.entityService.update("api::item.item", itemId, {
-          data: { current_serial_number: current_serial_number + 1 },
-        });
+        const updatedItem = await strapi.entityService.update(
+          "api::item.item",
+          itemId,
+          {
+            fields: ["id", "name", "desc", "rarity", "current_serial_number"],
+            populate: {
+              thumbnail: {
+                fields: ["url"],
+                populate: ["url"],
+              },
+            },
+            data: { current_serial_number: current_serial_number + 1 },
+          }
+        );
+
+        items.push(updatedItem);
 
         // create inventory
         await strapi.entityService.create("api::inventory.inventory", {
@@ -111,12 +124,12 @@ export default ({ strapi }) => ({
         data: {
           draw: drawId,
           users_permissions_user: userId,
-          draw_result: drawResult,
+          draw_result: itemIds,
           publishedAt: new Date(),
         },
       });
     });
 
-    return drawResult;
+    return items;
   },
 });
