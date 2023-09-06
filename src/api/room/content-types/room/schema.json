@@ -73,6 +73,12 @@
     },
     "end_date": {
       "type": "datetime"
+    },
+    "webtoon": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::webtoon.webtoon",
+      "inversedBy": "rooms"
     }
   }
 }

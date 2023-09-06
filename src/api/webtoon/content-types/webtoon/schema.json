@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "webtoons",
+  "info": {
+    "singularName": "webtoon",
+    "pluralName": "webtoons",
+    "displayName": "Webtoon",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "episodes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::episode.episode",
+      "mappedBy": "webtoon"
+    },
+    "webtoon_id": {
+      "type": "uid"
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "volume": {
+      "type": "integer"
+    },
+    "desc": {
+      "type": "richtext"
+    },
+    "release_date": {
+      "type": "datetime"
+    },
+    "creator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::creator.creator",
+      "inversedBy": "webtoons"
+    },
+    "rooms": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::room.room",
+      "mappedBy": "webtoon"
+    },
+    "webtoon_outlinks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::webtoon-outlink.webtoon-outlink"
+    }
+  }
+}

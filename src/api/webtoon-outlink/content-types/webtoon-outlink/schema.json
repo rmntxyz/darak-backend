@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "webtoon_outlinks",
+  "info": {
+    "singularName": "webtoon-outlink",
+    "pluralName": "webtoon-outlinks",
+    "displayName": "WebtoonOutlink",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "sns": {
+      "type": "enumeration",
+      "enum": [
+        "instagram",
+        "twitter",
+        "facebook",
+        "naver",
+        "kakao",
+        "etc"
+      ]
+    },
+    "url": {
+      "type": "string"
+    }
+  }
+}

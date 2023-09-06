@@ -63,6 +63,12 @@
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
       "mappedBy": "followings"
+    },
+    "webtoons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::webtoon.webtoon",
+      "mappedBy": "creator"
     }
   }
 }

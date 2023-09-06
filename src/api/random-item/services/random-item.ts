@@ -19,7 +19,7 @@ function drawItem(info: DrawInfo) {
   const random = Math.random();
 
   let total_probability = 0;
-  for (const [rarity, { items, probability }] of Object.entries(info)) {
+  for (const [_, { items, probability }] of Object.entries(info)) {
     total_probability += probability;
     if (random < total_probability) {
       const item = items[Math.floor(Math.random() * items.length)];
