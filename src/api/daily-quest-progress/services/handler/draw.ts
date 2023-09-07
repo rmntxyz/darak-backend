@@ -1,4 +1,5 @@
 import { getRefTimestamp } from "../../../../utils";
+import { progressDefaultOptions } from "../daily-quest-progress";
 
 async function verify(user: User, quest: DailyQuestProgress) {
   const now = new Date();
@@ -48,6 +49,7 @@ async function verify(user: User, quest: DailyQuestProgress) {
   return await strapi
     .service("api::daily-quest-progress.daily-quest-progress")
     .update(quest.id, {
+      ...progressDefaultOptions,
       data: {
         progress: quest.progress + 1,
         is_completed: true,

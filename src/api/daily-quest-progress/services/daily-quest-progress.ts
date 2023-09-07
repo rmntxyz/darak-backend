@@ -6,6 +6,20 @@ import { factories } from "@strapi/strapi";
 import { getRefTimestamp } from "../../../utils";
 import progressHandler from "./handler";
 
+export const progressDefaultOptions = {
+  fields: ["progress", "is_completed", "is_reward_claimed", "completed_date"],
+  populate: {
+    daily_quest: {
+      fields: ["level_requirement", "qid", "total_progress", "name", "desc"],
+      populate: {
+        streak_rewards: {
+          populate: ["rewards"],
+        },
+      },
+    },
+  },
+};
+
 async function getDailyQuestProgresses(userId: number) {
   const now = new Date();
   const refTimestamp = getRefTimestamp(now);
@@ -13,11 +27,7 @@ async function getDailyQuestProgresses(userId: number) {
   return await strapi.entityService.findMany(
     "api::daily-quest-progress.daily-quest-progress",
     {
-      populate: {
-        daily_quest: {
-          populate: { streak_rewards: { populate: ["rewards"] } },
-        },
-      },
+      ...progressDefaultOptions,
       filters: {
         users_permissions_user: { id: userId },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
@@ -46,6 +56,7 @@ export default factories.createCoreService(
         const quest = await strapi.entityService.create(
           "api::daily-quest-progress.daily-quest-progress",
           {
+            ...progressDefaultOptions,
             data: {
               daily_quest: { id: dailyQuest.id },
               progress: 0,
@@ -74,9 +85,7 @@ export default factories.createCoreService(
         const dailyQuestProgress = await strapi.entityService.findOne(
           "api::daily-quest-progress.daily-quest-progress",
           progressId,
-          {
-            populate: ["daily_quest"],
-          }
+          progressDefaultOptions
         );
 
         if (!dailyQuestProgress) {
@@ -151,17 +160,7 @@ export default factories.createCoreService(
         const progress = await strapi.entityService.findOne(
           "api::daily-quest-progress.daily-quest-progress",
           progressId,
-          {
-            populate: {
-              daily_quest: {
-                populate: {
-                  streak_rewards: {
-                    populate: ["rewards"],
-                  },
-                },
-              },
-            },
-          }
+          progressDefaultOptions
         );
 
         if (!progress.is_completed) {

@@ -29,13 +29,22 @@ module.exports = (plugin) => {
       {
         populate: {
           inventory: {
+            fields: ["serial_number"],
             populate: {
               item: { fields: ["id"] },
             },
           },
           freebie: true,
           streak: true,
-          rooms: true,
+          rooms: {
+            fields: ["name", "desc", "rid"],
+            populate: {
+              image_complete: {
+                fields: ["url"],
+                populate: ["url"],
+              },
+            },
+          },
           followings: true,
         },
       }
