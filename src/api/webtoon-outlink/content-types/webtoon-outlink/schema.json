@@ -12,14 +12,22 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "sns": {
+    "platform": {
       "type": "enumeration",
       "enum": [
         "instagram",
         "twitter",
         "facebook",
-        "naver",
-        "kakao",
+        "naver_webtoon",
+        "kakao_webtoon",
+        "kakao_page",
+        "naver_series",
+        "lezhin_comics",
+        "toptoon",
+        "bomtoon",
+        "anytoon",
+        "ridi_webtoon",
+        "toomics",
         "etc"
       ]
     },

@@ -60,7 +60,7 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::webtoon-outlink.webtoon-outlink",
-      "inversedBy": "webtoons"
+      "mappedBy": "webtoons"
     }
   }
 }
