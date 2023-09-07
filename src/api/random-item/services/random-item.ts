@@ -58,7 +58,17 @@ export default ({ strapi }) => ({
     let items = [];
 
     await strapi.db.transaction(async () => {
-      const draw = await strapi.entityService.findOne("api::draw.draw", drawId);
+      const draw = await strapi.entityService.findOne(
+        "api::draw.draw",
+        drawId,
+        {
+          populate: {
+            room: {
+              fields: ["id"],
+            },
+          },
+        }
+      );
 
       const { currency_type } = draw;
 
@@ -66,9 +76,31 @@ export default ({ strapi }) => ({
         "plugin::users-permissions.user",
         userId,
         {
-          populate: ["freebie" /*, "star"*/],
+          populate: {
+            freebie: true,
+            // star: true,
+            rooms: {
+              fields: ["id"],
+            },
+          },
         }
       );
+
+      // if user don't have room, assign room to user
+      if (!user.rooms?.find((room) => room.id === draw.room.id)) {
+        // assign room to user
+        const temp = await strapi.entityService.update(
+          "plugin::users-permissions.user",
+          userId,
+          {
+            data: {
+              rooms: {
+                connect: [draw.room.id],
+              },
+            },
+          }
+        );
+      }
 
       if (currency_type === "freebie") {
         try {
