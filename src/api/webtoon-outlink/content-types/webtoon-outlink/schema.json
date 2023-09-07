@@ -25,6 +25,12 @@
     },
     "url": {
       "type": "string"
+    },
+    "webtoons": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::webtoon.webtoon",
+      "inversedBy": "webtoon_outlinks"
     }
   }
 }

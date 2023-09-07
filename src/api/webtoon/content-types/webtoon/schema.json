@@ -58,8 +58,9 @@
     },
     "webtoon_outlinks": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::webtoon-outlink.webtoon-outlink"
+      "relation": "manyToMany",
+      "target": "api::webtoon-outlink.webtoon-outlink",
+      "inversedBy": "webtoons"
     }
   }
 }
