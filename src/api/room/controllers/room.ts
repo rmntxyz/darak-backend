@@ -20,10 +20,10 @@ export default factories.createCoreController(
         fields: ["name", "desc", "rid", "start_date", "end_date"],
         populate: {
           image_complete: {
-            fields: ["url"],
+            fields: ["url", "width", "height"],
           },
           image_empty: {
-            fields: ["url"],
+            fields: ["url", "width", "height"],
           },
           items: {
             fields: [
