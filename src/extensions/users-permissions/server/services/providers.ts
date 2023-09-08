@@ -62,11 +62,28 @@ export default ({ strapi }) => {
       throw new Error("Email was not available.");
     }
 
-    const users = await strapi
-      .query("plugin::users-permissions.user")
-      .findMany({
-        where: { email },
+    let users = await strapi.query("plugin::users-permissions.user").findMany({
+      where: { email },
+    });
+
+    if (users.length === 0 && profile.providerId) {
+      users = await strapi.query("plugin::users-permissions.user").findMany({
+        where: { email: `${provider}-${profile.providerId}@darak.app` },
       });
+
+      if (users.length > 0) {
+        const updated = await strapi
+          .query("plugin::users-permissions.user")
+          .update({
+            where: { id: users[0].id },
+            data: {
+              email,
+              username: profile.username,
+            },
+          });
+        users = [updated];
+      }
+    }
 
     const advancedSettings = await strapi
       .store({ type: "plugin", name: "users-permissions", key: "advanced" })
