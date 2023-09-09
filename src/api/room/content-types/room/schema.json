@@ -79,6 +79,9 @@
       "relation": "manyToOne",
       "target": "api::webtoon.webtoon",
       "inversedBy": "rooms"
+    },
+    "display_order": {
+      "type": "integer"
     }
   }
 }
