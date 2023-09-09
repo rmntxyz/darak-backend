@@ -113,6 +113,12 @@
       "relation": "manyToMany",
       "target": "api::creator.creator",
       "inversedBy": "followers"
+    },
+    "age_range": {
+      "type": "string"
+    },
+    "gender": {
+      "type": "string"
     }
   }
 }
