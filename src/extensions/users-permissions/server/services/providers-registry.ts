@@ -136,26 +136,16 @@ const getInitialProviders = ({ purest }) => ({
         //   console.log(body);
         //   return { body };
         // })
-        .then(({ body }) => {
-          if (body.kakao_account.profile) {
-            return {
-              providerId: body.id,
-              username: body.kakao_account.profile.nickname,
-              picture: body.kakao_account.profile.profile_image_url,
-              thumbnail: body.kakao_account.profile.thumbnail_image_url,
-              email: body.kakao_account.has_email
-                ? body.kakao_account.email
-                : `${body.kakao_account.profile.nickname}@kakao.com`,
-            };
-          } else {
-            return {
-              username: body.id,
-              picture: null,
-              thumbnail: null,
-              email: `kakao-${body.id}@darak.app`,
-            };
-          }
-        })
+        .then(({ body }) => ({
+          username: body.kakao_account.profile.nickname,
+          picture: body.kakao_account.profile.profile_image_url,
+          thumbnail: body.kakao_account.profile.thumbnail_image_url,
+          gender: body.kakao_account.gender,
+          age_range: body.kakao_account.age_range,
+          email: body.kakao_account.has_email
+            ? body.kakao_account.email
+            : `${body.kakao_account.profile.nickname}@kakao.com`,
+        }))
     );
     // .catch((err) => {
     //   console.log(err);
