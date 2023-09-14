@@ -67,29 +67,6 @@ export default factories.createCoreController(
 
       const room = rooms[0];
 
-      if (ctx.state.user) {
-        const userId = ctx.state.user.id;
-
-        // find user's items for this room
-        const inventory = await strapi.entityService.findMany(
-          "api::inventory.inventory",
-          {
-            fields: ["serial_number"],
-            populate: {
-              item: {
-                fields: ["rarity"],
-              },
-            },
-            filters: {
-              users_permissions_user: { id: userId },
-              item: { room: { id: room.id } },
-            },
-          }
-        );
-
-        room.inventory = inventory;
-      }
-
       return room;
     },
   })
