@@ -9,5 +9,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/user-rooms/:userId",
+      handler: "room.get-user-rooms",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

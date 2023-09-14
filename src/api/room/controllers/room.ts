@@ -14,52 +14,9 @@ export default factories.createCoreController(
         return ctx.badRequest("Room name is required");
       }
 
-      // find webtoon with roomName and populate webtoon
-      const rooms = await strapi.entityService.findMany("api::room.room", {
-        filters: { rid: roomName },
-        fields: ["name", "desc", "rid", "start_date", "end_date"],
-        populate: {
-          image_complete: {
-            fields: ["url", "width", "height"],
-          },
-          image_empty: {
-            fields: ["url", "width", "height"],
-          },
-          items: {
-            fields: [
-              "name",
-              "desc",
-              "rarity",
-              "category",
-              "attribute",
-              "current_serial_number",
-            ],
-            populate: {
-              image: {
-                fields: ["url"],
-              },
-              thumbnail: {
-                fields: ["url"],
-              },
-              additional_images: {
-                fields: ["url"],
-              },
-            },
-          },
-          webtoon: {
-            fields: ["title", "desc", "volume", "webtoon_id", "release_date"],
-            populate: {
-              episodes: true,
-              webtoon_outlinks: {
-                fields: ["platform", "url"],
-              },
-              cover_image: {
-                populate: ["url"],
-              },
-            },
-          },
-        },
-      });
+      const rooms = await strapi
+        .service("api::room.room")
+        .findRooomByRoomName(roomName);
 
       if (rooms.length === 0) {
         return ctx.notFound("Room not found");
@@ -68,6 +25,24 @@ export default factories.createCoreController(
       const room = rooms[0];
 
       return room;
+    },
+
+    "get-user-rooms": async (ctx) => {
+      const { userId } = ctx.params;
+
+      if (!userId) {
+        return ctx.badRequest("User id is required");
+      }
+
+      const rooms = await strapi
+        .service("api::room.room")
+        .findUserRooms(userId);
+
+      if (rooms.length === 0) {
+        return ctx.notFound("Rooms not found");
+      }
+
+      return rooms;
     },
   })
 );
