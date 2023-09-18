@@ -37,6 +37,14 @@ const roomsDefaultOptions = {
         },
       },
     },
+    creator: {
+      fields: ["name", "desc"],
+      populate: {
+        profile_image: {
+          fields: ["url"],
+        },
+      },
+    },
     webtoon: {
       fields: ["title", "desc", "volume", "webtoon_id", "release_date"],
       populate: {
@@ -63,7 +71,7 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
   async findUserRooms(userId: number) {
     return await strapi.entityService.findMany("api::room.room", {
       ...roomsDefaultOptions,
-      filters: { users_permissions_user: { id: userId } },
+      filters: { users: { id: userId } },
     });
   },
 }));

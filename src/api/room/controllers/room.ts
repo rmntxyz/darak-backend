@@ -7,7 +7,7 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
   "api::room.room",
   ({ strapi }) => ({
-    "get-room-info": async (ctx) => {
+    "get-room-by-name": async (ctx) => {
       const { roomName } = ctx.params;
 
       if (!roomName) {
@@ -37,10 +37,6 @@ export default factories.createCoreController(
       const rooms = await strapi
         .service("api::room.room")
         .findUserRooms(userId);
-
-      if (rooms.length === 0) {
-        return ctx.notFound("Rooms not found");
-      }
 
       return rooms;
     },

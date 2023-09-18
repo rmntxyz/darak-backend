@@ -3,7 +3,7 @@ export default {
     {
       method: "GET",
       path: "/room/:roomName",
-      handler: "room.get-room-info",
+      handler: "room.get-room-by-name",
       config: {
         policies: [],
         middlewares: [],
