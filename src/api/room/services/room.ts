@@ -38,7 +38,7 @@ const roomsDefaultOptions = {
       },
     },
     creator: {
-      fields: ["name", "desc"],
+      fields: ["name", "desc", "cid"],
       populate: {
         profile_image: {
           fields: ["url"],
