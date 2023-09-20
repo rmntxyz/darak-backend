@@ -119,6 +119,12 @@
     },
     "gender": {
       "type": "string"
+    },
+    "trades": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::trade.trade",
+      "mappedBy": "participants"
     }
   }
 }

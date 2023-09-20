@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "trades",
+  "info": {
+    "singularName": "trade",
+    "pluralName": "trades",
+    "displayName": "Trade",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "expires": {
+      "type": "datetime"
+    },
+    "items": {
+      "displayName": "items",
+      "type": "component",
+      "repeatable": true,
+      "component": "item-and-quantity.items"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "proposed",
+        "counter_proposed",
+        "success",
+        "failed",
+        "canceled",
+        "rejected"
+      ]
+    },
+    "history": {
+      "displayName": "trade_history",
+      "type": "component",
+      "repeatable": true,
+      "component": "trade-history.trade-history"
+    },
+    "participants": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "trades"
+    },
+    "initiator": {
+      "type": "integer"
+    }
+  }
+}
