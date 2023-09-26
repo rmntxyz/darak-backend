@@ -142,6 +142,28 @@ offset ${pageNum - 1} * ${pageSize};
   },
 
   async findTradeDetail(roomId: number, userId: number, partnerId: number) {
+    const all_rooms = await strapi.entityService.findMany("api::room.room", {
+      fields: ["name"],
+      populate: {
+        image_complete: {
+          fields: ["url"],
+        },
+      },
+    });
+
+    const room_info = await strapi.entityService.findOne(
+      "api::room.room",
+      roomId,
+      {
+        fields: ["name"],
+        populate: {
+          items: {
+            fields: ["id"],
+          },
+        },
+      }
+    );
+
     const me = await strapi
       .service("api::user-items.user-items")
       .findUserItemsByRoom(userId, roomId);
@@ -151,6 +173,8 @@ offset ${pageNum - 1} * ${pageSize};
       .findUserItemsByRoom(partnerId, roomId);
 
     return {
+      all_rooms,
+      room_info,
       me,
       partner,
     };
