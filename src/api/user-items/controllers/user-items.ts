@@ -14,6 +14,6 @@ export default {
 
     return await strapi
       .service("api::user-items.user-items")
-      .findUserItemsByRoom(roomId, userId);
+      .findUserItemsByRoom(userId, roomId);
   },
 };

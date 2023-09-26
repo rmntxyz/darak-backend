@@ -65,10 +65,15 @@ module.exports = (plugin) => {
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);
 
+    const dailyTradeCount = await strapi
+      .service("api::trade-process.trade-process")
+      .getDailyTradeCount(user.id);
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
       daily_quest_progresses: dailyQuestProgresses,
+      daily_trade_count: dailyTradeCount,
     });
   };
 

@@ -15,12 +15,6 @@
     "expires": {
       "type": "datetime"
     },
-    "items": {
-      "displayName": "items",
-      "type": "component",
-      "repeatable": true,
-      "component": "item-and-quantity.items"
-    },
     "status": {
       "type": "enumeration",
       "enum": [
@@ -29,7 +23,8 @@
         "success",
         "failed",
         "canceled",
-        "rejected"
+        "rejected",
+        "expired"
       ]
     },
     "history": {
@@ -38,14 +33,31 @@
       "repeatable": true,
       "component": "trade-history.trade-history"
     },
-    "participants": {
+    "proposer_items": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "trades"
+      "relation": "oneToMany",
+      "target": "api::inventory.inventory"
     },
-    "initiator": {
-      "type": "integer"
+    "partner_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inventory.inventory"
+    },
+    "proposer": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "partner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "proposer_read": {
+      "type": "boolean"
+    },
+    "partner_read": {
+      "type": "boolean"
     }
   }
 }

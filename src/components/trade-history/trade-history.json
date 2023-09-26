@@ -2,8 +2,22 @@
   "collectionName": "components_trade_history_trade_histories",
   "info": {
     "displayName": "trade_history",
-    "icon": "rotate"
+    "icon": "rotate",
+    "description": ""
   },
   "options": {},
-  "attributes": {}
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "proposed",
+        "counter_proposed",
+        "success",
+        "failed",
+        "canceled",
+        "rejected",
+        "expired"
+      ]
+    }
+  }
 }

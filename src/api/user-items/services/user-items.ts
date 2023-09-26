@@ -3,7 +3,7 @@
  */
 
 export default ({ strapi }) => ({
-  async findUserItemsByRoom(roomId: number, userId: number | undefined) {
+  async findUserItemsByRoom(userId: number, roomId: number | undefined) {
     const filters: any = {
       users_permissions_user: { id: userId },
     };

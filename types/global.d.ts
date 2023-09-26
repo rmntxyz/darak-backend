@@ -93,3 +93,36 @@ type DrawInfo = {
   super_rare: RarityData;
   unique: RarityData;
 };
+
+type Inventory = {
+  id: number;
+  serial_number: number;
+  item: Item;
+};
+
+type TradeStatus =
+  | "proposed"
+  | "counter_proposed"
+  | "canceled"
+  | "rejected"
+  | "success"
+  | "failed"
+  | "expired";
+
+type TradeHistory = {
+  id: number;
+  status: TradeStatus;
+};
+
+type Trade = {
+  id: number;
+  proposer: User;
+  partner: User;
+  proposer_items: Inventory[];
+  partner_items: Inventory[];
+  proposer_read: boolean;
+  partner_read: boolean;
+  expires: Date;
+  status: TradeStatus;
+  history: TradeHistory[];
+};
