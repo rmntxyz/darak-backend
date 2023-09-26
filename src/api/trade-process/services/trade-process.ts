@@ -83,7 +83,7 @@ offset ${pageNum - 1} * ${pageSize};
     return rows;
   },
 
-  async findNonOwnersOfItem(
+  async findNonItemOwners(
     itemId: number,
     pageNum: number = 1,
     pageSize: number = 10
