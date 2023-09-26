@@ -27,13 +27,32 @@ export default ({ strapi }) => ({
     pageNum: number = 1,
     pageSize: number = 10
   ) {
+    let {
+      rows: [{ room_id }],
+    } = await strapi.db.connection.raw(`
+SELECT
+  ROOM_ID
+FROM
+  ITEMS_ROOM_LINKS
+WHERE
+  ITEM_ID = ${itemId}
+     `);
+
+    const total_count = await strapi.db.query("api::item.item").count({
+      where: {
+        room: { id: room_id },
+        category: "decoration",
+      },
+    });
+
     let { rows } = await strapi.db.connection.raw(`
 select
+  ${room_id} as ROOM_ID,
   INVENTORIES_ITEM_LINKS.ITEM_ID,
   COUNT(*),
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME,
-  USER_ITEMS.ITEMS as USER_ITEMS
+  USER_ITEMS.COUNT as USER_COLLECTION_COUNT
 from
   INVENTORIES
 inner join INVENTORIES_ITEM_LINKS on
@@ -45,7 +64,7 @@ inner join UP_USERS on
 left join (
   select
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
-    ARRAY_AGG(distinct INVENTORIES_ITEM_LINKS.ITEM_ID) as ITEMS
+    COUNT(distinct INVENTORIES_ITEM_LINKS.ITEM_ID)
   from
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS
   inner join INVENTORIES on
@@ -55,14 +74,7 @@ left join (
   inner join ITEMS_ROOM_LINKS on
     INVENTORIES_ITEM_LINKS.ITEM_ID = ITEMS_ROOM_LINKS.ITEM_ID
   where
-    ITEMS_ROOM_LINKS.ROOM_ID in (
-    select
-      ROOM_ID
-    from
-      ITEMS_ROOM_LINKS
-    where
-      ITEM_ID = ${itemId}
-  )
+    ITEMS_ROOM_LINKS.ROOM_ID = ${room_id}
   group by
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID
 ) as USER_ITEMS on
@@ -73,12 +85,20 @@ group by
   INVENTORIES_ITEM_LINKS.ITEM_ID,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME,
-  USER_ITEMS.ITEMS
+  USER_ITEMS.COUNT
 order by
   COUNT desc
 limit ${pageSize}
 offset ${pageNum - 1} * ${pageSize};
       `);
+
+    for (const row of rows) {
+      const count = row.user_collection_count;
+      const completion_rate = Math.round((count / total_count) * 100);
+      delete row.user_collection_count;
+      row.count = Number(row.count);
+      row.completion_rate = completion_rate;
+    }
 
     return rows;
   },
@@ -88,13 +108,32 @@ offset ${pageNum - 1} * ${pageSize};
     pageNum: number = 1,
     pageSize: number = 10
   ) {
+    let {
+      rows: [{ room_id }],
+    } = await strapi.db.connection.raw(`
+SELECT
+  ROOM_ID
+FROM
+  ITEMS_ROOM_LINKS
+WHERE
+  ITEM_ID = ${itemId}
+     `);
+
+    const total_count = await strapi.db.query("api::item.item").count({
+      where: {
+        room: { id: room_id },
+        category: "decoration",
+      },
+    });
+
     let { rows } = await strapi.db.connection.raw(`
 select
+  ${room_id} as ROOM_ID,
   ${itemId} as ITEM_ID,
   SUM(case when INVENTORIES_ITEM_LINKS.ITEM_ID = ${itemId} then 1 else 0 end) as COUNT,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME,
-  USER_ITEMS.ITEMS as USER_ITEMS
+  USER_ITEMS.COUNT as USER_COLLECTION_COUNT
 from
   INVENTORIES
 inner join INVENTORIES_ITEM_LINKS on
@@ -106,7 +145,7 @@ inner join UP_USERS on
 left join (
   select
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
-    ARRAY_AGG(distinct INVENTORIES_ITEM_LINKS.ITEM_ID) as ITEMS
+    COUNT(distinct INVENTORIES_ITEM_LINKS.ITEM_ID)
   from
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS
   inner join INVENTORIES on
@@ -116,20 +155,13 @@ left join (
   inner join ITEMS_ROOM_LINKS on
     INVENTORIES_ITEM_LINKS.ITEM_ID = ITEMS_ROOM_LINKS.ITEM_ID
   where
-    ITEMS_ROOM_LINKS.ROOM_ID in (
-    select
-      ROOM_ID
-    from
-      ITEMS_ROOM_LINKS
-    where
-      ITEM_ID = ${itemId}
-  )
+    ITEMS_ROOM_LINKS.ROOM_ID = ${room_id}
   group by
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID
 ) as USER_ITEMS on
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID = USER_ITEMS.USER_ID
 group by
-  USER_ITEMS.ITEMS,
+  USER_ITEMS.COUNT,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME
 order by
@@ -137,6 +169,14 @@ order by
 limit ${pageSize}
 offset ${pageNum - 1} * ${pageSize};
       `);
+
+    for (const row of rows) {
+      const count = row.user_collection_count;
+      const completion_rate = Math.round((count / total_count) * 100);
+      delete row.user_collection_count;
+      row.count = Number(row.count);
+      row.completion_rate = completion_rate;
+    }
 
     return rows;
   },
@@ -151,19 +191,6 @@ offset ${pageNum - 1} * ${pageSize};
       },
     });
 
-    const room_info = await strapi.entityService.findOne(
-      "api::room.room",
-      roomId,
-      {
-        fields: ["name"],
-        populate: {
-          items: {
-            fields: ["id"],
-          },
-        },
-      }
-    );
-
     const me = await strapi
       .service("api::user-items.user-items")
       .findUserItemsByRoom(userId, roomId);
@@ -174,7 +201,6 @@ offset ${pageNum - 1} * ${pageSize};
 
     return {
       all_rooms,
-      room_info,
       me,
       partner,
     };
