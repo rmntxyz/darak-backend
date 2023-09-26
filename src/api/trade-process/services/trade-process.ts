@@ -136,7 +136,6 @@ order by
   count
 limit ${pageSize}
 offset ${pageNum - 1} * ${pageSize};
-});
       `);
 
     return rows;
