@@ -262,16 +262,6 @@ body: {
 - `1006`: _PROPOSER_ITEMS_NOT_FOUND_
 - `1007`: _PARTNER_ITEMS_NOT_FOUND_
 
-#### Related Error Code
-
-- `1001`: _TRADE_EXPIRED_
-- `1002`: _TRADE_NOT_FOUND_
-- `1003`: _INVALID_TRADE_STATUS_
-- `1004`: _INVALID_TRADE_ITEMS_
-- `1005`: _DAILY_TRADE_LIMIT_EXCEEDED_
-- `1006`: _PROPOSER_ITEMS_NOT_FOUND_
-- `1007`: _PARTNER_ITEMS_NOT_FOUND_
-
 <br />
 
 ## /trade-process/counter-proposal/`:tradeId`
