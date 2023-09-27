@@ -293,9 +293,11 @@ body에는 `partnerId`, `proposerItems`, `partnerItems`가 들어간다.
 
 ```javascript
 body: {
-  partnerId: 2,             // userId
-  proposerItems: [1, 2, 3], // inventoryId[]
-  partnerItems: [4, 5, 6]   // inventoryId[]
+  data: {
+    partnerId: 2,             // userId
+    proposerItems: [1, 2, 3], // inventoryId[]
+    partnerItems: [4, 5, 6]   // inventoryId[]
+  }
 }
 ```
 
@@ -319,8 +321,10 @@ body: {
 
 ```javascript
 body: {
-  proposerItems: [1, 2, 3], // inventoryId[]
-  partnerItems: [4, 5, 6]   // inventoryId[]
+  data: {
+    proposerItems: [1, 2, 3], // inventoryId[]
+    partnerItems: [4, 5, 6]   // inventoryId[]
+  }
 }
 ```
 
