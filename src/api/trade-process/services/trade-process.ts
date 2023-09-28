@@ -21,6 +21,48 @@ export const tradeDefaultOptions = {
   },
 };
 
+export const tradeDetailOptions = {
+  populate: {
+    proposer: {
+      fields: ["username"],
+    },
+    proposer_items: {
+      fields: ["serial_number"],
+      populate: {
+        item: {
+          fields: ["name", "rarity"],
+          populate: {
+            thumbnail: {
+              fields: ["url"],
+            },
+            room: {
+              fields: ["name"],
+            },
+          },
+        },
+      },
+    },
+    partner: {
+      fields: ["username"],
+    },
+    partner_items: {
+      populate: {
+        item: {
+          fields: ["name", "rarity"],
+          populate: {
+            thumbnail: {
+              fields: ["url"],
+            },
+            room: {
+              fields: ["name"],
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export default ({ strapi }) => ({
   async findItemOwners(
     itemId: number,
@@ -81,6 +123,8 @@ left join (
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID = USER_ITEMS.USER_ID
 where
   INVENTORIES_ITEM_LINKS.ITEM_ID = ${itemId}
+  and (INVENTORIES.STATUS is null
+		or INVENTORIES.STATUS = 'owned')
 group by
   INVENTORIES_ITEM_LINKS.ITEM_ID,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
@@ -138,6 +182,8 @@ from
   INVENTORIES
 inner join INVENTORIES_ITEM_LINKS on
   INVENTORIES.ID = INVENTORIES_ITEM_LINKS.INVENTORY_ID
+INNER JOIN ITEMS_ROOM_LINKS ON
+	ITEMS_ROOM_LINKS.ITEM_ID = INVENTORIES_ITEM_LINKS.ITEM_ID
 inner join INVENTORIES_USERS_PERMISSIONS_USER_LINKS on
   INVENTORIES.ID = INVENTORIES_USERS_PERMISSIONS_USER_LINKS.INVENTORY_ID
 inner join UP_USERS on
@@ -160,6 +206,11 @@ left join (
     INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID
 ) as USER_ITEMS on
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID = USER_ITEMS.USER_ID
+where
+  ITEMS_ROOM_LINKS.ROOM_ID = ${room_id}
+	AND
+	(INVENTORIES.STATUS IS NULL
+		OR INVENTORIES.STATUS = 'OWNED')
 group by
   USER_ITEMS.COUNT,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,

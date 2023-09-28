@@ -3,7 +3,10 @@
  */
 
 import { ErrorCode } from "../../../constant";
-import { tradeDefaultOptions } from "../services/trade-process";
+import {
+  tradeDefaultOptions,
+  tradeDetailOptions,
+} from "../services/trade-process";
 
 const DAY_LIMIT = 3;
 
@@ -375,6 +378,7 @@ export default {
         filters: {
           $or: [{ proposer: { id: userId } }, { partner: { id: userId } }],
         },
+        ...tradeDetailOptions,
       });
 
       // check expires
@@ -402,6 +406,26 @@ export default {
 
       return trades;
     });
+  },
+
+  "get-trade": async (ctx) => {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      return ctx.unauthorized("user is not authenticated");
+    }
+
+    const { tradeId } = ctx.params;
+
+    if (!tradeId) {
+      return ctx.badRequest("tradeId parameter is required");
+    }
+
+    return await strapi.entityService.findOne(
+      "api::trade.trade",
+      tradeId,
+      tradeDetailOptions
+    );
   },
 
   "read-trade-status": async (ctx) => {

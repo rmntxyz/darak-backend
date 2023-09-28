@@ -46,9 +46,9 @@ export default {
       },
     },
     {
-      method: "GET",
-      path: "/trade-process/trades",
-      handler: "trade-process.get-trade-list",
+      method: "PUT",
+      path: "/trade-process/accept/:tradeId",
+      handler: "trade-process.accept-trade",
       config: {
         policies: [],
         middlewares: [],
@@ -64,9 +64,18 @@ export default {
       },
     },
     {
-      method: "PUT",
-      path: "/trade-process/accept/:tradeId",
-      handler: "trade-process.accept-trade",
+      method: "GET",
+      path: "/trade-process/trades",
+      handler: "trade-process.get-trade-list",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
+      path: "/trade-process/trades/:tradeId",
+      handler: "trade-process.get-trade",
       config: {
         policies: [],
         middlewares: [],
