@@ -400,6 +400,83 @@ body: {
 
 <br />
 
+## /trade-process/trades/`:tradeId`
+
+### GET
+
+트레이드 상세
+**params**으로 `tradeId`를 받는다.  
+현재 내가 참여하고 있는 트레이드 상세 보여준다.  
+트레이드 확인 페이지에서 리스트를 클릭하면 호출한다.
+
+#### Response Example
+
+```JSON
+{
+    "id": 6,
+    "expires": "2023-09-28T01:39:23.508Z",
+    "createdAt": "2023-09-26T01:39:24.345Z",
+    "updatedAt": "2023-09-28T04:15:20.468Z",
+    "publishedAt": "2023-09-26T01:39:23.508Z",
+    "status": "expired",
+    "proposer_read": true,
+    "partner_read": false,
+    "proposer": {
+        "id": 73,
+        "username": "doodoji2"
+    },
+    "proposer_items": [
+        {
+            "id": 369,
+            "serial_number": 4,
+            "item": {
+                "id": 70,
+                "name": "거미",
+                "rarity": "common",
+                "thumbnail": {
+                    "id": 194,
+                    "url": "https://storage.googleapis.com/rmnt/_9f45b6c486/_9f45b6c486.png"
+                },
+                "room": {
+                    "id": 5,
+                    "name": "이상징후 사무실"
+                }
+            }
+        }
+    ],
+    "partner": {
+        "id": 71,
+        "username": "상호"
+    },
+    "partner_items": [
+        {
+            "id": 206,
+            "serial_number": 2,
+            "placed_in_room": false,
+            "createdAt": "2023-09-09T13:19:22.473Z",
+            "updatedAt": "2023-09-26T09:58:30.211Z",
+            "publishedAt": "2023-09-09T13:19:22.470Z",
+            "status": null,
+            "item": {
+                "id": 99,
+                "name": "탄생석",
+                "rarity": "uncommon",
+                "thumbnail": {
+                    "id": 222,
+                    "url": "https://storage.googleapis.com/rmnt/_139a0fc9b9/_139a0fc9b9.png"
+                },
+                "room": {
+                    "id": 5,
+                    "name": "이상징후 사무실"
+                }
+            }
+        }
+    ]
+}
+```
+
+<br />
+
 ## /trade-process/status/:tradeId?
 
 ### PUT
