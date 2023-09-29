@@ -246,10 +246,31 @@ export default {
         return ctx.badRequest("trade not found");
       }
 
+      if (trade.proposer.id !== userId && trade.partner.id !== userId) {
+        return ctx.badRequest(
+          "you are not participant",
+          ErrorCode.NOT_PARTICIPANT
+        );
+      }
+
       if (trade.status !== "proposed" && trade.status !== "counter_proposed") {
         return ctx.badRequest(
           "trade is not in proposed or counter proposed status",
           ErrorCode.INVALID_TRADE_STATUS
+        );
+      }
+
+      if (trade.status === "proposed" && trade.proposer.id === userId) {
+        return ctx.badRequest(
+          "only partner can accept proposal",
+          ErrorCode.ONLY_PARTNER_CAN_ACCEPT_PROPOSAL
+        );
+      }
+
+      if (trade.status === "counter_proposed" && trade.partner.id === userId) {
+        return ctx.badRequest(
+          "only proposer can accept counter-proposal",
+          ErrorCode.ONLY_PROPOSER_CAN_ACCEPT_COUNTER_PROPOSAL
         );
       }
 
@@ -326,6 +347,13 @@ export default {
 
       if (!trade) {
         return ctx.badRequest("trade not found");
+      }
+
+      if (trade.proposer.id !== userId && trade.partner.id !== userId) {
+        return ctx.badRequest(
+          "you are not participant",
+          ErrorCode.NOT_PARTICIPANT
+        );
       }
 
       if (trade.status !== "proposed" && trade.status !== "counter_proposed") {

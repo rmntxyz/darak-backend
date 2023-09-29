@@ -367,9 +367,6 @@ offset ${pageNum - 1} * ${pageSize};
   async acceptTrade(trade: Trade, userId?: number) {
     const { proposer, partner, proposer_items, partner_items } = trade;
 
-    console.log("proposer_items", proposer_items);
-    console.log("partner_items", partner_items);
-
     // update inventory
     await Promise.all([
       ...proposer_items.map((item) => {

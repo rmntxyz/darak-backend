@@ -65,4 +65,16 @@ export const ErrorCode = {
     code: 1008,
     message: "Only partner can counter propose",
   },
+  NOT_PARTICIPANT: {
+    code: 1009,
+    message: "Not participant",
+  },
+  ONLY_PARTNER_CAN_ACCEPT_PROPOSAL: {
+    code: 1010,
+    message: "Only partner can accept proposal",
+  },
+  ONLY_PROPOSER_CAN_ACCEPT_COUNTER_PROPOSAL: {
+    code: 1011,
+    message: "Only proposer can accept counter proposal",
+  },
 };
