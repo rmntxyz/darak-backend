@@ -13,7 +13,7 @@ export default ({ strapi }) => ({
     }
 
     return await strapi.entityService.findMany("api::inventory.inventory", {
-      fields: ["id", "serial_number"],
+      fields: ["id", "serial_number", "status"],
       filters,
       populate: {
         item: {

@@ -1,5 +1,8 @@
 import { getRefTimestamp } from "../../../utils";
 
+const getUserItemStatus = (status: UserItemStatus) =>
+  status === "owned" || status === null ? "owned" : status;
+
 /**
  * trade-process service
  */
@@ -265,6 +268,10 @@ offset ${pageNum - 1} * ${pageSize};
   ) {
     // create trade
 
+    await strapi
+      .service("api::trade-process.trade-process")
+      .changeItemsStatus([...proposerItems, ...partnerItems], "trading");
+
     // expires = new Date() + 48 hours
     const now = Date.now();
     const expires = new Date(now + 48 * 60 * 60 * 1000);
@@ -295,13 +302,18 @@ offset ${pageNum - 1} * ${pageSize};
   },
 
   // check if user has enough items in inventory to trade
-  async checkUserItems(userId: number, items: number[]) {
+  async checkUserItems(
+    items: number[],
+    userId: number,
+    status: UserItemStatus
+  ) {
     const results = await Promise.all(
       items.map((inventoryId) => {
         return strapi.entityService.findOne(
           "api::inventory.inventory",
           inventoryId,
           {
+            fields: ["status"],
             populate: {
               users_permissions_user: {
                 fields: ["id"],
@@ -313,7 +325,9 @@ offset ${pageNum - 1} * ${pageSize};
     );
 
     return results.every(
-      (result) => result?.users_permissions_user?.id === userId
+      (result) =>
+        getUserItemStatus(result?.status) === status &&
+        result?.users_permissions_user?.id === userId
     );
   },
 
@@ -337,29 +351,6 @@ offset ${pageNum - 1} * ${pageSize};
         partner_items: partnerItems.map((id) => ({ id })),
         proposer_read: false,
         partner_read: true,
-      },
-    });
-  },
-
-  async changeStatus(trade: Trade, status: TradeStatus, by?: number) {
-    if (trade.status === status) {
-      return trade;
-    }
-
-    const { id, history } = trade;
-
-    return await strapi.entityService.update("api::trade.trade", id, {
-      ...tradeDefaultOptions,
-      data: {
-        status,
-        history: [
-          ...history,
-          {
-            status,
-          },
-        ],
-        proposer_read: by === trade.proposer.id,
-        partner_read: by === trade.partner.id,
       },
     });
   },
@@ -392,20 +383,58 @@ offset ${pageNum - 1} * ${pageSize};
         );
       }),
     ]);
+  },
 
-    // update trade
-    return await strapi.entityService.update("api::trade.trade", trade.id, {
+  async changeItemsStatus(inventoryIds: number[], status: UserItemStatus) {
+    console.log(inventoryIds, status);
+    return await Promise.all(
+      inventoryIds.map((id) => {
+        return strapi.entityService.update("api::inventory.inventory", id, {
+          data: {
+            status,
+          },
+        });
+      })
+    );
+  },
+
+  async changeStatus(trade: Trade, status: TradeStatus, by?: number) {
+    if (trade.status === status) {
+      return trade;
+    }
+
+    const { id, history, proposer_items, partner_items } = trade;
+
+    const userItemIds = [
+      ...proposer_items.map((x) => x.id),
+      ...partner_items.map((x) => x.id),
+    ];
+
+    if (status === "proposed") {
+      await strapi
+        .service("api::trade-process.trade-process")
+        .changeItemsStatus(userItemIds, "trading");
+    } else if (status === "counter_proposed") {
+      // do nothing
+    } else {
+      // canceled, expired, success, failed, rejected
+      await strapi
+        .service("api::trade-process.trade-process")
+        .changeItemsStatus(userItemIds, "owned");
+    }
+
+    return await strapi.entityService.update("api::trade.trade", id, {
       ...tradeDefaultOptions,
       data: {
-        status: "success",
+        status,
         history: [
-          ...trade.history,
+          ...history,
           {
-            status: "success",
+            status,
           },
         ],
-        proposer_read: userId === proposer.id,
-        partner_read: userId === partner.id,
+        proposer_read: by === trade.proposer.id,
+        partner_read: by === trade.partner.id,
       },
     });
   },

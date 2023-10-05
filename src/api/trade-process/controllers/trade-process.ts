@@ -108,7 +108,7 @@ export default {
       // check if user has enough items in inventory to trade
       const proposerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
-        .checkUserItems(userId, proposerItems);
+        .checkUserItems(proposerItems, userId, "owned");
 
       if (!proposerItemsInInventory) {
         return ctx.badRequest(
@@ -119,7 +119,7 @@ export default {
 
       const partnerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
-        .checkUserItems(partnerId, partnerItems);
+        .checkUserItems(partnerItems, partnerId, "owned");
 
       if (!partnerItemsInInventory) {
         return ctx.badRequest(
@@ -196,7 +196,7 @@ export default {
       // check if user has enough items in inventory to trade
       const proposerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
-        .checkUserItems(trade.proposer.id, proposerItems);
+        .checkUserItems(proposerItems, trade.proposer.id, "trading");
 
       if (!proposerItemsInInventory) {
         return ctx.badRequest(
@@ -207,7 +207,7 @@ export default {
 
       const partnerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
-        .checkUserItems(userId, partnerItems);
+        .checkUserItems(partnerItems, userId, "trading");
 
       if (!partnerItemsInInventory) {
         return ctx.badRequest(
@@ -286,8 +286,9 @@ export default {
       const proposerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
         .checkUserItems(
+          trade.proposer_items.map((item) => item.id),
           trade.proposer.id,
-          trade.proposer_items.map((item) => item.id)
+          "trading"
         );
 
       if (!proposerItemsInInventory) {
@@ -304,8 +305,9 @@ export default {
       const partnerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
         .checkUserItems(
+          trade.partner_items.map((item) => item.id),
           trade.partner.id,
-          trade.partner_items.map((item) => item.id)
+          "trading"
         );
 
       if (!partnerItemsInInventory) {
@@ -319,9 +321,13 @@ export default {
         );
       }
 
-      return await strapi
+      await strapi
         .service("api::trade-process.trade-process")
         .acceptTrade(trade, userId);
+
+      return await strapi
+        .service("api::trade-process.trade-process")
+        .changeStatus(trade, "success", userId);
     });
   },
 
@@ -406,7 +412,6 @@ export default {
         filters: {
           $or: [{ proposer: { id: userId } }, { partner: { id: userId } }],
         },
-        ...tradeDetailOptions,
       });
 
       // check expires

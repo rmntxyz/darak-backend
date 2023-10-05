@@ -1,4 +1,22 @@
-# User API
+# User Info API
+
+## /user-info/me
+
+### PUT
+
+유저 정보를 업데이트 한다.  
+현재는 이름만 변경 가능하다.  
+TODO: 나중에는 아바타(프로필 이미지)도 변경 가능하도록 해야 한다.
+
+body에는 `username`가 들어간다.
+
+```javascript
+body: {
+  data: {
+    username: "NEW_NAME";
+  }
+}
+```
 
 # Random Item Draw API
 
