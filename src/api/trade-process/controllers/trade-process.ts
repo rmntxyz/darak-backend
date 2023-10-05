@@ -412,6 +412,7 @@ export default {
         filters: {
           $or: [{ proposer: { id: userId } }, { partner: { id: userId } }],
         },
+        ...tradeDetailOptions,
       });
 
       // check expires
