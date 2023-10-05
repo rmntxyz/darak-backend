@@ -266,8 +266,6 @@ offset ${pageNum - 1} * ${pageSize};
     proposerItems: number[],
     partnerItems: number[]
   ) {
-    // create trade
-
     await strapi
       .service("api::trade-process.trade-process")
       .changeItemsStatus([...proposerItems, ...partnerItems], "trading");
@@ -302,18 +300,13 @@ offset ${pageNum - 1} * ${pageSize};
   },
 
   // check if user has enough items in inventory to trade
-  async checkUserItems(
-    items: number[],
-    userId: number,
-    status: UserItemStatus
-  ) {
+  async checkUserItems(items: number[], userId: number) {
     const results = await Promise.all(
       items.map((inventoryId) => {
         return strapi.entityService.findOne(
           "api::inventory.inventory",
           inventoryId,
           {
-            fields: ["status"],
             populate: {
               users_permissions_user: {
                 fields: ["id"],
@@ -325,9 +318,7 @@ offset ${pageNum - 1} * ${pageSize};
     );
 
     return results.every(
-      (result) =>
-        getUserItemStatus(result?.status) === status &&
-        result?.users_permissions_user?.id === userId
+      (result) => result?.users_permissions_user?.id === userId
     );
   },
 
@@ -336,7 +327,21 @@ offset ${pageNum - 1} * ${pageSize};
     proposerItems: number[],
     partnerItems: number[]
   ) {
-    const { id, history } = trade;
+    const { id, history, proposer_items, partner_items } = trade;
+
+    // rollback status of previous items to owned
+    await strapi
+      .service("api::trade-process.trade-process")
+      .changeItemsStatus(
+        [...proposer_items.map((x) => x.id), ...partner_items.map((x) => x.id)],
+        "owned"
+      );
+
+    // then change status of new items to trading
+    await strapi
+      .service("api::trade-process.trade-process")
+      .changeItemsStatus([...proposerItems, ...partnerItems], "trading");
+
     return await strapi.entityService.update("api::trade.trade", id, {
       ...tradeDefaultOptions,
       data: {
@@ -355,7 +360,7 @@ offset ${pageNum - 1} * ${pageSize};
     });
   },
 
-  async acceptTrade(trade: Trade, userId?: number) {
+  async acceptTrade(trade: Trade) {
     const { proposer, partner, proposer_items, partner_items } = trade;
 
     // update inventory
@@ -410,12 +415,11 @@ offset ${pageNum - 1} * ${pageSize};
       ...partner_items.map((x) => x.id),
     ];
 
-    if (status === "proposed") {
+    if (status === "proposed" || status === "counter_proposed") {
+      // There are no cases coming in here
       await strapi
         .service("api::trade-process.trade-process")
         .changeItemsStatus(userItemIds, "trading");
-    } else if (status === "counter_proposed") {
-      // do nothing
     } else {
       // canceled, expired, success, failed, rejected
       await strapi
