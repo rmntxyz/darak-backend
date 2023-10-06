@@ -16,10 +16,10 @@ export const tradeDefaultOptions = {
       fields: ["id"],
     },
     proposer_items: {
-      fields: ["id"],
+      fields: ["id", "status"],
     },
     partner_items: {
-      fields: ["id"],
+      fields: ["id", "status"],
     },
   },
 };
@@ -30,7 +30,7 @@ export const tradeDetailOptions = {
       fields: ["username"],
     },
     proposer_items: {
-      fields: ["serial_number"],
+      fields: ["serial_number", "status"],
       populate: {
         item: {
           fields: ["name", "rarity"],
@@ -245,13 +245,17 @@ offset ${pageNum - 1} * ${pageSize};
       },
     });
 
-    const me = await strapi
-      .service("api::user-items.user-items")
-      .findUserItemsByRoom(userId, roomId);
+    const me = (
+      await strapi
+        .service("api::user-items.user-items")
+        .findUserItemsByRoom(userId, roomId)
+    ).filter((item) => item.status === "owned" || item.status === null);
 
-    const partner = await strapi
-      .service("api::user-items.user-items")
-      .findUserItemsByRoom(partnerId, roomId);
+    const partner = (
+      await strapi
+        .service("api::user-items.user-items")
+        .findUserItemsByRoom(partnerId, roomId)
+    ).filter((item) => item.status === "owned" || item.status === null);
 
     return {
       all_rooms,
@@ -268,7 +272,7 @@ offset ${pageNum - 1} * ${pageSize};
   ) {
     await strapi
       .service("api::trade-process.trade-process")
-      .changeItemsStatus([...proposerItems, ...partnerItems], "trading");
+      .changeItemsStatus([...proposerItems], "trading");
 
     // expires = new Date() + 48 hours
     const now = Date.now();
@@ -332,15 +336,12 @@ offset ${pageNum - 1} * ${pageSize};
     // rollback status of previous items to owned
     await strapi
       .service("api::trade-process.trade-process")
-      .changeItemsStatus(
-        [...proposer_items.map((x) => x.id), ...partner_items.map((x) => x.id)],
-        "owned"
-      );
+      .changeItemsStatus([...proposer_items.map((x) => x.id)], "owned");
 
     // then change status of new items to trading
     await strapi
       .service("api::trade-process.trade-process")
-      .changeItemsStatus([...proposerItems, ...partnerItems], "trading");
+      .changeItemsStatus([...partnerItems], "trading");
 
     return await strapi.entityService.update("api::trade.trade", id, {
       ...tradeDefaultOptions,
@@ -391,7 +392,6 @@ offset ${pageNum - 1} * ${pageSize};
   },
 
   async changeItemsStatus(inventoryIds: number[], status: UserItemStatus) {
-    console.log(inventoryIds, status);
     return await Promise.all(
       inventoryIds.map((id) => {
         return strapi.entityService.update("api::inventory.inventory", id, {
@@ -403,6 +403,13 @@ offset ${pageNum - 1} * ${pageSize};
     );
   },
 
+  /**
+   * Change trade status for success, failed, rejected, canceled, expired
+   * @param trade
+   * @param status
+   * @param by
+   * @returns
+   */
   async changeStatus(trade: Trade, status: TradeStatus, by?: number) {
     if (trade.status === status) {
       return trade;
@@ -410,22 +417,15 @@ offset ${pageNum - 1} * ${pageSize};
 
     const { id, history, proposer_items, partner_items } = trade;
 
-    const userItemIds = [
-      ...proposer_items.map((x) => x.id),
-      ...partner_items.map((x) => x.id),
-    ];
+    const prevStatus = trade.status;
+    const target = prevStatus === "proposed" ? proposer_items : partner_items;
+    const changeToOwned = target
+      .filter((item) => item.status !== "owned")
+      .map((x) => x.id);
 
-    if (status === "proposed" || status === "counter_proposed") {
-      // There are no cases coming in here
-      await strapi
-        .service("api::trade-process.trade-process")
-        .changeItemsStatus(userItemIds, "trading");
-    } else {
-      // canceled, expired, success, failed, rejected
-      await strapi
-        .service("api::trade-process.trade-process")
-        .changeItemsStatus(userItemIds, "owned");
-    }
+    await strapi
+      .service("api::trade-process.trade-process")
+      .changeItemsStatus(changeToOwned, "owned");
 
     return await strapi.entityService.update("api::trade.trade", id, {
       ...tradeDefaultOptions,
@@ -451,7 +451,11 @@ offset ${pageNum - 1} * ${pageSize};
       where: {
         proposer: { id: userId },
         createdAt: { $gte: new Date(refTime).toISOString() },
+        $not: {
+          status: "failed",
+        },
       },
+      limit: 3,
     });
   },
 });
