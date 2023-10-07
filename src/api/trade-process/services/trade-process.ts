@@ -1,8 +1,5 @@
 import { getRefTimestamp } from "../../../utils";
 
-const getUserItemStatus = (status: UserItemStatus) =>
-  status === "owned" || status === null ? "owned" : status;
-
 /**
  * trade-process service
  */
@@ -75,11 +72,11 @@ export default ({ strapi }) => ({
     let {
       rows: [{ room_id }],
     } = await strapi.db.connection.raw(`
-SELECT
+select
   ROOM_ID
-FROM
+from
   ITEMS_ROOM_LINKS
-WHERE
+where
   ITEM_ID = ${itemId}
      `);
 
@@ -126,8 +123,6 @@ left join (
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID = USER_ITEMS.USER_ID
 where
   INVENTORIES_ITEM_LINKS.ITEM_ID = ${itemId}
-  and (INVENTORIES.STATUS is null
-		or INVENTORIES.STATUS = 'owned')
 group by
   INVENTORIES_ITEM_LINKS.ITEM_ID,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
@@ -211,9 +206,6 @@ left join (
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID = USER_ITEMS.USER_ID
 where
   ITEMS_ROOM_LINKS.ROOM_ID = ${room_id}
-	AND
-	(INVENTORIES.STATUS IS NULL
-		OR INVENTORIES.STATUS = 'owned')
 group by
   USER_ITEMS.COUNT,
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
@@ -245,17 +237,13 @@ offset ${pageNum - 1} * ${pageSize};
       },
     });
 
-    const me = (
-      await strapi
-        .service("api::user-items.user-items")
-        .findUserItemsByRoom(userId, roomId)
-    ).filter((item) => item.status === "owned" || item.status === null);
+    const me = await strapi
+      .service("api::user-items.user-items")
+      .findUserItemsByRoom(userId, roomId);
 
-    const partner = (
-      await strapi
-        .service("api::user-items.user-items")
-        .findUserItemsByRoom(partnerId, roomId)
-    ).filter((item) => item.status === "owned" || item.status === null);
+    const partner = await strapi
+      .service("api::user-items.user-items")
+      .findUserItemsByRoom(partnerId, roomId);
 
     return {
       all_rooms,
@@ -420,7 +408,7 @@ offset ${pageNum - 1} * ${pageSize};
     const prevStatus = trade.status;
     const target = prevStatus === "proposed" ? proposer_items : partner_items;
     const changeToOwned = target
-      .filter((item) => item.status !== "owned")
+      .filter((item) => item.status === "trading")
       .map((x) => x.id);
 
     await strapi
