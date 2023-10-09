@@ -48,7 +48,17 @@ const roomsDefaultOptions = {
     webtoon: {
       fields: ["title", "desc", "volume", "webtoon_id", "release_date"],
       populate: {
-        episodes: true,
+        episodes: {
+          fields: ["title", "episode_number", "episode_id"],
+          populate: {
+            thumbnail: {
+              fields: ["url"],
+            },
+            images: {
+              fields: ["url"],
+            },
+          },
+        },
         webtoon_outlinks: {
           fields: ["platform", "url"],
         },
