@@ -23,7 +23,11 @@ export const tradeDefaultOptions = {
 
 export const tradeDetailOptions = {
   populate: {
+    history: true,
     proposer: {
+      fields: ["username"],
+    },
+    partner: {
       fields: ["username"],
     },
     proposer_items: {
@@ -42,10 +46,8 @@ export const tradeDetailOptions = {
         },
       },
     },
-    partner: {
-      fields: ["username"],
-    },
     partner_items: {
+      fields: ["serial_number", "status"],
       populate: {
         item: {
           fields: ["name", "rarity"],

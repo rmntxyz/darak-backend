@@ -405,12 +405,11 @@ export default {
     return await strapi.db.transaction(async () => {
       // filter by userId
       const trades = await strapi.entityService.findMany("api::trade.trade", {
-        ...tradeDefaultOptions,
+        ...tradeDetailOptions,
         sort: { updatedAt: "desc" },
         filters: {
           $or: [{ proposer: { id: userId } }, { partner: { id: userId } }],
         },
-        ...tradeDetailOptions,
       });
 
       // check expires
