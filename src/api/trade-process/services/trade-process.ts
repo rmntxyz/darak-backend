@@ -229,6 +229,9 @@ offset ${pageNum - 1} * ${pageSize};
 
   async findTradeDetail(roomId: number, userId: number, partnerId: number) {
     const all_rooms = await strapi.entityService.findMany("api::room.room", {
+      filters: {
+        publishedAt: { $ne: null },
+      },
       fields: ["name"],
       populate: {
         image_complete: {
