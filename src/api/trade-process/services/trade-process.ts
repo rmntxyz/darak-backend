@@ -129,7 +129,7 @@ group by
   UP_USERS.USERNAME,
   USER_ITEMS.COUNT
 order by
-  COUNT desc, USER_COLLECTION_COUNT desc
+  COUNT desc, USER_COLLECTION_COUNT desc, USER_ID
 limit ${pageSize}
 offset ${pageNum - 1} * ${pageSize};
       `);
@@ -211,7 +211,7 @@ group by
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME
 order by
-  COUNT, USER_COLLECTION_COUNT desc
+  COUNT, USER_COLLECTION_COUNT desc, USER_ID
 limit ${pageSize}
 offset ${pageNum - 1} * ${pageSize};
       `);
