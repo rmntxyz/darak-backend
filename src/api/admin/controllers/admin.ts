@@ -20,22 +20,6 @@ export default {
         },
       }
     );
-    // const user = await strapi.entityService.findOne(
-    //   "plugin::users-permissions.user",
-    //   userId,
-    //   {
-    //     fields: ["id"],
-    //     populate: {
-    //       rooms: {
-    //         populate: {
-    //           items: {
-    //             fields: ["id"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //   }
-    // );
 
     for (const user of users) {
       const userId = user.id;
@@ -92,7 +76,6 @@ export default {
         let completed = false;
         let duration = null;
 
-        let temp_time = 0;
         for (const userItem of userItems) {
           const itemId = userItem.item.id;
           if (!itemIds.has(itemId)) {
@@ -138,12 +121,9 @@ export default {
           publishedAt: new Date(),
         };
 
-        console.log(userRoomInfo);
-
-        const result = await strapi.entityService.create(
-          "api::user-room.user-room",
-          { data: userRoomInfo }
-        );
+        await strapi.entityService.create("api::user-room.user-room", {
+          data: userRoomInfo,
+        });
       }
 
       console.log(`user ${userId} done`);
