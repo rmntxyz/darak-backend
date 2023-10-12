@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_rooms",
+  "info": {
+    "singularName": "user-room",
+    "pluralName": "user-rooms",
+    "displayName": "UserRoom",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "start_time": {
+      "type": "datetime"
+    },
+    "completion_time": {
+      "type": "datetime"
+    },
+    "room": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::room.room",
+      "inversedBy": "user_rooms"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_rooms"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "completion_rate": {
+      "type": "integer"
+    },
+    "item_details": {
+      "type": "json"
+    },
+    "duration": {
+      "type": "biginteger"
+    },
+    "owned": {
+      "type": "json"
+    }
+  }
+}
