@@ -119,6 +119,12 @@
     },
     "gender": {
       "type": "string"
+    },
+    "user_rooms": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-room.user-room",
+      "mappedBy": "user"
     }
   }
 }

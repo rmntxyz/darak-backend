@@ -1,0 +1,5 @@
+/**
+ * admin service
+ */
+
+export default () => ({});
