@@ -72,8 +72,6 @@ export default ({ strapi }) => ({
       .sort((a, b) => a.duration - b.duration)
       .sort((a, b) => b.completion_count - a.completion_count);
 
-    console.log(rankings);
-
     return rankings;
   },
 });
