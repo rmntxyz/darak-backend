@@ -21,7 +21,7 @@ export default {
       }
     );
 
-    for (const user of users) {
+    const promises = users.map(async (user) => {
       const userId = user.id;
       const rooms = user.rooms;
 
@@ -127,7 +127,11 @@ export default {
       }
 
       console.log(`user ${userId} done`);
-    }
+    });
+
+    await Promise.all(promises);
+
+    console.log("completed");
 
     return 200;
   },

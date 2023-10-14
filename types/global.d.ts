@@ -67,7 +67,7 @@ type Item = {
   category: "built-in" | "decoration";
   price: number;
   current_serial_number: number;
-  // room: Room;
+  room: Room;
   // inventory: Inventory;
   item_code: number;
   attribute: JSON;
@@ -128,4 +128,25 @@ type Trade = {
   expires: Date;
   status: TradeStatus;
   history: TradeHistory[];
+};
+
+type UserRoom = {
+  id: number;
+  start_time: Date;
+  completion_time: Date;
+  duration: number;
+  completed: boolean;
+  completion_rate: number;
+  item_details: {
+    total: number;
+    rarity: {
+      common: number[];
+      uncommon: number[];
+      rare: number[];
+      super_rare: number[];
+      unique: number[];
+    };
+  };
+  owned_items: { [key: number]: number };
+  room: Room;
 };

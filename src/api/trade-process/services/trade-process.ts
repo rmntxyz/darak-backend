@@ -382,6 +382,64 @@ offset ${pageNum - 1} * ${pageSize};
         );
       }),
     ]);
+
+    const tradeInfo: {
+      [itemId: number]: { proposerItems?: number[]; partnerItems?: number[] };
+    } = {};
+    trade.proposer_items
+      .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
+      .reduce((acc, each) => {
+        if (!acc[each.roomId]) {
+          acc[each.roomId] = {};
+        }
+        if (!acc[each.roomId].proposerItems) {
+          acc[each.roomId].proposerItems = [];
+        }
+        acc[each.roomId].proposerItems.push(each.itemId);
+        return acc;
+      }, tradeInfo);
+    trade.partner_items
+      .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
+      .reduce((acc, each) => {
+        if (!acc[each.roomId]) {
+          acc[each.roomId] = {};
+        }
+        if (!acc[each.roomId].partnerItems) {
+          acc[each.roomId].partnerItems = [];
+        }
+        acc[each.roomId].partnerItems.push(each.itemId);
+        return acc;
+      }, tradeInfo);
+
+    Object.entries(tradeInfo).map(
+      async ([roomId, { proposerItems, partnerItems }]) => {
+        const proposerRoom = (
+          await strapi.entityService.findMany("api::user-room.user-room", {
+            filters: {
+              user: { id: trade.proposer.id },
+              room: { id: roomId },
+            },
+          })
+        )[0];
+
+        const partnerRoom = (
+          await strapi.entityService.findMany("api::user-room.user-room", {
+            filters: {
+              user: { id: trade.partner.id },
+              room: { id: roomId },
+            },
+          })
+        )[0];
+
+        await strapi
+          .service("api::user-room.user-room")
+          .updateItems(proposerRoom, partnerItems, proposerItems);
+
+        await strapi
+          .service("api::user-room.user-room")
+          .updateItems(partnerRoom, proposerItems, partnerItems);
+      }
+    );
   },
 
   async changeItemsStatus(inventoryIds: number[], status: UserItemStatus) {

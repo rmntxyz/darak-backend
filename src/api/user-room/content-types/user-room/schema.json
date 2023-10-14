@@ -43,7 +43,7 @@
     "duration": {
       "type": "biginteger"
     },
-    "owned": {
+    "owned_items": {
       "type": "json"
     }
   }

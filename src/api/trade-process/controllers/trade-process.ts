@@ -239,7 +239,7 @@ export default {
       const trade = await strapi.entityService.findOne(
         "api::trade.trade",
         tradeId,
-        tradeDefaultOptions
+        tradeDetailOptions
       );
 
       if (!trade) {
