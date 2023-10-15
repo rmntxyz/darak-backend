@@ -19,7 +19,9 @@ export default ({ strapi }) => ({
         }
       );
 
-      const userRoom = await getUserRoom(userId, draw);
+      const userRoom = await strapi
+        .service("api::user-room.user-room")
+        .getUserRoom(userId, draw.room.id);
 
       const { currency_type } = draw;
 
@@ -30,28 +32,9 @@ export default ({ strapi }) => ({
           populate: {
             freebie: true,
             // star: true,
-            rooms: {
-              fields: ["id"],
-            },
           },
         }
       );
-
-      // if user don't have room, assign room to user
-      if (!user.rooms?.find((room) => room.id === draw.room.id)) {
-        // assign room to user
-        const temp = await strapi.entityService.update(
-          "plugin::users-permissions.user",
-          userId,
-          {
-            data: {
-              rooms: {
-                connect: [draw.room.id],
-              },
-            },
-          }
-        );
-      }
 
       if (currency_type === "freebie") {
         try {
@@ -170,46 +153,4 @@ async function deductFreebie(user: User) {
       throw new Error("freebie is not enough");
     }
   });
-}
-
-async function getUserRoom(userId: number, draw: Draw) {
-  let userRoom = (
-    await strapi.entityService.findMany("api::user-room.user-room", {
-      filters: {
-        user: { id: userId },
-        room: { id: draw.room.id },
-      },
-    })
-  )[0];
-
-  if (!userRoom) {
-    const now = new Date();
-    const { draw_info, room } = draw;
-    const rarity = {};
-    let total_count = 0;
-    for (let key in draw_info) {
-      rarity[key] = draw_info[key].items;
-      total_count += draw_info[key].items.length;
-    }
-
-    userRoom = await strapi.entityService.create("api::user-room.user-room", {
-      data: {
-        start_time: now,
-        completion_time: null,
-        room: { id: room.id },
-        user: { id: userId },
-        completed: false,
-        completion_rate: 0,
-        duration: null,
-        item_details: {
-          rarity,
-          total: total_count,
-        },
-        owned_items: {},
-        publishedAt: now,
-      },
-    });
-  }
-
-  return userRoom;
 }

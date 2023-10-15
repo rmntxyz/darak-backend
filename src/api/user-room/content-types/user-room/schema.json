@@ -37,9 +37,6 @@
     "completion_rate": {
       "type": "integer"
     },
-    "item_details": {
-      "type": "json"
-    },
     "duration": {
       "type": "biginteger"
     },

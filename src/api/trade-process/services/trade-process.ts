@@ -390,10 +390,10 @@ offset ${pageNum - 1} * ${pageSize};
       .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
       .reduce((acc, each) => {
         if (!acc[each.roomId]) {
-          acc[each.roomId] = {};
-        }
-        if (!acc[each.roomId].proposerItems) {
-          acc[each.roomId].proposerItems = [];
+          acc[each.roomId] = {
+            proposerItems: [],
+            partnerItems: [],
+          };
         }
         acc[each.roomId].proposerItems.push(each.itemId);
         return acc;
@@ -402,10 +402,10 @@ offset ${pageNum - 1} * ${pageSize};
       .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
       .reduce((acc, each) => {
         if (!acc[each.roomId]) {
-          acc[each.roomId] = {};
-        }
-        if (!acc[each.roomId].partnerItems) {
-          acc[each.roomId].partnerItems = [];
+          acc[each.roomId] = {
+            proposerItems: [],
+            partnerItems: [],
+          };
         }
         acc[each.roomId].partnerItems.push(each.itemId);
         return acc;
@@ -413,23 +413,13 @@ offset ${pageNum - 1} * ${pageSize};
 
     Object.entries(tradeInfo).map(
       async ([roomId, { proposerItems, partnerItems }]) => {
-        const proposerRoom = (
-          await strapi.entityService.findMany("api::user-room.user-room", {
-            filters: {
-              user: { id: trade.proposer.id },
-              room: { id: roomId },
-            },
-          })
-        )[0];
+        const proposerRoom = await strapi
+          .service("api::user-room.user-room")
+          .getUserRoom(trade.proposer.id, roomId);
 
-        const partnerRoom = (
-          await strapi.entityService.findMany("api::user-room.user-room", {
-            filters: {
-              user: { id: trade.partner.id },
-              room: { id: roomId },
-            },
-          })
-        )[0];
+        const partnerRoom = await strapi
+          .service("api::user-room.user-room")
+          .getUserRoom(trade.partner.id, roomId);
 
         await strapi
           .service("api::user-room.user-room")

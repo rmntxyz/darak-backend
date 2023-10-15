@@ -99,18 +99,12 @@ export default {
 
         const owned_items = Object.fromEntries(itemIds);
 
-        const item_details = {
-          total: roomItems.length,
-          rarity,
-        };
-
         const userRoomInfo = {
           start_time,
           completion_time,
           duration,
           completed,
           completion_rate,
-          item_details,
           owned_items,
           room: {
             connect: [room.id],

@@ -137,16 +137,6 @@ type UserRoom = {
   duration: number;
   completed: boolean;
   completion_rate: number;
-  item_details: {
-    total: number;
-    rarity: {
-      common: number[];
-      uncommon: number[];
-      rare: number[];
-      super_rare: number[];
-      unique: number[];
-    };
-  };
   owned_items: { [key: number]: number };
   room: Room;
 };
