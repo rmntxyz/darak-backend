@@ -4,7 +4,6 @@
 
 export default ({ strapi }) => ({
   async findRoomCompletionRankings(roomId: number) {
-    console.log("asdf");
     const options = {
       filters: {
         completed: true,
