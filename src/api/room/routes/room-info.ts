@@ -11,6 +11,15 @@ export default {
     },
     {
       method: "GET",
+      path: "/user-rooms/count",
+      handler: "room.get-user-rooms-count",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/user-rooms/:userId",
       handler: "room.get-user-rooms",
       config: {

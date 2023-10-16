@@ -84,4 +84,47 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
       filters: { users: { id: userId } },
     });
   },
+
+  async findUserRoomsCount() {
+    const rooms = await strapi.entityService.findMany("api::room.room", {
+      fields: ["name", "desc", "rid", "start_date", "end_date"],
+      populate: {
+        image_complete: {
+          fields: ["url", "width", "height"],
+        },
+        items: {
+          fields: [
+            "name",
+            "desc",
+            "rarity",
+            "category",
+            "attribute",
+            "current_serial_number",
+          ],
+        },
+        creator: {
+          fields: ["name", "desc", "cid"],
+          populate: {
+            profile_image: {
+              fields: ["url"],
+            },
+          },
+        },
+        user_rooms: {
+          fields: ["id"],
+        },
+      },
+    });
+
+    rooms.forEach((room) => {
+      room.user_rooms_count = room.user_rooms.length;
+      delete room.user_rooms;
+    });
+
+    rooms.sort((a, b) => {
+      return b.user_rooms_count - a.user_rooms_count;
+    });
+
+    return rooms;
+  },
 }));

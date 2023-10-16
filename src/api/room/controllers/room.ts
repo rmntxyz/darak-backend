@@ -40,5 +40,14 @@ export default factories.createCoreController(
 
       return rooms;
     },
+
+    /**
+     * @public
+     * @param ctx
+     * @returns
+     */
+    "get-user-rooms-count": async (ctx) => {
+      return await strapi.service("api::room.room").findUserRoomsCount();
+    },
   })
 );
