@@ -1,5 +1,11 @@
 # User Info API
 
+## /users/me
+
+### GET
+
+<br />
+
 ## /user-info/me
 
 ### PUT
@@ -18,9 +24,58 @@ body: {
 }
 ```
 
+<br />
+<br />
+
+# User Room API
+
+## /user-rooms/count
+
+### GET
+
+<br />
+<br />
+
+# Leaderboard API
+
+## /leaderboard/room-completion-rankings/`:roomId?`
+
+### GET
+
+<br />
+<br />
+
 # Random Item Draw API
 
+## /random-item/`:drawId`
+
+### GET
+
+<br />
+<br />
+
 # Daily Quest API
+
+## /daily-quest-progress/today
+
+### GET
+
+<br />
+
+## /daily-quest-progress/verify/`:progressId`
+
+<br />
+
+### GET
+
+<br />
+
+## /daily-quest-progress/claim-rewards/`:progressId`
+
+### GET
+
+<br />
+<br />
 
 # Trade API
 
