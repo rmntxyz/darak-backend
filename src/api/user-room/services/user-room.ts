@@ -12,7 +12,13 @@ export default factories.createCoreService(
       itemsToAdd: number[],
       itemsToRemove: number[]
     ) {
-      const { id, start_time, owned_items, room } = userRoom;
+      const {
+        id,
+        start_time,
+        owned_items,
+        room,
+        completed: prev_completed,
+      } = userRoom;
 
       for (const itemId of itemsToAdd) {
         if (!owned_items[itemId]) {
@@ -41,7 +47,7 @@ export default factories.createCoreService(
         completed,
       };
 
-      if (completed) {
+      if (!prev_completed && completed) {
         const now = new Date();
         data.completion_time = now;
         data.duration = now.getTime() - new Date(start_time).getTime();

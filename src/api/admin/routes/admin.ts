@@ -9,5 +9,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/admin/reset-user-room",
+      handler: "admin.reset-user-room",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
