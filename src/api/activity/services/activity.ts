@@ -26,6 +26,11 @@ export default factories.createCoreService(
           },
           item: {
             fields: ["id", "name", "rarity"],
+            populate: {
+              room: {
+                fields: ["id", "name", "rid"],
+              },
+            },
           },
         },
         sort: "createdAt",

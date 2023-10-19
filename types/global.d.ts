@@ -99,6 +99,7 @@ type Inventory = {
   serial_number: number;
   item: Item;
   status: UserItemStatus;
+  users_permissions_user: User;
 };
 
 type UserItemStatus = null | "owned" | "trading" | "auctioning";

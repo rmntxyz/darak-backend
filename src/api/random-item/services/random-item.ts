@@ -75,14 +75,28 @@ export default ({ strapi }) => ({
         items.push(updatedItem);
 
         // create inventory
-        await strapi.entityService.create("api::inventory.inventory", {
-          data: {
-            users_permissions_user: userId,
-            serial_number: current_serial_number + 1,
-            item: itemId,
-            publishedAt: new Date(),
-          },
-        });
+        const userItem = await strapi.entityService.create(
+          "api::inventory.inventory",
+          {
+            data: {
+              users_permissions_user: userId,
+              serial_number: current_serial_number + 1,
+              item: itemId,
+              publishedAt: new Date(),
+            },
+            fields: ["serial_number"],
+            populate: {
+              item: {
+                fields: ["rarity"],
+              },
+              users_permissions_user: { fields: ["id"] },
+            },
+          }
+        );
+
+        await strapi
+          .service("api::update-manager.update-manager")
+          .updateItemAquisition(userItem);
       }
 
       await strapi
