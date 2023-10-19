@@ -45,6 +45,84 @@ body: {
 <br />
 <br />
 
+# Activity API
+
+## /activity/list/`:category?`
+
+### GET
+
+유저 활동 리스트를 호출한다.
+**params**으로 `category`를 받는다.  
+`category` 값으로는 `platform`, `room`, `user` 이렇게 3가지 지정이 가능하다.  
+만약 **`tradeId` 없이 호출한다면 디폴트로 `platform`이 지정** 된다.  
+**query**로 `duration`, `limit` 사용 가능하다.
+
+기본호출시 다음과 같은 결과를 보인다.  
+ `/activity/list/platform?duration=7&limit=20`
+
+응답 결과는 `type` 값에 따라 구분된다.
+
+```JSON
+[
+    {
+        "id": 1,
+        "category": "platform",
+        "type": "room_completion",
+        "detail": { "order": 6 },
+        "createdAt": "2023-10-19T19:22:10.489Z",
+        "user": { "id": 45, "username": "디그다" },
+        "room": {
+            "id": 4,
+            "name": "세 친구들의 거실",
+            "rid": "three_friends_livingroom"
+        },
+        "item": null
+    },
+    {
+        "id": 12,
+        "category": "platform",
+        "type": "newcomer",
+        "detail": { "rank": 4 },
+        "createdAt": "2023-10-19T19:38:03.238Z",
+        "user": { "id": 45, "username": "디그다" },
+        "room": null,
+        "item": null
+    },
+     {
+        "id": 30,
+        "category": "platform",
+        "type": "rank_up",
+        "detail": { "to": 2, "from": 2 },
+        "createdAt": "2023-10-19T19:53:55.686Z",
+        "user": { "id": 45, "username": "디그다" },
+        "room": null,
+        "item": null
+    },
+    {
+        "id": 31,
+        "category": "platform",
+        "type": "item_#1",
+        "detail": {},
+        "createdAt": "2023-10-19T19:56:25.044Z",
+        "user": { "id": 45, "username": "디그다" },
+        "room": null,
+        "item": {
+            "id": 61,
+            "name": "화분",
+            "rarity": "uncommon",
+            "room": {
+                "id": 4,
+                "name": "세 친구들의 거실",
+                "rid": "three_friends_livingroom"
+            }
+        }
+    },
+]
+```
+
+<br />
+<br />
+
 # Random Item Draw API
 
 ## /random-item/`:drawId`
@@ -554,7 +632,7 @@ body: {
 
 <br />
 
-## /trade-process/status/:tradeId?
+## /trade-process/status/`:tradeId?`
 
 ### PUT
 
