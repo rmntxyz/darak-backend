@@ -53,9 +53,27 @@ export default factories.createCoreService(
         data.duration = now.getTime() - new Date(start_time).getTime();
       }
 
-      return strapi.entityService.update("api::user-room.user-room", id, {
-        data,
-      });
+      const updatedUserRoom = await strapi.entityService.update(
+        "api::user-room.user-room",
+        id,
+        {
+          data,
+          populate: {
+            user: {
+              fields: ["id"],
+            },
+            room: {
+              fields: ["id"],
+            },
+          },
+        }
+      );
+
+      if (prev_completed !== completed) {
+        await strapi
+          .service("api::update-manager.update-manager")
+          .updateRoomCompletion(updatedUserRoom);
+      }
     },
 
     async getUserRoom(userId: number, roomId: number) {
@@ -66,6 +84,9 @@ export default factories.createCoreService(
             room: { id: roomId },
           },
           populate: {
+            user: {
+              fields: ["id"],
+            },
             room: {
               fields: ["id"],
               populate: {
@@ -109,6 +130,9 @@ export default factories.createCoreService(
               publishedAt: now,
             },
             populate: {
+              user: {
+                fields: ["id"],
+              },
               room: {
                 fields: ["id"],
                 populate: {

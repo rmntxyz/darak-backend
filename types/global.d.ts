@@ -139,4 +139,12 @@ type UserRoom = {
   completion_rate: number;
   owned_items: { [key: number]: number };
   room: Room;
+  user: User;
 };
+
+type Ranking = {
+  id: number;
+  username: string;
+  duration: number;
+  completion_count: number;
+}[];

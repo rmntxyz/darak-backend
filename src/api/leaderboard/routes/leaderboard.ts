@@ -1,13 +1,7 @@
-export default {
-  routes: [
-    {
-      method: "GET",
-      path: "/leaderboard/room-completion-rankings/:roomId?",
-      handler: "leaderboard.get-room-completion-rankings",
-      config: {
-        policies: [],
-        middlewares: [],
-      },
-    },
-  ],
-};
+/**
+ * leaderboard router
+ */
+
+import { factories } from "@strapi/strapi";
+
+export default factories.createCoreRouter("api::leaderboard.leaderboard");

@@ -88,6 +88,12 @@
       "relation": "oneToMany",
       "target": "api::user-room.user-room",
       "mappedBy": "room"
+    },
+    "activities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::activity.activity",
+      "mappedBy": "room"
     }
   }
 }

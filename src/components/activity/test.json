@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_activity_tests",
+  "info": {
+    "displayName": "test",
+    "icon": "file"
+  },
+  "options": {},
+  "attributes": {
+    "from": {
+      "type": "integer"
+    }
+  }
+}

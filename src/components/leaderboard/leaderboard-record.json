@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_record_leaderboard_records",
+  "info": {
+    "displayName": "record",
+    "icon": "server",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "ranking": {
+      "type": "json"
+    },
+    "date": {
+      "type": "datetime"
+    }
+  }
+}
