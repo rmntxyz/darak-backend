@@ -44,6 +44,12 @@
         "level_up",
         "item_acquisition"
       ]
+    },
+    "item": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::item.item",
+      "inversedBy": "activities"
     }
   }
 }

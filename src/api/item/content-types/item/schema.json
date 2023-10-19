@@ -98,6 +98,12 @@
         "videos",
         "audios"
       ]
+    },
+    "activities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::activity.activity",
+      "mappedBy": "item"
     }
   }
 }
