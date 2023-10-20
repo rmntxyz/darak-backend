@@ -1,4 +1,4 @@
-const RANKING_LIMIT = 5;
+import { RANKING_LIMIT } from "../../../../constant";
 
 export default {
   update: async (userRoom: UserRoom) => {
@@ -53,25 +53,6 @@ async function updateOverallRanking() {
       },
     })
   )[0];
-
-  if (!leaderboard) {
-    await strapi.entityService.create("api::leaderboard.leaderboard", {
-      data: {
-        name: "overall",
-        ranking: overallRanking,
-        date: new Date(),
-        publishedAt: new Date(),
-      },
-      fields: ["ranking", "date"],
-      populate: {
-        records: {
-          fields: ["ranking", "date"],
-        },
-      },
-    });
-
-    return;
-  }
 
   const current = leaderboard.ranking.map((list, idx) => ({
     ...list,

@@ -3,6 +3,13 @@
  */
 
 export default {
+  "create-leaderboard": async (ctx) => {
+    const { name } = ctx.params;
+    const exist = await strapi
+      .service("api::leaderboard.leaderboard")
+      .createLeaderboard(name);
+    return exist ? 200 : 400;
+  },
   "reset-user-room": async (ctx) => {
     // strapi transaction
     const result = await strapi.db.transaction(async () => {

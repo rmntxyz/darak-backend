@@ -78,3 +78,5 @@ export const ErrorCode = {
     message: "Only proposer can accept counter proposal",
   },
 };
+
+export const RANKING_LIMIT = 5;

@@ -2,6 +2,15 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/admin/create-leaderboard/:name",
+      handler: "admin.create-leaderboard",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/admin/migration-rooms",
       handler: "admin.migration-room-to-userRoom",
       config: {

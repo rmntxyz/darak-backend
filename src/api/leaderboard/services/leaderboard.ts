@@ -2,10 +2,52 @@
  * leaderboard service
  */
 import { factories } from "@strapi/strapi";
+import { RANKING_LIMIT } from "../../../constant";
 
 export default factories.createCoreService(
   "api::leaderboard.leaderboard",
   ({ strapi }) => ({
+    async createLeaderboard(name: string) {
+      const leaderboard = (
+        await strapi.entityService.findMany("api::leaderboard.leaderboard", {
+          filters: {
+            name,
+          },
+          fields: ["ranking", "date"],
+          populate: {
+            records: {
+              fields: ["ranking", "date"],
+            },
+          },
+        })
+      )[0];
+
+      if (!leaderboard) {
+        let ranking;
+
+        if (name === "overall") {
+          ranking = await strapi
+            .service("api::leaderboard.leaderboard")
+            .findOverallRoomCompletionRankings(RANKING_LIMIT);
+        }
+
+        const leaderboard = await strapi.entityService.create(
+          "api::leaderboard.leaderboard",
+          {
+            data: {
+              name,
+              ranking,
+              date: new Date(),
+              publishedAt: new Date(),
+            },
+          }
+        );
+
+        return !!leaderboard;
+      }
+
+      return true;
+    },
     async findRoomCompletionRankings(roomId: number) {
       const options = {
         filters: {
