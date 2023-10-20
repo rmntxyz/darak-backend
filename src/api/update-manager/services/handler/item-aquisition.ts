@@ -15,14 +15,30 @@ export default {
     //   });
     // }
 
-    if (item.rarity === "unique") {
+    // if (item.rarity === "unique") {
+    //   await strapi.entityService.create("api::activity.activity", {
+    //     data: {
+    //       category: "platform",
+    //       type: "unique_item",
+    //       user: { id: user.id },
+    //       item: { id: item.id },
+    //       detail: { serial_number },
+    //       publishedAt: new Date(),
+    //     },
+    //   });
+    // }
+
+    if (
+      serial_number === 1 &&
+      (item.rarity === "unique" || item.rarity === "rare")
+    ) {
       await strapi.entityService.create("api::activity.activity", {
         data: {
           category: "platform",
-          type: "unique_item",
+          type: "high_rarity_item_#1",
           user: { id: user.id },
           item: { id: item.id },
-          detail: { serial_number },
+          detail: {},
           publishedAt: new Date(),
         },
       });

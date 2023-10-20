@@ -13,7 +13,7 @@ export default {
 };
 
 async function updateRoomCompletion(userRoom: UserRoom) {
-  const { user, room } = userRoom;
+  const { user, room, completion_time } = userRoom;
 
   // create platform activity for completion
   if (userRoom.completed) {
@@ -28,7 +28,7 @@ async function updateRoomCompletion(userRoom: UserRoom) {
         type: "room_completion",
         user,
         room,
-        detail: { order },
+        detail: { order, completion_time },
         publishedAt: new Date(),
       },
     });
