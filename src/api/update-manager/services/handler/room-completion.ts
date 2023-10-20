@@ -73,14 +73,20 @@ async function updateOverallRanking() {
     return;
   }
 
-  const current = leaderboard.ranking;
-  const updated = overallRanking;
+  const current = leaderboard.ranking.map((list, idx) => ({
+    ...list,
+    rank: idx + 1,
+  }));
+  const updated = overallRanking.map((list, idx) => ({
+    ...list,
+    rank: idx + 1,
+  }));
 
   const { rankups, newcomers } = compareRankings(current, updated);
 
   // create platform activity for rankups
   for (const rankup of rankups) {
-    const prevRank = current.findIndex((item) => item.id === rankup.id) + 1;
+    const prevRank = current.find((item) => item.id === rankup.id).rank;
 
     await strapi.entityService.create("api::activity.activity", {
       data: {
@@ -116,7 +122,7 @@ async function updateOverallRanking() {
       leaderboard.id,
       {
         data: {
-          ranking: updated,
+          ranking: overallRanking,
           date: new Date(),
           records: [
             ...leaderboard.records,
@@ -138,23 +144,15 @@ async function updateOverallRanking() {
 }
 
 function compareRankings(current: Ranking, updated: Ranking) {
-  const currWithRank = current.map((list, idx) => ({ ...list, rank: idx + 1 }));
-  const updatedWithRank = updated.map((list, idx) => ({
-    ...list,
-    rank: idx + 1,
-  }));
-
   // not in current and in updated
-  const newcomers = updatedWithRank.filter(
-    (item) => !currWithRank.find((currentItem) => currentItem.id === item.id)
+  const newcomers = updated.filter(
+    (item) => !current.find((currentItem) => currentItem.id === item.id)
   );
 
   // in current but rank up
-  const rankups = currWithRank.filter((item) => {
-    const updatedItem = updatedWithRank.find(
-      (updatedItem) => updatedItem.id === item.id
-    );
-    return updatedItem && updatedItem.rank < item.rank;
+  const rankups = updated.filter((updatedItem) => {
+    const item = current.find((item) => updatedItem.id === item.id);
+    return item && updatedItem.rank < item.rank;
   });
 
   return {

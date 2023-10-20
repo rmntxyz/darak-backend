@@ -148,4 +148,5 @@ type Ranking = {
   username: string;
   duration: number;
   completion_count: number;
+  rank?: number;
 }[];
