@@ -46,7 +46,7 @@ export default {
           {
             populate: {
               items: {
-                fields: ["id", "category", "rarity"],
+                fields: ["category", "rarity"],
               },
             },
           }

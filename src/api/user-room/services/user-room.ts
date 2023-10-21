@@ -33,7 +33,9 @@ export default factories.createCoreService(
         }
       }
 
-      const total = room.items.length;
+      const total = room.items.filter(
+        (item) => item.category === "decoration"
+      ).length;
 
       const completion_rate = Math.round(
         (Object.values(owned_items).filter(Boolean).length / total) * 100
@@ -91,7 +93,7 @@ export default factories.createCoreService(
               fields: ["id"],
               populate: {
                 items: {
-                  fields: ["rarity"],
+                  fields: ["category", "rarity"],
                 },
               },
             },
@@ -137,7 +139,7 @@ export default factories.createCoreService(
                 fields: ["id"],
                 populate: {
                   items: {
-                    fields: ["rarity"],
+                    fields: ["category", "rarity"],
                   },
                 },
               },
