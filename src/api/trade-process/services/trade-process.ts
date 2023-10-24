@@ -384,7 +384,7 @@ offset ${pageNum - 1} * ${pageSize};
     ]);
 
     const tradeInfo: {
-      [itemId: number]: { proposerItems?: number[]; partnerItems?: number[] };
+      [roomId: number]: { proposerItems?: number[]; partnerItems?: number[] };
     } = {};
     trade.proposer_items
       .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
