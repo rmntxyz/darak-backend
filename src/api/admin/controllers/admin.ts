@@ -12,216 +12,216 @@ export default {
   },
   "reset-user-room": async (ctx) => {
     // strapi transaction
-    const result = await strapi.db.transaction(async () => {
-      // find all user rooms
-      const userRooms = await strapi.entityService.findMany(
-        "api::user-room.user-room",
-        {
-          populate: {
-            room: {
-              fields: ["id"],
-              populate: {
-                draws: {
-                  fields: ["id"],
-                },
+    // const result = await strapi.db.transaction(async () => {
+    // find all user rooms
+    const userRooms = await strapi.entityService.findMany(
+      "api::user-room.user-room",
+      {
+        populate: {
+          room: {
+            fields: ["id"],
+            populate: {
+              draws: {
+                fields: ["id"],
               },
             },
-            user: {
-              fields: ["id"],
+          },
+          user: {
+            fields: ["id"],
+          },
+        },
+      }
+    );
+
+    const promises = userRooms.map(async (userRoom) => {
+      const id = userRoom.id;
+      const roomId = userRoom.room.id;
+      const drawId = userRoom.room.draws[0].id;
+      const userId = userRoom.user.id;
+
+      // room info
+      const roomInfo = await strapi.entityService.findOne(
+        "api::room.room",
+        roomId,
+        {
+          populate: {
+            items: {
+              fields: ["category", "rarity"],
             },
           },
         }
       );
+      const roomItems = roomInfo.items
+        .filter((item) => item.category === "decoration")
+        .map((item) => item.id);
 
-      const promises = userRooms.map(async (userRoom) => {
-        const id = userRoom.id;
-        const roomId = userRoom.room.id;
-        const drawId = userRoom.room.draws[0].id;
-        const userId = userRoom.user.id;
-
-        // room info
-        const roomInfo = await strapi.entityService.findOne(
-          "api::room.room",
-          roomId,
-          {
-            populate: {
-              items: {
-                fields: ["category", "rarity"],
-              },
-            },
-          }
-        );
-        const roomItems = roomInfo.items
-          .filter((item) => item.category === "decoration")
-          .map((item) => item.id);
-
-        // draw histories
-        const drawHistories = await strapi.entityService.findMany(
-          "api::draw-history.draw-history",
-          {
-            filters: {
-              users_permissions_user: { id: userId },
-              draw: { id: drawId },
-            },
-          }
-        );
-        const drawList = drawHistories.map((drawHistory) => ({
-          type: "draw",
-          id: drawHistory.id,
-          date: new Date(drawHistory.createdAt).getTime(),
-          incoming: drawHistory.draw_result,
-          outgoing: [],
-        }));
-
-        // trades
-        const trades = await strapi.entityService.findMany("api::trade.trade", {
+      // draw histories
+      const drawHistories = await strapi.entityService.findMany(
+        "api::draw-history.draw-history",
+        {
           filters: {
-            $or: [
-              {
-                proposer: { id: userId },
-              },
-              {
-                partner: { id: userId },
-              },
-            ],
-            status: "success",
+            users_permissions_user: { id: userId },
+            draw: { id: drawId },
           },
-          populate: {
-            proposer: {
-              fields: ["id"],
+        }
+      );
+      const drawList = drawHistories.map((drawHistory) => ({
+        type: "draw",
+        id: drawHistory.id,
+        date: new Date(drawHistory.createdAt).getTime(),
+        incoming: drawHistory.draw_result,
+        outgoing: [],
+      }));
+
+      // trades
+      const trades = await strapi.entityService.findMany("api::trade.trade", {
+        filters: {
+          $or: [
+            {
+              proposer: { id: userId },
             },
-            partner: {
-              fields: ["id"],
+            {
+              partner: { id: userId },
             },
-            proposer_items: {
-              fields: ["id"],
-              populate: {
-                item: {
-                  fields: ["id"],
-                },
-              },
-            },
-            partner_items: {
-              fields: ["id"],
-              populate: {
-                item: {
-                  fields: ["id"],
-                },
+          ],
+          status: "success",
+        },
+        populate: {
+          proposer: {
+            fields: ["id"],
+          },
+          partner: {
+            fields: ["id"],
+          },
+          proposer_items: {
+            fields: ["id"],
+            populate: {
+              item: {
+                fields: ["id"],
               },
             },
           },
-        });
+          partner_items: {
+            fields: ["id"],
+            populate: {
+              item: {
+                fields: ["id"],
+              },
+            },
+          },
+        },
+      });
 
-        const tradeList = trades
-          .map((trade) => {
-            const proposerItems = trade.proposer_items
-              .map((x) => x.item.id)
-              .filter((x) => roomItems.includes(x));
-            const partnerItems = trade.partner_items
-              .map((x) => x.item.id)
-              .filter((x) => roomItems.includes(x));
+      const tradeList = trades
+        .map((trade) => {
+          const proposerItems = trade.proposer_items
+            .map((x) => x.item.id)
+            .filter((x) => roomItems.includes(x));
+          const partnerItems = trade.partner_items
+            .map((x) => x.item.id)
+            .filter((x) => roomItems.includes(x));
 
-            if (proposerItems.length === 0 && partnerItems.length === 0) {
-              return null;
-            }
-
-            return {
-              type: "trade",
-              id: trade.id,
-              date: new Date(trade.updatedAt).getTime(),
-              incoming:
-                trade.proposer.id === userId ? partnerItems : proposerItems,
-              outgoing:
-                trade.proposer.id === userId ? proposerItems : partnerItems,
-            };
-          })
-          .filter(Boolean);
-
-        const list = [...drawList, ...tradeList];
-        list.sort((a, b) => a.date - b.date);
-
-        // return list;
-
-        const itemIds = new Map();
-        const start_time = list[0].date;
-        let completion_time = null;
-        let completed = false;
-        let duration = null;
-
-        for (const each of list) {
-          const { incoming, outgoing } = each;
-
-          for (const itemId of incoming) {
-            if (!itemIds.has(itemId)) {
-              itemIds.set(itemId, 0);
-            }
-            itemIds.set(itemId, itemIds.get(itemId) + 1);
+          if (proposerItems.length === 0 && partnerItems.length === 0) {
+            return null;
           }
 
-          for (const itemId of outgoing) {
-            if (itemIds.has(itemId)) {
-              itemIds.set(itemId, Math.max(itemIds.get(itemId) - 1, 0));
-            }
+          return {
+            type: "trade",
+            id: trade.id,
+            date: new Date(trade.updatedAt).getTime(),
+            incoming:
+              trade.proposer.id === userId ? partnerItems : proposerItems,
+            outgoing:
+              trade.proposer.id === userId ? proposerItems : partnerItems,
+          };
+        })
+        .filter(Boolean);
+
+      const list = [...drawList, ...tradeList];
+      list.sort((a, b) => a.date - b.date);
+
+      // return list;
+
+      const itemIds = new Map();
+      const start_time = list[0].date;
+      let completion_time = null;
+      let completed = false;
+      let duration = null;
+
+      for (const each of list) {
+        const { incoming, outgoing } = each;
+
+        for (const itemId of incoming) {
+          if (!itemIds.has(itemId)) {
+            itemIds.set(itemId, 0);
           }
+          itemIds.set(itemId, itemIds.get(itemId) + 1);
+        }
 
-          const collected = [...itemIds.entries()].filter(
-            ([_, value]) => value > 0
-          );
-
-          if (collected.length === roomItems.length) {
-            completed = true;
-            completion_time = each.date;
-            duration = completion_time - start_time;
+        for (const itemId of outgoing) {
+          if (itemIds.has(itemId)) {
+            itemIds.set(itemId, Math.max(itemIds.get(itemId) - 1, 0));
           }
         }
 
         const collected = [...itemIds.entries()].filter(
           ([_, value]) => value > 0
         );
-        const completion_rate = Math.round(
-          (collected.length / roomItems.length) * 100
-        );
 
-        const owned_items = Object.fromEntries(itemIds);
+        if (collected.length === roomItems.length) {
+          completed = true;
+          completion_time = each.date;
+          duration = completion_time - start_time;
+        }
+      }
 
-        const userRoomInfo = {
-          start_time: new Date(start_time).toISOString(),
-          completion_time:
-            completion_time !== null
-              ? new Date(completion_time).toISOString()
-              : null,
-          duration,
-          completed,
-          completion_rate,
-          owned_items,
-          room: {
-            connect: [roomId],
-          },
-          user: {
-            connect: [userId],
-          },
-        };
+      const collected = [...itemIds.entries()].filter(
+        ([_, value]) => value > 0
+      );
+      const completion_rate = Math.round(
+        (collected.length / roomItems.length) * 100
+      );
 
-        const result = await strapi.entityService.update(
-          "api::user-room.user-room",
-          id,
-          {
-            data: userRoomInfo,
-          }
-        );
+      const owned_items = Object.fromEntries(itemIds);
 
-        // return userRoomInfo;
-        console.log(`user ${userId}, user-room ${id} done`);
+      const userRoomInfo = {
+        start_time: new Date(start_time).toISOString(),
+        completion_time:
+          completion_time !== null
+            ? new Date(completion_time).toISOString()
+            : null,
+        duration,
+        completed,
+        completion_rate,
+        owned_items,
+        room: {
+          connect: [roomId],
+        },
+        user: {
+          connect: [userId],
+        },
+      };
 
-        return result;
-      });
+      const result = await strapi.entityService.update(
+        "api::user-room.user-room",
+        id,
+        {
+          data: userRoomInfo,
+        }
+      );
 
-      const result = await Promise.all(promises);
-      console.log("completed");
+      // return userRoomInfo;
+      console.log(`user ${userId}, user-room ${id} done`);
+
       return result;
     });
 
+    const result = await Promise.all(promises);
+    console.log("completed");
     return result;
+    // });
+
+    // return result;
   },
 
   "migration-room-to-userRoom": async (ctx) => {
