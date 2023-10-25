@@ -131,6 +131,12 @@
       "relation": "oneToMany",
       "target": "api::activity.activity",
       "mappedBy": "user"
+    },
+    "star_point": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::star-point.star-point",
+      "mappedBy": "user"
     }
   }
 }
