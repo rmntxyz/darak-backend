@@ -33,7 +33,7 @@ export default factories.createCoreService(
             },
           },
         },
-        sort: "createdAt",
+        sort: { createdAt: "desc" },
         limit,
       };
 
@@ -41,6 +41,9 @@ export default factories.createCoreService(
         "api::activity.activity",
         options
       );
+
+      // sort by id (asc)
+      activities.sort((a, b) => a.id - b.id);
 
       return activities;
     },
