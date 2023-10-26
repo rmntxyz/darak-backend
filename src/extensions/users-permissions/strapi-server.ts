@@ -36,6 +36,9 @@ module.exports = (plugin) => {
           },
           freebie: true,
           streak: true,
+          star_point: {
+            fields: ["amount"],
+          },
           rooms: {
             fields: ["name", "desc", "rid"],
             populate: {
@@ -49,6 +52,12 @@ module.exports = (plugin) => {
         },
       }
     );
+
+    if (user.star_point === null) {
+      user.star_point = await strapi
+        .service("api::star-point.star-point")
+        .getStarPoint(user.id);
+    }
 
     const freebie = await strapi
       .service("api::freebie.freebie")

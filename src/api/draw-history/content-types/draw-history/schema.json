@@ -24,6 +24,11 @@
     },
     "draw_result": {
       "type": "json"
+    },
+    "user_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inventory.inventory"
     }
   }
 }

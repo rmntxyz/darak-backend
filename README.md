@@ -640,3 +640,48 @@ body: {
 트레이드 확인 페이지에서 호출한다.  
 **params**으로 `tradeId`를 받는다.  
 만약 **`tradeId` 없이 호출한다면 모든 트레이드를 읽음 처리**한다.
+
+<br />
+<br />
+
+# Inventory Managing API
+
+## /inventory-manager/sell
+
+### PUT
+
+아이템을 판매한다.
+
+body의 `data`에는 `Inventory ID`의 배열이 들어간다.
+
+```javascript
+body: {
+  data: [457, 458, 462];
+}
+```
+
+#### Related Error Code
+
+- `2001`: _INVALID_ITEMS_STATUS_
+- `2002`: _ITEM_NOT_OWNED_
+
+<br />
+
+## /inventory-manager/sell/item
+
+### PUT
+
+아이템을 판매한다.
+
+body의 `data`에는 `key-value` 객체가 들어가며 `key` 값으로는 `Item ID`, `value` 값으로는 판매하려는 갯수를 입력한다.
+
+```javascript
+body: {
+  data: {"79":3,"274":2}
+}
+```
+
+#### Related Error Code
+
+- `2003`: _NON_NUMERIC_INPUT_
+- `2004`: _NOT_ENOUGH_ITEMS_

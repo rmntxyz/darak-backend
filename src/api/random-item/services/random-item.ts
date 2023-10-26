@@ -23,7 +23,7 @@ export default ({ strapi }) => ({
         .service("api::user-room.user-room")
         .getUserRoom(userId, draw.room.id);
 
-      const { currency_type } = draw;
+      const { currency_type, cost } = draw;
 
       const user = await strapi.entityService.findOne(
         "plugin::users-permissions.user",
@@ -31,14 +31,20 @@ export default ({ strapi }) => ({
         {
           populate: {
             freebie: true,
-            // star: true,
+            star_point: true,
           },
         }
       );
 
       if (currency_type === "freebie") {
         try {
-          await deductFreebie(user);
+          await deductFreebie(user, cost);
+        } catch (err) {
+          throw err;
+        }
+      } else if (currency_type === "star_point") {
+        try {
+          await deductStarPoint(user, cost);
         } catch (err) {
           throw err;
         }
@@ -49,6 +55,7 @@ export default ({ strapi }) => ({
 
       // draw
       const itemIds = getRandomItems(draw);
+      const userItems = [];
 
       for (const itemId of itemIds) {
         const item = await strapi.entityService.findOne(
@@ -97,6 +104,8 @@ export default ({ strapi }) => ({
         await strapi
           .service("api::update-manager.update-manager")
           .updateItemAquisition(userItem);
+
+        userItems.push(userItem.id);
       }
 
       await strapi
@@ -109,6 +118,7 @@ export default ({ strapi }) => ({
           draw: drawId,
           users_permissions_user: userId,
           draw_result: itemIds,
+          user_items: { connect: userItems },
           publishedAt: new Date(),
         },
       });
@@ -144,7 +154,29 @@ function drawItem(info: DrawInfo) {
   }
 }
 
-async function deductFreebie(user: User) {
+async function deductStarPoint(user: User, cost: number) {
+  const { star_point } = user;
+
+  await strapi.db.transaction(async () => {
+    let starPoint = star_point;
+
+    if (!starPoint) {
+      starPoint = await strapi
+        .service("api::star-point.star-point")
+        .getStarPoint(user.id);
+    }
+
+    if (starPoint.amount >= cost) {
+      await strapi
+        .service("api::star-point.star-point")
+        .updateStarPoint(starPoint, -cost, "item_draw");
+    } else {
+      throw new Error("star point is not enough");
+    }
+  });
+}
+
+async function deductFreebie(user: User, cost: number) {
   const { freebie } = user;
 
   await strapi.db.transaction(async () => {
@@ -155,7 +187,7 @@ async function deductFreebie(user: User) {
 
     // check quantity of freebie
     if (current > 0) {
-      const after = current - 1;
+      const after = current - cost;
       const data: FreebieData = { current: after };
 
       if (current === max) {

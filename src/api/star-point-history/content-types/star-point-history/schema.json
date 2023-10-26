@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "star_point_histories",
+  "info": {
+    "singularName": "star-point-history",
+    "pluralName": "star-point-histories",
+    "displayName": "StarPointHistory",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "change": {
+      "type": "integer"
+    },
+    "star_point": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::star-point.star-point",
+      "inversedBy": "star_point_histories"
+    },
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "item_sale",
+        "item_draw",
+        "archivement_reward",
+        "quest_reward"
+      ]
+    },
+    "inventories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inventory.inventory"
+    },
+    "remaining": {
+      "type": "integer"
+    }
+  }
+}

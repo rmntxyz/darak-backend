@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "star_points",
+  "info": {
+    "singularName": "star-point",
+    "pluralName": "star-points",
+    "displayName": "StarPoint",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "star_point"
+    },
+    "star_point_histories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::star-point-history.star-point-history",
+      "mappedBy": "star_point"
+    }
+  }
+}

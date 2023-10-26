@@ -16,8 +16,7 @@
       "type": "enumeration",
       "enum": [
         "freebie",
-        "diamond",
-        "ticket"
+        "star_point"
       ]
     },
     "cost": {

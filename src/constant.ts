@@ -1,4 +1,6 @@
 export const ErrorCode = {
+  /* HTTP errors */
+
   INVALID_REQUEST: {
     code: 400,
     message: "Invalid request",
@@ -32,7 +34,9 @@ export const ErrorCode = {
     message: "Gateway timeout",
   },
 
-  // Custom errors
+  /* Custom errors */
+
+  // Trading
   TRADE_EXPIRED: {
     code: 1001,
     message: "Trade expired",
@@ -76,6 +80,24 @@ export const ErrorCode = {
   ONLY_PROPOSER_CAN_ACCEPT_COUNTER_PROPOSAL: {
     code: 1011,
     message: "Only proposer can accept counter proposal",
+  },
+
+  // Inventory Management
+  INVALID_ITEMS_STATUS: {
+    code: 2001,
+    message: "Invalid user item's status",
+  },
+  ITEM_NOT_OWNED: {
+    code: 2002,
+    message: "Item not owned",
+  },
+  NON_NUMERIC_INPUT: {
+    code: 2003,
+    message: "Invalid input, numeric value expected",
+  },
+  NOT_ENOUGH_ITEMS: {
+    code: 2004,
+    message: "Not enough items",
   },
 };
 
