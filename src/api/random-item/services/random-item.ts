@@ -2,6 +2,8 @@
  * random-item service
  */
 
+import { ErrorCode } from "../../../constant";
+
 export default ({ strapi }) => ({
   async drawRandom(userId: number, drawId: number) {
     let items = [];
@@ -37,17 +39,9 @@ export default ({ strapi }) => ({
       );
 
       if (currency_type === "freebie") {
-        try {
-          await deductFreebie(user, cost);
-        } catch (err) {
-          throw err;
-        }
+        await deductFreebie(user, cost);
       } else if (currency_type === "star_point") {
-        try {
-          await deductStarPoint(user, cost);
-        } catch (err) {
-          throw err;
-        }
+        await deductStarPoint(user, cost);
       } else {
         // TODO: star
         throw new Error("not supported currency type");
@@ -171,7 +165,7 @@ async function deductStarPoint(user: User, cost: number) {
         .service("api::star-point.star-point")
         .updateStarPoint(starPoint, -cost, "item_draw");
     } else {
-      throw new Error("star point is not enough");
+      throw ErrorCode.NOT_ENOUGH_STAR_POINT;
     }
   });
 }
@@ -196,7 +190,7 @@ async function deductFreebie(user: User, cost: number) {
 
       await strapi.service("api::freebie.freebie").update(freebie.id, { data });
     } else {
-      throw new Error("freebie is not enough");
+      throw ErrorCode.NOT_ENOUGH_FREEBIE;
     }
   });
 }

@@ -99,6 +99,16 @@ export const ErrorCode = {
     code: 2004,
     message: "Not enough items",
   },
+
+  // Draw
+  NOT_ENOUGH_FREEBIE: {
+    code: 3001,
+    message: "Not enough freebie",
+  },
+  NOT_ENOUGH_STAR_POINT: {
+    code: 3002,
+    message: "Not enough star point",
+  },
 };
 
 export const RANKING_LIMIT = 5;

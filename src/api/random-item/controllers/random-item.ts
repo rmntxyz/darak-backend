@@ -22,7 +22,7 @@ export default {
         .drawRandom(userId, drawId);
       ctx.body = result;
     } catch (err) {
-      return ctx.forbidden("draw failed", { errors: err.message });
+      return ctx.internalServerError("draw failed", err);
     }
   },
 };
