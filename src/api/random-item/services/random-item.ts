@@ -158,20 +158,18 @@ async function deductStarPoint(user: User, cost: number) {
   const { star_point } = user;
 
   await strapi.db.transaction(async () => {
-    const { amount } = await strapi
-      .service("api::star-point.star-point")
-      .getStarPoint(user.id);
+    let starPoint = star_point;
 
-    if (amount >= cost) {
-      await strapi.entityService.update(
-        "api::star-point.star-point",
-        star_point.id,
-        {
-          data: {
-            amount: amount - cost,
-          },
-        }
-      );
+    if (!starPoint) {
+      starPoint = await strapi
+        .service("api::star-point.star-point")
+        .getStarPoint(user.id);
+    }
+
+    if (starPoint.amount >= cost) {
+      await strapi
+        .service("api::star-point.star-point")
+        .updateStarPoint(starPoint, -cost, "item_draw");
     } else {
       throw new Error("star point is not enough");
     }
