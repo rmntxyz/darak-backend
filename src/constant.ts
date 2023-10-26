@@ -101,13 +101,13 @@ export const ErrorCode = {
   },
 
   // Draw
-  NOT_ENOUGH_FREEBIE: {
+  NOT_ENOUGH_FREEBIES: {
     code: 3001,
-    message: "Not enough freebie",
+    message: "Not enough freebies",
   },
-  NOT_ENOUGH_STAR_POINT: {
+  NOT_ENOUGH_STAR_POINTS: {
     code: 3002,
-    message: "Not enough star point",
+    message: "Not enough star points",
   },
 };
 
