@@ -20,9 +20,22 @@ type Streak = {
 
 type User = {
   id: number;
+  star_point: StarPoint;
   freebie: Freebie;
   streak: Streak;
   daily_quest_progresses: DailyQuestProgress[];
+};
+
+type StarPoint = {
+  id: number;
+  amount: number;
+  star_point_history: StarPointHistory[];
+};
+
+type StarPointHistory = {
+  id: number;
+  point: number;
+  detail: "item_sale" | "item_draw" | "archivement_reward" | "quest_reward";
 };
 
 type DailyQuestProgress = {
