@@ -12,17 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "date": {
-      "type": "datetime"
-    },
     "change": {
-      "type": "enumeration",
-      "enum": [
-        "inc",
-        "dec"
-      ]
-    },
-    "point": {
       "type": "integer"
     },
     "star_point": {
@@ -44,6 +34,9 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::inventory.inventory"
+    },
+    "remaining": {
+      "type": "integer"
     }
   }
 }

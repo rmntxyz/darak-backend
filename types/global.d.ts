@@ -29,14 +29,23 @@ type User = {
 type StarPoint = {
   id: number;
   amount: number;
-  star_point_history: StarPointHistory[];
+  star_point_histories: StarPointHistory[];
 };
 
 type StarPointHistory = {
   id: number;
-  point: number;
-  detail: "item_sale" | "item_draw" | "archivement_reward" | "quest_reward";
+  change: number;
+  remaining: number;
+  star_point: StarPoint;
+  detail: StarPointChangeDetail;
+  inventories: Inventory[];
 };
+
+type StarPointChangeDetail =
+  | "item_sale"
+  | "item_draw"
+  | "archivement_reward"
+  | "quest_reward";
 
 type DailyQuestProgress = {
   id: number;

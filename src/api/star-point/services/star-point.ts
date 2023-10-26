@@ -33,5 +33,38 @@ export default factories.createCoreService(
 
       return starPoint;
     },
+
+    async updateStarPoint(
+      starPoint: StarPoint,
+      change: number,
+      detail: StarPointChangeDetail
+    ) {
+      const updated = await strapi.entityService.update(
+        "api::star-point.star-point",
+        starPoint.id,
+        {
+          data: {
+            amount: starPoint.amount + change,
+          },
+          fields: ["amount"],
+        }
+      );
+
+      // record to star point history
+      await strapi.entityService.create(
+        "api::star-point-history.star-point-history",
+        {
+          data: {
+            change,
+            remaining: updated.amount,
+            detail,
+            star_point: { id: updated.id },
+            publishedAt: new Date(),
+          },
+        }
+      );
+
+      return updated;
+    },
   })
 );
