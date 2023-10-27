@@ -42,6 +42,10 @@
     },
     "owned_items": {
       "type": "json"
+    },
+    "initial_completion_checked": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

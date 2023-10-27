@@ -77,6 +77,34 @@ export default factories.createCoreService(
           .updateRoomCompletion(updatedUserRoom);
       }
     },
+    async getUserRooms(userId: number) {
+      const userRooms = await strapi.entityService.findMany(
+        "api::user-room.user-room",
+        {
+          filters: {
+            user: { id: userId },
+          },
+          populate: {
+            user: {
+              fields: ["id"],
+            },
+            room: {
+              fields: ["name", "rid"],
+              populate: {
+                image_complete: {
+                  fields: ["url"],
+                },
+                items: {
+                  fields: ["category", "rarity"],
+                },
+              },
+            },
+          },
+        }
+      );
+
+      return userRooms;
+    },
 
     async getUserRoom(userId: number, roomId: number) {
       let userRoom = (
@@ -90,8 +118,11 @@ export default factories.createCoreService(
               fields: ["id"],
             },
             room: {
-              fields: ["id"],
+              fields: ["name", "rid"],
               populate: {
+                image_complete: {
+                  fields: ["url"],
+                },
                 items: {
                   fields: ["category", "rarity"],
                 },
@@ -129,6 +160,7 @@ export default factories.createCoreService(
               completion_rate: 0,
               duration: null,
               owned_items: {},
+              initial_completion_checked: false,
               publishedAt: now,
             },
             populate: {
@@ -136,8 +168,11 @@ export default factories.createCoreService(
                 fields: ["id"],
               },
               room: {
-                fields: ["id"],
+                fields: ["name", "rid"],
                 populate: {
+                  image_complete: {
+                    fields: ["url"],
+                  },
                   items: {
                     fields: ["category", "rarity"],
                   },

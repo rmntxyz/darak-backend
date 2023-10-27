@@ -685,3 +685,36 @@ body: {
 
 - `2003`: _NON_NUMERIC_INPUT_
 - `2004`: _NOT_ENOUGH_ITEMS_
+
+<br />
+<br />
+
+# User Room API
+
+## /user-room/initial-completion-check/`:roomId?`
+
+### GET
+
+최초 완성 체크된 방의 정보만 배열로 내려온다.
+`:roomId`를 넣지 않으면 내가 가진 전체 방에 대한 완성 여부를 내려준다.
+첫 완료에 해당하는 방이 없으면 빈 배열(`[]`)을 응답한다.
+
+#### Response Example
+
+```JSON
+// roomId를 입력하지 않은 경우 복수의 결과가 나올 수 있다.
+[
+    {
+        "id": 4,
+        "name": "세 친구들의 거실",
+        "rid": "three_friends_livingroom",
+        "image_complete": "https://storage.googleapis.com/rmnt/complete_bd92e77b40/complete_bd92e77b40.png"
+    },
+    {
+        "id": 3,
+        "name": "냥냥이의 자취방",
+        "rid": "meo_home",
+        "image_complete": "https://storage.googleapis.com/rmnt/complete_meo_2f251bd719/complete_meo_2f251bd719.png"
+    }
+]
+```
