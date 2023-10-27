@@ -27,15 +27,6 @@ body: {
 <br />
 <br />
 
-# User Room API
-
-## /user-rooms/count
-
-### GET
-
-<br />
-<br />
-
 # Leaderboard API
 
 ## /leaderboard/room-completion-rankings/`:roomId?`
