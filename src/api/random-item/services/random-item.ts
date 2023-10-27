@@ -165,7 +165,7 @@ async function deductStarPoint(user: User, cost: number) {
         .service("api::star-point.star-point")
         .updateStarPoint(starPoint, -cost, "item_draw");
     } else {
-      throw ErrorCode.NOT_ENOUGH_STAR_POINT;
+      throw ErrorCode.NOT_ENOUGH_STAR_POINTS;
     }
   });
 }
@@ -190,7 +190,7 @@ async function deductFreebie(user: User, cost: number) {
 
       await strapi.service("api::freebie.freebie").update(freebie.id, { data });
     } else {
-      throw ErrorCode.NOT_ENOUGH_FREEBIE;
+      throw ErrorCode.NOT_ENOUGH_FREEBIES;
     }
   });
 }
