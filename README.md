@@ -696,12 +696,13 @@ body: {
 ### GET
 
 최초 완성 체크된 방의 정보만 배열로 내려온다.
-`:roomId`를 넣지 않으면 내가 가진 전체 방에 대한 완성 여부를 내려준다.
+
+`:roomId`를 넣지 않으면 내가 가진 전체 방에 대한 완성 여부를 내려준다.  
 첫 완료에 해당하는 방이 없으면 빈 배열(`[]`)을 응답한다.
 
 #### Response Example
 
-```JSON
+```JSONC
 // roomId를 입력하지 않은 경우 복수의 결과가 나올 수 있다.
 [
     {
@@ -717,4 +718,7 @@ body: {
         "image_complete": "https://storage.googleapis.com/rmnt/complete_meo_2f251bd719/complete_meo_2f251bd719.png"
     }
 ]
+
+// 결과가 없는 경우
+[]
 ```
