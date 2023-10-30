@@ -20,9 +20,8 @@
     },
     "room": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::room.room",
-      "inversedBy": "activities"
+      "relation": "oneToOne",
+      "target": "api::room.room"
     },
     "category": {
       "type": "enumeration",
@@ -49,9 +48,8 @@
     },
     "item": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::item.item",
-      "inversedBy": "activities"
+      "relation": "oneToOne",
+      "target": "api::item.item"
     }
   }
 }
