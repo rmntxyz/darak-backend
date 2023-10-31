@@ -87,6 +87,9 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
 
   async findUserRoomsCount() {
     const rooms = await strapi.entityService.findMany("api::room.room", {
+      filters: {
+        publishedAt: { $ne: null },
+      },
       fields: ["name", "desc", "rid", "start_date", "end_date"],
       populate: {
         image_complete: {
