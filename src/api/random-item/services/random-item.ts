@@ -25,28 +25,6 @@ export default ({ strapi }) => ({
         .service("api::user-room.user-room")
         .getUserRoom(userId, draw.room.id);
 
-      const { currency_type, cost } = draw;
-
-      const user = await strapi.entityService.findOne(
-        "plugin::users-permissions.user",
-        userId,
-        {
-          populate: {
-            freebie: true,
-            star_point: true,
-          },
-        }
-      );
-
-      if (currency_type === "freebie") {
-        await deductFreebie(user, cost);
-      } else if (currency_type === "star_point") {
-        await deductStarPoint(user, cost);
-      } else {
-        // TODO: star
-        throw new Error("not supported currency type");
-      }
-
       // draw
       const itemIds = getRandomItems(draw);
       const userItems = [];
@@ -106,6 +84,28 @@ export default ({ strapi }) => ({
         .service("api::user-room.user-room")
         .updateItems(userRoom, itemIds, []);
 
+      const { currency_type, cost } = draw;
+
+      const user = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        userId,
+        {
+          populate: {
+            freebie: true,
+            star_point: true,
+          },
+        }
+      );
+
+      if (currency_type === "freebie") {
+        await deductFreebie(user, cost);
+      } else if (currency_type === "star_point") {
+        await deductStarPoint(user, cost, userItems);
+      } else {
+        // TODO: star
+        throw new Error("not supported currency type");
+      }
+
       // record draw history
       await strapi.entityService.create("api::draw-history.draw-history", {
         data: {
@@ -148,7 +148,7 @@ function drawItem(info: DrawInfo) {
   }
 }
 
-async function deductStarPoint(user: User, cost: number) {
+async function deductStarPoint(user: User, cost: number, userItems: number[]) {
   const { star_point } = user;
 
   await strapi.db.transaction(async () => {
@@ -163,7 +163,7 @@ async function deductStarPoint(user: User, cost: number) {
     if (starPoint.amount >= cost) {
       await strapi
         .service("api::star-point.star-point")
-        .updateStarPoint(starPoint, -cost, "item_draw");
+        .updateStarPoint(starPoint, -cost, "item_draw", userItems);
     } else {
       throw ErrorCode.NOT_ENOUGH_STAR_POINTS;
     }

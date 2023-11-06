@@ -37,7 +37,8 @@ export default factories.createCoreService(
     async updateStarPoint(
       starPoint: StarPoint,
       change: number,
-      detail: StarPointChangeDetail
+      detail: StarPointChangeDetail,
+      userItems: number[] = []
     ) {
       const updated = await strapi.entityService.update(
         "api::star-point.star-point",
@@ -59,6 +60,7 @@ export default factories.createCoreService(
             remaining: updated.amount,
             detail,
             star_point: { id: updated.id },
+            inventories: { connect: userItems },
             publishedAt: new Date(),
           },
         }

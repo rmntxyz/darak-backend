@@ -67,7 +67,7 @@ export default factories.createCoreService(
 
       const updatedStarPoint = await strapi
         .service("api::star-point.star-point")
-        .updateStarPoint(starPoint, sum, "item_sale");
+        .updateStarPoint(starPoint, sum, "item_sale", userItems);
 
       return updatedStarPoint;
     },
