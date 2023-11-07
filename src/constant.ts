@@ -113,8 +113,14 @@ export const ErrorCode = {
     code: 3002,
     message: "Not enough star points",
   },
+  DAILY_DRAW_LIMIT_EXCEEDED: {
+    code: 3003,
+    message: "Daily draw limit exceeded",
+  },
 };
 
 export const RANKING_LIMIT = 5;
 
 export const TRADE_ITEM_LIMIT = 5;
+
+export const DAILY_DRAW_LIMIT = 5;

@@ -2,13 +2,21 @@
  * random-item service
  */
 
-import { ErrorCode } from "../../../constant";
+import { DAILY_DRAW_LIMIT, ErrorCode } from "../../../constant";
 
 export default ({ strapi }) => ({
   async drawRandom(userId: number, drawId: number) {
     let items = [];
 
     await strapi.db.transaction(async () => {
+      const drawCount = await strapi
+        .service("api::draw-history.draw-history")
+        .getDailyDrawCountByDraw(userId, drawId);
+
+      if (drawCount >= DAILY_DRAW_LIMIT) {
+        throw ErrorCode.DAILY_DRAW_LIMIT_EXCEEDED;
+      }
+
       const draw = await strapi.entityService.findOne(
         "api::draw.draw",
         drawId,
@@ -20,10 +28,6 @@ export default ({ strapi }) => ({
           },
         }
       );
-
-      const userRoom = await strapi
-        .service("api::user-room.user-room")
-        .getUserRoom(userId, draw.room.id);
 
       const { currency_type, cost } = draw;
 
@@ -101,6 +105,10 @@ export default ({ strapi }) => ({
 
         userItems.push(userItem.id);
       }
+
+      const userRoom = await strapi
+        .service("api::user-room.user-room")
+        .getUserRoom(userId, draw.room.id);
 
       await strapi
         .service("api::user-room.user-room")

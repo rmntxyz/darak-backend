@@ -31,17 +31,6 @@ export default factories.createCoreService(
         }
       );
 
-      /*
-      {
-        [roomId]: {
-          [drawId]: {
-            currency_type: "star_point",
-            count: 0,
-          }
-        }
-      }
-      */
-
       const result = histories.reduce((acc, history) => {
         const roomId = history.draw.room.id;
         const drawId = history.draw.id;
@@ -107,6 +96,28 @@ export default factories.createCoreService(
       }, {});
 
       return result;
+    },
+
+    getDailyDrawCountByDraw: async (userId: number, drawId: number) => {
+      const now = new Date();
+      const refTime = getRefTimestamp(now);
+      const histories = await strapi.entityService.findMany(
+        "api::draw-history.draw-history",
+        {
+          filters: {
+            users_permissions_user: userId,
+            createdAt: { $gte: new Date(refTime).toISOString() },
+            draw: { id: drawId },
+          },
+          populate: {
+            draw: {
+              fields: ["currency_type"],
+            },
+          },
+        }
+      );
+
+      return histories.length;
     },
   })
 );
