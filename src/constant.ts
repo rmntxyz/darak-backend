@@ -81,6 +81,10 @@ export const ErrorCode = {
     code: 1011,
     message: "Only proposer can accept counter proposal",
   },
+  TRADE_ITEM_LIMIT_EXCEEDED: {
+    code: 1012,
+    message: "Item limit exceeded",
+  },
 
   // Inventory Management
   INVALID_ITEMS_STATUS: {
@@ -112,3 +116,5 @@ export const ErrorCode = {
 };
 
 export const RANKING_LIMIT = 5;
+
+export const TRADE_ITEM_LIMIT = 5;

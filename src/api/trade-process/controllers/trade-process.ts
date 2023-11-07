@@ -2,7 +2,7 @@
  * A set of functions called "actions" for `trade-process`
  */
 
-import { ErrorCode } from "../../../constant";
+import { ErrorCode, TRADE_ITEM_LIMIT } from "../../../constant";
 import {
   tradeDefaultOptions,
   tradeDetailOptions,
@@ -93,6 +93,19 @@ export default {
       );
     }
 
+    // item limit exceeded check (max 5 items)
+    if (
+      proposerItems.length > TRADE_ITEM_LIMIT ||
+      partnerItems.length > TRADE_ITEM_LIMIT
+    ) {
+      return ctx.badRequest(
+        `${
+          proposerItems.length > TRADE_ITEM_LIMIT ? "proposer" : "partner"
+        } item limit exceeded`,
+        ErrorCode.TRADE_ITEM_LIMIT_EXCEEDED
+      );
+    }
+
     return await strapi.db.transaction(async () => {
       const count = await strapi
         .service("api::trade-process.trade-process")
@@ -156,6 +169,19 @@ export default {
       return ctx.badRequest(
         "Invalid Request Parameters",
         ErrorCode.INVALID_TRADE_ITEMS
+      );
+    }
+
+    // item limit exceeded check (max 5 items)
+    if (
+      proposerItems.length > TRADE_ITEM_LIMIT ||
+      partnerItems.length > TRADE_ITEM_LIMIT
+    ) {
+      return ctx.badRequest(
+        `${
+          proposerItems.length > TRADE_ITEM_LIMIT ? "proposer" : "partner"
+        } item limit exceeded`,
+        ErrorCode.TRADE_ITEM_LIMIT_EXCEEDED
       );
     }
 
