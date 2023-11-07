@@ -411,25 +411,25 @@ offset ${pageNum - 1} * ${pageSize};
         return acc;
       }, tradeInfo);
 
-    Object.entries(tradeInfo).map(
-      async ([roomId, { proposerItems, partnerItems }]) => {
-        const proposerRoom = await strapi
-          .service("api::user-room.user-room")
-          .getUserRoom(trade.proposer.id, roomId);
+    for (const [roomId, { proposerItems, partnerItems }] of Object.entries(
+      tradeInfo
+    )) {
+      const proposerRoom = await strapi
+        .service("api::user-room.user-room")
+        .getUserRoom(trade.proposer.id, roomId);
 
-        const partnerRoom = await strapi
-          .service("api::user-room.user-room")
-          .getUserRoom(trade.partner.id, roomId);
+      const partnerRoom = await strapi
+        .service("api::user-room.user-room")
+        .getUserRoom(trade.partner.id, roomId);
 
-        await strapi
-          .service("api::user-room.user-room")
-          .updateItems(proposerRoom, partnerItems, proposerItems);
+      await strapi
+        .service("api::user-room.user-room")
+        .updateItems(proposerRoom, partnerItems, proposerItems);
 
-        await strapi
-          .service("api::user-room.user-room")
-          .updateItems(partnerRoom, proposerItems, partnerItems);
-      }
-    );
+      await strapi
+        .service("api::user-room.user-room")
+        .updateItems(partnerRoom, proposerItems, partnerItems);
+    }
   },
 
   async changeItemsStatus(inventoryIds: number[], status: UserItemStatus) {
