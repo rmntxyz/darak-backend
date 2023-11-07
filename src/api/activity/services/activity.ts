@@ -42,9 +42,6 @@ export default factories.createCoreService(
         options
       );
 
-      // sort by id (asc)
-      activities.sort((a, b) => a.id - b.id);
-
       return activities;
     },
   })
