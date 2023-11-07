@@ -78,11 +78,16 @@ module.exports = (plugin) => {
       .service("api::trade-process.trade-process")
       .getDailyTradeCount(user.id);
 
+    const dailyDrawCount = await strapi
+      .service("api::draw-history.draw-history")
+      .getDailyDrawCount(user.id);
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
       daily_quest_progresses: dailyQuestProgresses,
       daily_trade_count: dailyTradeCount,
+      daily_draw_count: dailyDrawCount,
     });
   };
 
