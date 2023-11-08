@@ -8,7 +8,6 @@ export default factories.createCoreService(
   "api::inventory.inventory",
   ({ strapi }) => ({
     async sell(userId: number, userItems: number[]) {
-      const promises = [];
       const itemsToSellByRoom = {};
       let sum = 0;
 
@@ -52,13 +51,10 @@ export default factories.createCoreService(
           .getUserRoom(userId, roomId);
 
         const items = itemsToSellByRoom[roomId];
-        const updated = strapi
+        await strapi
           .service("api::user-room.user-room")
           .updateItems(userRoom, [], items);
-
-        promises.push(updated);
       }
-      await Promise.all(promises);
 
       // update star point
       const starPoint = await strapi
