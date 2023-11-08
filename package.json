@@ -1,7 +1,7 @@
 {
   "name": "darak-backend",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
@@ -15,6 +15,7 @@
     "@strapi/plugin-users-permissions": "4.11.3",
     "@strapi/strapi": "4.11.3",
     "better-sqlite3": "8.0.1",
+    "deep-diff": "^1.0.2",
     "pg": "^8.11.2"
   },
   "author": {

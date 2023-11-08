@@ -48,6 +48,44 @@ export default factories.createCoreService(
 
       return true;
     },
+    async updateLeaderboard(name: string) {
+      const leaderboard = (
+        await strapi.entityService.findMany("api::leaderboard.leaderboard", {
+          filters: {
+            name,
+          },
+          fields: ["id"],
+        })
+      )[0];
+
+      if (!leaderboard) {
+        return false;
+      }
+
+      let ranking;
+
+      if (name === "overall") {
+        ranking = await strapi
+          .service("api::leaderboard.leaderboard")
+          .findOverallRoomCompletionRankings(RANKING_LIMIT);
+      } else {
+        // TEMP
+        return false;
+      }
+
+      await strapi.entityService.update(
+        "api::leaderboard.leaderboard",
+        leaderboard.id,
+        {
+          data: {
+            ranking,
+            date: new Date(),
+          },
+        }
+      );
+
+      return true;
+    },
     async findRoomCompletionRankings(roomId: number) {
       const options = {
         filters: {

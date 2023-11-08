@@ -2,7 +2,9 @@
  * update-manager service
  */
 
-import roomCompletion from "./handler/room-completion";
+import roomCompletion, {
+  updateOverallRanking,
+} from "./handler/room-completion";
 import itemAquisition from "./handler/item-aquisition";
 
 export default ({ strapi }) => ({
@@ -14,5 +16,11 @@ export default ({ strapi }) => ({
   updateItemAquisition: async (userItem: Inventory) => {
     await itemAquisition.update(userItem);
     return;
+  },
+
+  updateRoomCompletionRankings: async () => {
+    await updateOverallRanking();
+    // all room's ranking
+    return true;
   },
 });

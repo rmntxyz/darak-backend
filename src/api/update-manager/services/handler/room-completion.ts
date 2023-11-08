@@ -35,7 +35,7 @@ async function updateRoomCompletion(userRoom: UserRoom) {
   }
 }
 
-async function updateOverallRanking() {
+export async function updateOverallRanking() {
   const overallRanking = await strapi
     .service("api::leaderboard.leaderboard")
     .findOverallRoomCompletionRankings(RANKING_LIMIT);
