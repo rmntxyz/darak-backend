@@ -119,7 +119,7 @@ export const ErrorCode = {
   },
 };
 
-export const RANKING_LIMIT = 10;
+export const RANKING_LIMIT = 5;
 
 export const TRADE_ITEM_LIMIT = 5;
 
