@@ -52,6 +52,10 @@ export default ({ strapi }) => ({
       (collected.length / roomItems.length) * 100
     );
 
+    if (collected.length === roomItems.length) {
+      completed = true;
+    }
+
     const owned_items = Object.fromEntries(itemIds);
 
     const userRoomInfo = {
