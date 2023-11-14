@@ -26,6 +26,12 @@
     },
     "date": {
       "type": "datetime"
+    },
+    "criteria": {
+      "type": "json"
+    },
+    "ref_date": {
+      "type": "datetime"
     }
   }
 }

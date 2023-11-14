@@ -19,7 +19,7 @@ async function updateRoomCompletion(userRoom: UserRoom) {
   if (userRoom.completed) {
     const list = await strapi
       .service("api::leaderboard.leaderboard")
-      .findRoomCompletionOrder(room.id);
+      .getRoomCompletionOrder(room.id);
     const order = list.findIndex((item) => item.id === user.id) + 1;
 
     return strapi.entityService.create("api::activity.activity", {
@@ -38,7 +38,7 @@ async function updateRoomCompletion(userRoom: UserRoom) {
 export async function updateOverallRanking() {
   const overallRanking = await strapi
     .service("api::leaderboard.leaderboard")
-    .findOverallRoomCompletionRankings(RANKING_LIMIT);
+    .getOverallRoomCompletionRankings(RANKING_LIMIT);
 
   const leaderboard = (
     await strapi.entityService.findMany("api::leaderboard.leaderboard", {

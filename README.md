@@ -29,6 +29,14 @@ body: {
 
 # Leaderboard API
 
+j
+
+## /leaderboard/room-completion-rankings/monthly
+
+### GET
+
+<br />
+
 ## /leaderboard/room-completion-rankings/`:roomId?`
 
 ### GET

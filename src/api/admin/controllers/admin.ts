@@ -4,11 +4,16 @@
 import { diff } from "deep-diff";
 
 export default {
+  "update-monthly-criteria": async (ctx) => {
+    return await strapi
+      .service("api::leaderboard.leaderboard")
+      .updateMonthlyRoomCompletionCriteria();
+  },
   "create-leaderboard": async (ctx) => {
     const { name } = ctx.params;
     const exist = await strapi
       .service("api::leaderboard.leaderboard")
-      .createLeaderboard(name);
+      .getLeaderboard(name);
     return exist ? 200 : 400;
   },
   "update-leaderboard": async (ctx) => {
@@ -149,7 +154,14 @@ export default {
       const { owned_items: prevOwnedItems } = userRoom;
       const { owned_items: newOwnedItems } = userRoomInfo;
 
-      const changes = diff(prevOwnedItems, newOwnedItems);
+      let changes = diff(prevOwnedItems, newOwnedItems);
+
+      if (
+        userRoom.completed !== userRoomInfo.completed ||
+        userRoom.completion_rate !== userRoomInfo.completion_rate
+      ) {
+        changes = true;
+      }
 
       if (changes) {
         const result = await strapi.entityService.update(

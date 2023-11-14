@@ -2,6 +2,15 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/admin/update-monthly-criteria",
+      handler: "admin.update-monthly-criteria",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/admin/create-leaderboard/:name",
       handler: "admin.create-leaderboard",
       config: {

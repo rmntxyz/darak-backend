@@ -20,6 +20,7 @@ type Streak = {
 
 type User = {
   id: number;
+  username: string;
   star_point: StarPoint;
   freebie: Freebie;
   streak: Streak;
@@ -168,7 +169,32 @@ type UserRoom = {
 type Ranking = {
   id: number;
   username: string;
-  duration: number;
+  duration?: number;
   completion_count: number;
+  items_count: number;
   rank?: number;
 }[];
+
+type CollectionStatus = {
+  id: number;
+  username: string;
+  completion_count: number;
+  items_count: number;
+};
+
+type CollectionStatusByUser = {
+  [id: number]: CollectionStatus;
+};
+
+type Leaderboard = {
+  id: number;
+  name: string;
+  ranking: Ranking[];
+  date: Date;
+  records: {
+    ranking: Ranking;
+    date: Date;
+  }[];
+  criteria: CollectionStatusByUser;
+  ref_date: Date;
+};

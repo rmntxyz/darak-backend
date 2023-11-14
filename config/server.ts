@@ -6,11 +6,10 @@ export default ({ env }) => ({
   app: {
     keys: env.array("APP_KEYS"),
   },
-  // enable cron
-  // cron: {
-  //   enabled: true,
-  //   tasks: cronTasks,
-  // },
+  cron: {
+    enabled: true,
+    tasks: cronTasks,
+  },
   // webhooks: {
   //   populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
   // },

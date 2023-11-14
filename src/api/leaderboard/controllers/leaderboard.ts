@@ -14,12 +14,24 @@ export default factories.createCoreController(
         if (!roomId) {
           return await strapi
             .service("api::leaderboard.leaderboard")
-            .findOverallRoomCompletionRankings();
+            .getOverallRoomCompletionRankings();
         }
 
         return await strapi
           .service("api::leaderboard.leaderboard")
-          .findRoomCompletionRankings(roomId);
+          .getRoomCompletionRankings(roomId);
+      } catch (err) {
+        return ctx.forbidden("failed to get rankings.", {
+          errors: err.message,
+        });
+      }
+    },
+
+    "get-monthly-room-completion-rankings": async (ctx) => {
+      try {
+        return await strapi
+          .service("api::leaderboard.leaderboard")
+          .getMonthlyRoomCompletionRankings();
       } catch (err) {
         return ctx.forbidden("failed to get rankings.", {
           errors: err.message,
