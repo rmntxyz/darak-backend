@@ -106,7 +106,7 @@ export default factories.createCoreService(
       return userRooms;
     },
 
-    async getUserRoom(userId: number, roomId: number) {
+    async getUserRoom(userId: number, roomId: number, forceCreate = true) {
       let userRoom = (
         await strapi.entityService.findMany("api::user-room.user-room", {
           filters: {
@@ -132,7 +132,7 @@ export default factories.createCoreService(
         })
       )[0];
 
-      if (!userRoom) {
+      if (!userRoom && forceCreate) {
         const now = new Date();
 
         // TEMPORARY: link user to room
