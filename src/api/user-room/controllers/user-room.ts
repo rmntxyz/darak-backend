@@ -50,7 +50,11 @@ export default factories.createCoreController(
       } else {
         const userRoom = await strapi
           .service("api::user-room.user-room")
-          .getUserRoom(userId, roomId);
+          .getUserRoom(userId, roomId, false);
+
+        if (!userRoom) {
+          return [];
+        }
 
         const { id, completed, initial_completion_checked } = userRoom;
 
