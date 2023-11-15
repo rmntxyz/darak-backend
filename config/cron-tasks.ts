@@ -6,7 +6,7 @@ export default {
         .updateMonthlyRoomCompletionCriteria();
     },
     options: {
-      rule: "0 0 5 1 * *",
+      rule: "0 0 0 1 * *",
       tz: "Asia/Seoul",
     },
   },
