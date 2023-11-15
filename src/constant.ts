@@ -117,6 +117,18 @@ export const ErrorCode = {
     code: 3003,
     message: "Daily draw limit exceeded",
   },
+  DRAW_NOT_FOUND: {
+    code: 3004,
+    message: "Draw not found",
+  },
+  DRAW_NOT_STARTED: {
+    code: 3005,
+    message: "Draw not started",
+  },
+  DRAW_ENDED: {
+    code: 3006,
+    message: "Draw ended",
+  },
 };
 
 export const RANKING_LIMIT = 10;

@@ -23,11 +23,25 @@ export default ({ strapi }) => ({
         {
           populate: {
             room: {
-              fields: ["id"],
+              fields: ["start_date", "end_date", "id"],
             },
           },
         }
       );
+
+      if (!draw) {
+        throw ErrorCode.DRAW_NOT_FOUND;
+      }
+
+      const now = new Date().toISOString();
+
+      if (draw.room.start_date > now) {
+        throw ErrorCode.DRAW_NOT_STARTED;
+      }
+
+      if (draw.room.end_date < now) {
+        throw ErrorCode.DRAW_ENDED;
+      }
 
       // draw
       const itemIds = getRandomItems(draw);
