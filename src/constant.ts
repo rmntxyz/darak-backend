@@ -17,6 +17,10 @@ export const ErrorCode = {
     code: 404,
     message: "Not found",
   },
+  LOCKED: {
+    code: 423,
+    message: "Locked",
+  },
   INTERNAL_SERVER_ERROR: {
     code: 500,
     message: "Internal server error",
