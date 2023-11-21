@@ -15,7 +15,7 @@ export default {
       handler: "inventory.sell-by-item-id",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["api::inventory.critical-section"],
       },
     },
     {
