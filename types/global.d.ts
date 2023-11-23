@@ -45,7 +45,7 @@ type StarPointHistory = {
 type StarPointChangeDetail =
   | "item_sale"
   | "item_draw"
-  | "archivement_reward"
+  | "achievement_reward"
   | "quest_reward";
 
 type DailyQuestProgress = {
@@ -74,7 +74,7 @@ type DailyQuest = {
 };
 
 type Reward = {
-  type: "freebie" | "star" | "item" | "exp" | "point";
+  type: "freebie" | "star_point" | "item" | "exp";
   amount: number;
   item?: Item;
 };
@@ -197,4 +197,37 @@ type Leaderboard = {
   }[];
   criteria: CollectionStatusByUser;
   ref_date: Date;
+};
+
+type Badge = {
+  id: number;
+  name: string;
+  desc: string;
+  image: { url: string };
+  achievement: Achievement;
+};
+
+type Achievement = {
+  id: number;
+  title: string;
+  desc: string;
+  aid: string;
+  goal: number;
+  badge: Badge;
+  type: "general" | "milestone" | "sub";
+  milestones: Achievement[];
+  rewards: Reward[];
+};
+
+type AchievementProgress = {
+  id: number;
+  achievement: Achievement;
+  progress: number;
+  reward_claimed: boolean;
+  reward_claim_date: Date;
+  completed: boolean;
+  completion_date: Date;
+  user: User;
+  milestone_progresses: AchievementProgress[];
+  belongs_to: AchievementProgress;
 };

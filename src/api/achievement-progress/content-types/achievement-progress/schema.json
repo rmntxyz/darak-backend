@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "achievement_progresses",
+  "info": {
+    "singularName": "achievement-progress",
+    "pluralName": "achievement-progresses",
+    "displayName": "AchievementProgress",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "achievement": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::achievement.achievement",
+      "inversedBy": "achievement_progress"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "achievement_progresses"
+    },
+    "progress": {
+      "type": "integer"
+    },
+    "reward_claimed": {
+      "type": "boolean"
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "completion_date": {
+      "type": "datetime"
+    },
+    "milestone_progresses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::achievement-progress.achievement-progress",
+      "mappedBy": "belongs_to"
+    },
+    "belongs_to": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::achievement-progress.achievement-progress",
+      "inversedBy": "milestone_progresses"
+    },
+    "reward_claim_date": {
+      "type": "datetime"
+    }
+  }
+}

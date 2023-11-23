@@ -16,9 +16,8 @@
       "type": "enumeration",
       "enum": [
         "freebie",
-        "star",
+        "star_point",
         "exp",
-        "point",
         "item"
       ]
     },

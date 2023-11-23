@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "achievements",
+  "info": {
+    "singularName": "achievement",
+    "pluralName": "achievements",
+    "displayName": "Achievement",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "general",
+        "milestone",
+        "sub"
+      ]
+    },
+    "aid": {
+      "type": "uid"
+    },
+    "goal": {
+      "type": "integer"
+    },
+    "desc": {
+      "type": "text"
+    },
+    "milestones": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::achievement.achievement",
+      "mappedBy": "parent"
+    },
+    "parent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::achievement.achievement",
+      "inversedBy": "milestones"
+    },
+    "achievement_progress": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::achievement-progress.achievement-progress",
+      "mappedBy": "achievement"
+    },
+    "rewards": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::reward.reward"
+    },
+    "badge": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::badge.badge",
+      "mappedBy": "achievement"
+    }
+  }
+}

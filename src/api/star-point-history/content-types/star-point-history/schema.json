@@ -26,7 +26,7 @@
       "enum": [
         "item_sale",
         "item_draw",
-        "archivement_reward",
+        "achievement_reward",
         "quest_reward"
       ]
     },

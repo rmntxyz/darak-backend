@@ -137,6 +137,12 @@
       "relation": "oneToOne",
       "target": "api::star-point.star-point",
       "mappedBy": "user"
+    },
+    "achievement_progresses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::achievement-progress.achievement-progress",
+      "mappedBy": "user"
     }
   }
 }

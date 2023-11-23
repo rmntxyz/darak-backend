@@ -62,7 +62,6 @@ export default ({ strapi }) => ({
             populate: {
               thumbnail: {
                 fields: ["url"],
-                populate: ["url"],
               },
             },
             data: { current_serial_number: current_serial_number + 1 },
