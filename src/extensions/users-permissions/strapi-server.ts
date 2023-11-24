@@ -74,6 +74,10 @@ module.exports = (plugin) => {
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);
 
+    const achievementProgresses = await strapi
+      .service("api::achievement-progress.achievement-progress")
+      .getAchievementList(user.id);
+
     const dailyTradeCount = await strapi
       .service("api::trade-process.trade-process")
       .getDailyTradeCount(user.id);
@@ -85,6 +89,7 @@ module.exports = (plugin) => {
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
+      achievement_progresses: achievementProgresses,
       daily_quest_progresses: dailyQuestProgresses,
       daily_trade_count: dailyTradeCount,
       daily_draw_count: dailyDrawCount,
