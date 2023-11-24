@@ -1,78 +1,25 @@
-import {
-  progressOptions,
-  simpleProgressOptions,
-} from "../achievement-progress";
-
-async function create(userId: number, achievement: Achievement) {
-  const milestone_progresses = [];
-  for (const milestone of achievement.milestones) {
-    const { id } = await strapi.entityService.create(
-      "api::achievement-progress.achievement-progress",
-      {
-        data: {
-          progress: 0,
-          reward_claimed: false,
-          completed: false,
-          user: { id: userId },
-          achievement: { id: milestone.id },
-          publishedAt: new Date(),
-        },
-      }
-    );
-
-    milestone_progresses.push(id);
-  }
-
-  return strapi.entityService.create(
-    "api::achievement-progress.achievement-progress",
-    {
-      ...progressOptions,
-      data: {
-        progress: 0,
-        reward_claimed: false,
-        completed: false,
-        user: { id: userId },
-        achievement: { id: achievement.id },
-        milestone_progresses,
-        publishedAt: new Date(),
-      },
-    }
-  );
-}
-
-async function createMilestone(
-  userId: number,
-  achievementId: number,
-  parentProgressId: number
-) {
-  return strapi.entityService.create(
-    "api::achievement-progress.achievement-progress",
-    {
-      ...simpleProgressOptions,
-      data: {
-        progress: 0,
-        reward_claimed: false,
-        completed: false,
-        user: { id: userId },
-        achievement: { id: achievementId },
-        belongs_to: { id: parentProgressId },
-        publishedAt: new Date(),
-      },
-    }
-  );
-}
+import { simpleProgressOptions } from "../achievement-progress";
 
 async function verify(user: User, progress: AchievementProgress) {
-  const { longest_login } = user.streak;
+  const userRooms = await strapi
+    .service("api::user-room.user-room")
+    .getUserRooms(user.id);
+  const completion_count = userRooms.filter(
+    (userRoom) => userRoom.completed
+  ).length;
   const now = new Date();
 
   const updatedProgresses = [];
   const { milestone_progresses } = progress;
 
   for (const sub of milestone_progresses) {
+    if (sub.completed) {
+      continue;
+    }
+
     const { goal } = sub.achievement;
 
-    if (longest_login >= goal) {
+    if (completion_count >= goal) {
       const updated = await strapi.entityService.update(
         "api::achievement-progress.achievement-progress",
         sub.id,
@@ -92,7 +39,7 @@ async function verify(user: User, progress: AchievementProgress) {
 
   const { goal } = progress.achievement;
 
-  if (goal && longest_login >= goal) {
+  if (goal && completion_count >= goal) {
     const updated = await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,
@@ -110,13 +57,6 @@ async function verify(user: User, progress: AchievementProgress) {
   return updatedProgresses;
 }
 
-async function claimRewards(userId: number, progressId: number) {
-  strapi;
-}
-
 export default {
-  create,
-  createMilestone,
   verify,
-  claimRewards,
 };

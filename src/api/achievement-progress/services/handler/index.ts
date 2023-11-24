@@ -1,18 +1,47 @@
 import streak from "./streak";
-import { simpleProgressOptions } from "../achievement-progress";
+import {
+  simpleProgressOptions,
+  progressOptions,
+} from "../achievement-progress";
 
 const Handler = { streak };
 
 export default {
   create: async (userId: number, achievement: Achievement) => {
-    const { aid } = achievement;
-    const handler = Handler[aid];
+    const milestone_progresses = [];
+    for (const milestone of achievement.milestones) {
+      const { id } = await strapi.entityService.create(
+        "api::achievement-progress.achievement-progress",
+        {
+          data: {
+            progress: 0,
+            reward_claimed: false,
+            completed: false,
+            user: { id: userId },
+            achievement: { id: milestone.id },
+            publishedAt: new Date(),
+          },
+        }
+      );
 
-    if (!handler) {
-      return null;
+      milestone_progresses.push(id);
     }
 
-    return await handler.create(userId, achievement);
+    return strapi.entityService.create(
+      "api::achievement-progress.achievement-progress",
+      {
+        ...progressOptions,
+        data: {
+          progress: 0,
+          reward_claimed: false,
+          completed: false,
+          user: { id: userId },
+          achievement: { id: achievement.id },
+          milestone_progresses,
+          publishedAt: new Date(),
+        },
+      }
+    );
   },
 
   createMilestone: async (
@@ -20,14 +49,21 @@ export default {
     parent: AchievementProgress,
     milestone: Achievement
   ) => {
-    const { aid } = parent.achievement;
-    const handler = Handler[aid];
-
-    if (!handler) {
-      return null;
-    }
-
-    return await handler.createMilestone(userId, milestone.id, parent.id);
+    return strapi.entityService.create(
+      "api::achievement-progress.achievement-progress",
+      {
+        ...simpleProgressOptions,
+        data: {
+          progress: 0,
+          reward_claimed: false,
+          completed: false,
+          user: { id: userId },
+          achievement: { id: milestone.id },
+          belongs_to: { id: parent.id },
+          publishedAt: new Date(),
+        },
+      }
+    );
   },
 
   verify: async (user: User, progress: AchievementProgress) => {
@@ -42,15 +78,6 @@ export default {
   },
 
   claimRewards: async (user: User, progress: AchievementProgress) => {
-    const { aid } = progress.achievement;
-    const handler = Handler[aid];
-
-    if (!handler) {
-      return null;
-    }
-
-    await handler.claimRewards(user, progress);
-
     const now = new Date();
 
     const rewardList = [];
