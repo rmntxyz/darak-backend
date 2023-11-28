@@ -135,7 +135,11 @@ export default ({ strapi }) => {
       .query("plugin::users-permissions.user")
       .create({ data: newUser });
 
-    return createdUser;
+    const achievement_progresses = await strapi
+      .services("api::achievement-progress.achievement-progress")
+      .createAchievementProgress([createdUser.id]);
+
+    return { ...createdUser, achievement_progresses };
   };
 
   const buildRedirectUri = (provider = "") => {

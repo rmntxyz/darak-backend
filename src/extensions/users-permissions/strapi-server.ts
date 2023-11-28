@@ -63,13 +63,6 @@ module.exports = (plugin) => {
       .service("api::freebie.freebie")
       .refresh(user.freebie);
 
-    //refresh streak
-    // await strapi.service("api::streak.streak").refresh(user.streak);
-
-    // const dailyQuestProgresses = await strapi
-    //   .service("api::daily-quest-progress.daily-quest-progress")
-    //   .getTodayQuest(user.id);
-
     const dailyQuestProgresses = await strapi
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuest(user.id);

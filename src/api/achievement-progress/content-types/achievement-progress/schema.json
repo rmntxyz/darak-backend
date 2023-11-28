@@ -14,9 +14,9 @@
   "attributes": {
     "achievement": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::achievement.achievement",
-      "inversedBy": "achievement_progress"
+      "inversedBy": "achievement_progresses"
     },
     "user": {
       "type": "relation",
@@ -50,6 +50,9 @@
     },
     "reward_claim_date": {
       "type": "datetime"
+    },
+    "read": {
+      "type": "boolean"
     }
   }
 }

@@ -6,7 +6,7 @@ export default {
       handler: "achievement-progress.get-achievement-list",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
     {
@@ -25,6 +25,15 @@ export default {
       config: {
         policies: [],
         middlewares: ["global::mutex-by-user"],
+      },
+    },
+    {
+      method: "GET",
+      path: "/achievement-progress/status/:progressId?",
+      handler: "achievement-progress.read-status",
+      config: {
+        policies: [],
+        middlewares: [],
       },
     },
   ],

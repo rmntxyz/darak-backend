@@ -1,10 +1,24 @@
+// milestone achievements
 import streak from "./streak";
+import room_completion from "./room_completion";
+
+// general achievements
+import first_room_ranking_top_10 from "./first_room_ranking_top_10";
+import item_sales_count from "./item_sales_count";
+import successful_trades_proposer from "./successful_trades_proposer";
+
 import {
   simpleProgressOptions,
   progressOptions,
 } from "../achievement-progress";
 
-const Handler = { streak };
+const Handler = {
+  streak,
+  room_completion,
+  first_room_ranking_top_10,
+  item_sales_count,
+  successful_trades_proposer,
+};
 
 export default {
   create: async (userId: number, achievement: Achievement) => {
@@ -66,7 +80,7 @@ export default {
     );
   },
 
-  verify: async (user: User, progress: AchievementProgress) => {
+  verify: async (user: User, progress: AchievementProgress, options?: any) => {
     const { aid } = progress.achievement;
     const handler = Handler[aid];
 
@@ -74,7 +88,7 @@ export default {
       return null;
     }
 
-    return await handler.verify(user, progress);
+    return await handler.verify(user, progress, options);
   },
 
   claimRewards: async (user: User, progress: AchievementProgress) => {

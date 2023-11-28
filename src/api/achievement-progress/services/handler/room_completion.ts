@@ -24,34 +24,71 @@ async function verify(user: User, progress: AchievementProgress) {
         "api::achievement-progress.achievement-progress",
         sub.id,
         {
+          ...simpleProgressOptions,
           data: {
+            progress: goal,
             completed: true,
-            completed_date: now,
+            completion_date: now,
           },
         }
       );
 
       updatedProgresses.push(updated);
     } else {
-      break;
+      await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        sub.id,
+        {
+          data: {
+            progress: completion_count,
+          },
+        }
+      );
     }
   }
 
   const { goal } = progress.achievement;
 
-  if (goal && completion_count >= goal) {
-    const updated = await strapi.entityService.update(
+  if (goal) {
+    if (completion_count >= goal) {
+      // completed
+      const updated = await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        progress.id,
+        {
+          ...simpleProgressOptions,
+          data: {
+            progress: goal,
+            completed: true,
+            completion_date: now,
+          },
+        }
+      );
+
+      updatedProgresses.push(updated);
+    } else {
+      // not completed, but progress is updated
+      await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        progress.id,
+        {
+          data: {
+            progress: completion_count,
+          },
+        }
+      );
+    }
+  } else {
+    // has no goal, just update progress
+    await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,
       {
         data: {
-          completed: true,
-          completed_date: now,
+          progress: completion_count,
         },
       }
     );
-
-    updatedProgresses.push(updated);
   }
 
   return updatedProgresses;

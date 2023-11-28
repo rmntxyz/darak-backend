@@ -76,5 +76,33 @@ export default factories.createCoreController(
         return ctx.badRequest(error.message);
       }
     },
+
+    "read-status": async (ctx) => {
+      const { progressId } = ctx.params;
+
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
+      try {
+        if (progressId) {
+          const result = await strapi
+            .service("api::achievement-progress.achievement-progress")
+            .readStatus(progressId);
+
+          return result;
+        } else {
+          const results = await strapi
+            .service("api::achievement-progress.achievement-progress")
+            .readAllStatus(userId);
+
+          return results;
+        }
+      } catch (error) {
+        return ctx.badRequest(error.message);
+      }
+    },
   })
 );

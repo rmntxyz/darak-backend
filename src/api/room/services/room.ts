@@ -95,6 +95,12 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
         image_complete: {
           fields: ["url", "width", "height"],
         },
+        image_empty: {
+          fields: ["url", "width", "height"],
+        },
+        key_scenes: {
+          fields: ["url", "width", "height"],
+        },
         items: {
           fields: [
             "name",

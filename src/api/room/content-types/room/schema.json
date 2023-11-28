@@ -88,6 +88,16 @@
       "relation": "oneToMany",
       "target": "api::user-room.user-room",
       "mappedBy": "room"
+    },
+    "key_scenes": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
     }
   }
 }

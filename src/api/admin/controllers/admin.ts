@@ -294,4 +294,24 @@ export default {
 
     return 200;
   },
+
+  "create-achievement-progress": async (ctx) => {
+    const users = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        fields: ["id"],
+      }
+    );
+
+    // const userIds = users.map((user) => user.id);
+    const userIds = [45, 86];
+
+    await strapi
+      .service("api::achievement-progress.achievement-progress")
+      .createAchievementProgress(userIds);
+
+    console.log("completed");
+
+    return 200;
+  },
 };

@@ -63,5 +63,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/admin/create-achievement-progress",
+      handler: "admin.create-achievement-progress",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

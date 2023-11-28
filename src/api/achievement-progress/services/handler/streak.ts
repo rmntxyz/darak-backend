@@ -21,6 +21,7 @@ async function verify(user: User, progress: AchievementProgress) {
         {
           ...simpleProgressOptions,
           data: {
+            progress: goal,
             completed: true,
             completion_date: now,
           },
@@ -28,25 +29,61 @@ async function verify(user: User, progress: AchievementProgress) {
       );
 
       updatedProgresses.push(updated);
+    } else {
+      await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        sub.id,
+        {
+          data: {
+            progress: longest_draw,
+          },
+        }
+      );
     }
   }
 
   const { goal } = progress.achievement;
 
-  if (goal && longest_draw >= goal) {
-    const updated = await strapi.entityService.update(
+  if (goal) {
+    if (longest_draw >= goal) {
+      // completed
+      const updated = await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        progress.id,
+        {
+          ...simpleProgressOptions,
+          data: {
+            progress: goal,
+            completed: true,
+            completion_date: now,
+          },
+        }
+      );
+
+      updatedProgresses.push(updated);
+    } else {
+      // not completed, but progress is updated
+      await strapi.entityService.update(
+        "api::achievement-progress.achievement-progress",
+        progress.id,
+        {
+          data: {
+            progress: longest_draw,
+          },
+        }
+      );
+    }
+  } else {
+    // has no goal, just update progress
+    await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,
       {
-        ...simpleProgressOptions,
         data: {
-          completed: true,
-          completion_date: now,
+          progress: longest_draw,
         },
       }
     );
-
-    updatedProgresses.push(updated);
   }
 
   return updatedProgresses;
