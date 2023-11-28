@@ -161,6 +161,7 @@ export default factories.createCoreService(
 
         for (const progress of progresses) {
           if (!progress.completed) {
+            console.log(progress.achievement);
             const completed = await progressHandler.verify(user, progress);
 
             if (completed.length > 0) {
@@ -352,7 +353,13 @@ export const simpleProgressOptions = {
 };
 
 export const progressOptions = {
-  fields: ["progress", "completed", "reward_claimed", "completion_date"],
+  fields: [
+    "progress",
+    "completed",
+    "reward_claimed",
+    "completion_date",
+    "read",
+  ],
   populate: {
     milestone_progresses: {
       fields: ["progress", "completed", "reward_claimed", "completion_date"],

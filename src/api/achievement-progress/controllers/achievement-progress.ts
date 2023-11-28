@@ -30,23 +30,23 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      try {
-        let result;
+      // try {
+      let result;
 
-        if (aid) {
-          result = await strapi
-            .service("api::achievement-progress.achievement-progress")
-            .verify(userId, aid);
-        } else {
-          result = await strapi
-            .service("api::achievement-progress.achievement-progress")
-            .verifyAll(userId);
-        }
-
-        return result;
-      } catch (error) {
-        return ctx.badRequest(error.message);
+      if (aid) {
+        result = await strapi
+          .service("api::achievement-progress.achievement-progress")
+          .verify(userId, aid);
+      } else {
+        result = await strapi
+          .service("api::achievement-progress.achievement-progress")
+          .verifyAll(userId);
       }
+
+      return result;
+      // } catch (error) {
+      //   return ctx.badRequest(error.message);
+      // }
     },
 
     "claim-rewards": async (ctx) => {

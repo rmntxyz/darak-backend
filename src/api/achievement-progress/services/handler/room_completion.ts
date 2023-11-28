@@ -18,6 +18,7 @@ async function verify(user: User, progress: AchievementProgress) {
     }
 
     const { goal } = sub.achievement;
+    const { progress: subProgress } = sub;
 
     if (completion_count >= goal) {
       const updated = await strapi.entityService.update(
@@ -34,7 +35,7 @@ async function verify(user: User, progress: AchievementProgress) {
       );
 
       updatedProgresses.push(updated);
-    } else {
+    } else if (completion_count !== subProgress) {
       await strapi.entityService.update(
         "api::achievement-progress.achievement-progress",
         sub.id,
@@ -48,38 +49,26 @@ async function verify(user: User, progress: AchievementProgress) {
   }
 
   const { goal } = progress.achievement;
+  const { progress: currentProgress } = progress;
 
-  if (goal) {
-    if (completion_count >= goal) {
-      // completed
-      const updated = await strapi.entityService.update(
-        "api::achievement-progress.achievement-progress",
-        progress.id,
-        {
-          ...simpleProgressOptions,
-          data: {
-            progress: goal,
-            completed: true,
-            completion_date: now,
-          },
-        }
-      );
+  if (goal && completion_count >= goal) {
+    // completed
+    const updated = await strapi.entityService.update(
+      "api::achievement-progress.achievement-progress",
+      progress.id,
+      {
+        ...simpleProgressOptions,
+        data: {
+          progress: goal,
+          completed: true,
+          completion_date: now,
+        },
+      }
+    );
 
-      updatedProgresses.push(updated);
-    } else {
-      // not completed, but progress is updated
-      await strapi.entityService.update(
-        "api::achievement-progress.achievement-progress",
-        progress.id,
-        {
-          data: {
-            progress: completion_count,
-          },
-        }
-      );
-    }
-  } else {
-    // has no goal, just update progress
+    updatedProgresses.push(updated);
+  } else if (completion_count !== currentProgress) {
+    // not completed, but progress is updated
     await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,

@@ -1,52 +1,37 @@
 import { simpleProgressOptions } from "../achievement-progress";
 
 async function verify(user: User, progress: AchievementProgress) {
-  const count = await strapi.db.query("api::trade.trade").count({
-    where: { proposer: { id: user.id }, status: "success" },
-  });
+  const userRooms = await strapi
+    .service("api::user-room.user-room")
+    .getUserRooms(user.id);
 
-  console.log("count", count);
+  const roomIds = userRooms.map((userRoom) => userRoom.room.id);
 
-  return count;
+  let verified = false;
+
+  for (const roomId of roomIds) {
+    const ranking = await strapi
+      .service("api::leaderboard.leaderboard")
+      .getRoomCompletionRankings(roomId);
+
+    if (ranking.findIndex((rank) => rank.id === user.id) < 10) {
+      verified = true;
+      break;
+    }
+  }
 
   const now = new Date();
 
   const updatedProgresses = [];
-  const { milestone_progresses } = progress;
 
-  for (const sub of milestone_progresses) {
-    if (sub.completed) {
-      continue;
-    }
-
-    const { goal } = sub.achievement;
-
-    if (count >= goal) {
-      const updated = await strapi.entityService.update(
-        "api::achievement-progress.achievement-progress",
-        sub.id,
-        {
-          ...simpleProgressOptions,
-          data: {
-            completed: true,
-            completion_date: now,
-          },
-        }
-      );
-
-      updatedProgresses.push(updated);
-    }
-  }
-
-  const { goal } = progress.achievement;
-
-  if (goal && count >= goal) {
+  if (verified) {
     const updated = await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,
       {
         ...simpleProgressOptions,
         data: {
+          progress: 1,
           completed: true,
           completion_date: now,
         },

@@ -10,6 +10,7 @@ async function verify(user: User, progress: AchievementProgress) {
   const updatedProgresses = [];
 
   const { goal } = progress.achievement;
+  const { progress: currentProgress } = progress;
 
   if (count >= goal) {
     const updated = await strapi.entityService.update(
@@ -26,7 +27,7 @@ async function verify(user: User, progress: AchievementProgress) {
     );
 
     updatedProgresses.push(updated);
-  } else {
+  } else if (count > currentProgress) {
     await strapi.entityService.update(
       "api::achievement-progress.achievement-progress",
       progress.id,

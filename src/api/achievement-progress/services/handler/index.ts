@@ -6,6 +6,7 @@ import room_completion from "./room_completion";
 import first_room_ranking_top_10 from "./first_room_ranking_top_10";
 import item_sales_count from "./item_sales_count";
 import successful_trades_proposer from "./successful_trades_proposer";
+import serial_number_1_items from "./serial_number_1_items";
 
 import {
   simpleProgressOptions,
@@ -18,6 +19,7 @@ const Handler = {
   first_room_ranking_top_10,
   item_sales_count,
   successful_trades_proposer,
+  serial_number_1_items,
 };
 
 export default {
@@ -85,7 +87,7 @@ export default {
     const handler = Handler[aid];
 
     if (!handler) {
-      return null;
+      throw new Error("handler not found");
     }
 
     return await handler.verify(user, progress, options);
