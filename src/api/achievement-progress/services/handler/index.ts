@@ -5,7 +5,7 @@ import room_completion from "./room_completion";
 // general achievements
 import first_room_ranking_top_10 from "./first_room_ranking_top_10";
 import item_sales_count from "./item_sales_count";
-import successful_trades_proposer from "./successful_trades_proposer";
+import successful_trades_10_times from "./successful_trades_10_times";
 import serial_number_1_items from "./serial_number_1_items";
 
 import {
@@ -18,7 +18,7 @@ const Handler = {
   room_completion,
   first_room_ranking_top_10,
   item_sales_count,
-  successful_trades_proposer,
+  successful_trades_10_times,
   serial_number_1_items,
 };
 
@@ -93,7 +93,7 @@ export default {
     return await handler.verify(user, progress, options);
   },
 
-  claimRewards: async (user: User, progress: AchievementProgress) => {
+  collectRewards: async (user: User, progress: AchievementProgress) => {
     const now = new Date();
 
     const rewardList = [];
@@ -104,7 +104,7 @@ export default {
         continue;
       }
 
-      const updated = await strapi.entityService.update(
+      await strapi.entityService.update(
         "api::achievement-progress.achievement-progress",
         sub.id,
         {
@@ -116,12 +116,12 @@ export default {
         }
       );
 
-      const { rewards } = sub.achievement;
-      rewardList.push(...rewards);
+      const { rewards, badge, title, aid } = sub.achievement;
+      rewardList.push({ rewards, badge, title, aid });
     }
 
     if (completed && !reward_claimed) {
-      const updated = await strapi.entityService.update(
+      await strapi.entityService.update(
         "api::achievement-progress.achievement-progress",
         progress.id,
         {
@@ -133,8 +133,8 @@ export default {
         }
       );
 
-      const { rewards } = progress.achievement;
-      rewardList.push(...rewards);
+      const { rewards, badge, title, aid } = progress.achievement;
+      rewardList.push({ rewards, badge, title, aid });
     }
 
     return rewardList;

@@ -49,6 +49,20 @@ export default factories.createCoreController(
       // }
     },
 
+    "get-verified-list": async (ctx) => {
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
+      const result = await strapi
+        .service("api::achievement-progress.achievement-progress")
+        .getVerifiedList(userId);
+
+      return result;
+    },
+
     "claim-rewards": async (ctx) => {
       const { aid } = ctx.params;
 

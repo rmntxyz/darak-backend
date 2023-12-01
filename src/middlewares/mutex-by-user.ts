@@ -6,7 +6,7 @@ import { Strapi } from "@strapi/strapi";
 
 import { ErrorCode } from "../constant";
 
-const LOCKER = new Map<string, Map<number, number>>();
+const LOCKER = new Map<string, number>();
 const USER_LOCK_TIMEOUT = 1000 * 15; // 15 seconds
 
 export default (config, { strapi }: { strapi: Strapi }) => {
@@ -19,18 +19,13 @@ export default (config, { strapi }: { strapi: Strapi }) => {
       return ctx.unauthorized("user is not authenticated");
     }
 
+    const key = [path, userId].join("@");
     const now = Date.now();
 
-    let userLocker = LOCKER.get(path);
-    if (!userLocker) {
-      userLocker = new Map<number, number>();
-      LOCKER.set(path, userLocker);
-    }
-
-    const prev = userLocker.get(userId);
+    const prev = LOCKER.get(key);
 
     if (!prev || now - prev >= USER_LOCK_TIMEOUT) {
-      userLocker.set(userId, now);
+      LOCKER.set(key, now);
     } else {
       return ctx.locked(
         `previous ${path} request from user(${userId}) is still pending.`,
@@ -43,7 +38,7 @@ export default (config, { strapi }: { strapi: Strapi }) => {
     } catch (error) {
       throw error;
     } finally {
-      userLocker.delete(userId);
+      LOCKER.delete(key);
     }
   };
 };

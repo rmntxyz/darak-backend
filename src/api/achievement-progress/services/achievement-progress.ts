@@ -91,6 +91,11 @@ export default factories.createCoreService(
       return progressMap;
     },
 
+    async getVerifiedList(userId: number) {
+      await this.verifyAll(userId);
+      return this.getAchievementList(userId);
+    },
+
     async verify(userId: number, aid: number) {
       return await strapi.db.transaction(async () => {
         const progress = (
@@ -161,7 +166,6 @@ export default factories.createCoreService(
 
         for (const progress of progresses) {
           if (!progress.completed) {
-            console.log(progress.achievement);
             const completed = await progressHandler.verify(user, progress);
 
             if (completed.length > 0) {
@@ -214,7 +218,8 @@ export default factories.createCoreService(
           }
         );
 
-        const rewards = await progressHandler.claimRewards(user, progress);
+        const collected = await progressHandler.collectRewards(user, progress);
+        const rewards = collected.flatMap((col) => col.rewards);
 
         await strapi.service("api::reward.reward").claim(user, rewards);
 
@@ -253,12 +258,17 @@ export default factories.createCoreService(
         const rewardList = [];
 
         for (const progress of progresses) {
-          const rewards = await progressHandler.claimRewards(user, progress);
+          const collected = await progressHandler.collectRewards(
+            user,
+            progress
+          );
 
-          rewardList.push(...rewards);
+          rewardList.push(...collected);
         }
 
-        await strapi.service("api::reward.reward").claim(user, rewardList);
+        const rewords = rewardList.flatMap((col) => col.rewards);
+
+        await strapi.service("api::reward.reward").claim(user, rewords);
 
         return rewardList;
       });

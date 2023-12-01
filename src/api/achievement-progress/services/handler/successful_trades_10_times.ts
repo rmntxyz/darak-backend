@@ -2,7 +2,10 @@ import { simpleProgressOptions } from "../achievement-progress";
 
 async function verify(user: User, progress: AchievementProgress) {
   const count = await strapi.db.query("api::trade.trade").count({
-    where: { proposer: { id: user.id }, status: "success" },
+    where: {
+      $or: [{ proposer: { id: user.id } }, { partner: { id: user.id } }],
+      status: "success",
+    },
   });
 
   const now = new Date();
