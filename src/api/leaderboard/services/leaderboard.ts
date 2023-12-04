@@ -172,7 +172,7 @@ export default factories.createCoreService(
           filters: {
             name: "monthly",
           },
-          fields: ["criteria"],
+          fields: ["criteria", "ref_date"],
           populate: {
             records: {
               fields: ["ranking", "date"],
@@ -201,7 +201,7 @@ export default factories.createCoreService(
           ...leaderboard.records,
           {
             ranking: lastRankings,
-            date: now,
+            date: leaderboard.ref_date,
           },
         ];
       }
