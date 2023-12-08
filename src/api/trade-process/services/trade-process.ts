@@ -279,6 +279,7 @@ offset ${pageNum - 1} * ${pageSize};
         history: [
           {
             status: "proposed",
+            date: now,
           },
         ],
         proposer_items: proposerItems.map((id) => ({ id })),
@@ -325,6 +326,7 @@ offset ${pageNum - 1} * ${pageSize};
     partnerItems: number[]
   ) {
     const { id, history, proposer_items, partner_items } = trade;
+    const now = Date.now();
 
     // rollback status of previous items to owned
     await strapi
@@ -344,6 +346,7 @@ offset ${pageNum - 1} * ${pageSize};
           ...history,
           {
             status: "counter_proposed",
+            date: now,
           },
         ],
         proposer_items: proposerItems.map((id) => ({ id })),
@@ -457,6 +460,7 @@ offset ${pageNum - 1} * ${pageSize};
     }
 
     const { id, history, proposer_items, partner_items } = trade;
+    const now = Date.now();
 
     const prevStatus = trade.status;
     const target = prevStatus === "proposed" ? proposer_items : partner_items;
@@ -476,6 +480,7 @@ offset ${pageNum - 1} * ${pageSize};
           ...history,
           {
             status,
+            date: now,
           },
         ],
         proposer_read: by === trade.proposer.id,

@@ -139,6 +139,7 @@ type TradeStatus =
 type TradeHistory = {
   id: number;
   status: TradeStatus;
+  date: Date;
 };
 
 type Trade = {

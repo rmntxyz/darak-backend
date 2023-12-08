@@ -72,5 +72,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/admin/fill-trade-history-date",
+      handler: "admin.fill-trade-history-date",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

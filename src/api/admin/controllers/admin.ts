@@ -314,4 +314,64 @@ export default {
 
     return 200;
   },
+
+  "fill-trade-history-date": async (ctx) => {
+    const trades = await strapi.entityService.findMany("api::trade.trade", {
+      fields: ["createdAt", "expires"],
+      populate: {
+        history: true,
+      },
+    });
+
+    let counter = 0;
+    const promises = trades.map(async (trade) => {
+      const { id, createdAt, expires, history } = trade;
+
+      let changed = false;
+      const newHistory = history.map((h) => {
+        if (h.date) {
+          return h;
+        }
+
+        changed = true;
+
+        let date = new Date(createdAt);
+
+        if (h.status === "proposed") {
+          // do nothing
+        } else if (h.status === "canceled") {
+          date.setHours(date.getHours() + 1);
+        } else if (h.status === "counter_proposed" || h.status === "rejected") {
+          date.setHours(date.getHours() + 3);
+        } else if (h.status === "success" || h.status === "failed") {
+          date.setHours(date.getHours() + 8);
+        } else if (h.status === "expired") {
+          date = new Date(expires);
+        }
+
+        return {
+          ...h,
+          date,
+        };
+      });
+
+      if (changed) {
+        console.log(`trade ${id} changed`);
+
+        await strapi.entityService.update("api::trade.trade", id, {
+          data: {
+            history: newHistory,
+          },
+        });
+      }
+
+      counter++;
+    });
+
+    await Promise.all(promises);
+
+    console.log("completed", counter);
+
+    return trades;
+  },
 };
