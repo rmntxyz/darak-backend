@@ -6,5 +6,11 @@
     "description": ""
   },
   "options": {},
-  "attributes": {}
+  "attributes": {
+    "rewards": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::reward.reward"
+    }
+  }
 }
