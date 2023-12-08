@@ -18,6 +18,9 @@
         "rejected",
         "expired"
       ]
+    },
+    "date": {
+      "type": "datetime"
     }
   }
 }
