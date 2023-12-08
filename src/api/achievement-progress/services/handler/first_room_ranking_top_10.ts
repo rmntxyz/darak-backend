@@ -5,22 +5,29 @@ async function verify(user: User, progress: AchievementProgress) {
     .service("api::user-room.user-room")
     .getUserRooms(user.id);
 
-  const roomIds = userRooms.map((userRoom) => userRoom.room.id);
+  const filtered = userRooms
+    .filter((r) => r.completion_time && r.completion_time !== null)
+    .map((r) => ({
+      roomId: r.room.id,
+      completion_time: r.completion_time,
+    }));
 
   let verified = false;
+  let minCompletionTime = new Date().getTime();
 
-  for (const roomId of roomIds) {
+  for (const { roomId, completion_time } of filtered) {
     const ranking = await strapi
       .service("api::leaderboard.leaderboard")
       .getRoomCompletionRankings(roomId);
 
     if (ranking.findIndex((rank) => rank.id === user.id) < 10) {
       verified = true;
-      break;
+      minCompletionTime = Math.min(
+        minCompletionTime,
+        new Date(completion_time).getTime()
+      );
     }
   }
-
-  const now = new Date();
 
   const updatedProgresses = [];
 
@@ -33,7 +40,7 @@ async function verify(user: User, progress: AchievementProgress) {
         data: {
           progress: 1,
           completed: true,
-          completion_date: now,
+          completion_date: minCompletionTime,
         },
       }
     );
