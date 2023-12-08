@@ -1,20 +1,22 @@
 import { simpleProgressOptions } from "../achievement-progress";
 
 async function verify(user: User, progress: AchievementProgress) {
-  const histories = await strapi.db
-    .query("api::star-point-history.star-point-history")
-    .findMany({
-      where: {
+  const histories = await strapi.entityService.findMany(
+    "api::star-point-history.star-point-history",
+    {
+      filters: {
         star_point: {
           user: { id: user.id },
         },
         detail: "item_sale",
       },
-    });
+      sort: "createdAt",
+      start: 0,
+      limit: progress.achievement.goal,
+    }
+  );
 
   const count = histories.flatMap((history) => history.inventories).length;
-
-  const now = new Date();
 
   const updatedProgresses = [];
 
@@ -30,7 +32,7 @@ async function verify(user: User, progress: AchievementProgress) {
         data: {
           progress: goal,
           completed: true,
-          completion_date: now,
+          completion_date: histories[goal - 1].createdAt,
         },
       }
     );
