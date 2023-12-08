@@ -4,10 +4,16 @@ async function verify(user: User, progress: AchievementProgress) {
   const userRooms = await strapi
     .service("api::user-room.user-room")
     .getUserRooms(user.id);
-  const completion_count = userRooms.filter(
-    (userRoom) => userRoom.completed
-  ).length;
-  const now = new Date();
+
+  const completed = userRooms
+    .filter((userRoom) => userRoom.completed)
+    .sort(
+      (a, b) =>
+        new Date(a.completion_time).getTime() -
+        new Date(b.completion_time).getTime()
+    );
+
+  const completion_count = completed.length;
 
   const updatedProgresses = [];
   const { milestone_progresses } = progress;
@@ -29,7 +35,7 @@ async function verify(user: User, progress: AchievementProgress) {
           data: {
             progress: goal,
             completed: true,
-            completion_date: now,
+            completion_date: completed[goal - 1].completion_time,
           },
         }
       );
@@ -61,7 +67,7 @@ async function verify(user: User, progress: AchievementProgress) {
         data: {
           progress: goal,
           completed: true,
-          completion_date: now,
+          completion_date: completed[goal - 1].completion_time,
         },
       }
     );
