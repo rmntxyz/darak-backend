@@ -303,8 +303,8 @@ export default {
       }
     );
 
-    // const userIds = users.map((user) => user.id);
-    const userIds = [45, 86];
+    const userIds = users.map((user) => user.id);
+    // const userIds = [45, 86];
 
     await strapi
       .service("api::achievement-progress.achievement-progress")
