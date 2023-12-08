@@ -1,15 +1,22 @@
 import { simpleProgressOptions } from "../achievement-progress";
 
 async function verify(user: User, progress: AchievementProgress) {
-  const count = await strapi.db.query("api::inventory.inventory").count({
-    where: {
-      serial_number: 1,
-      users_permissions_user: { id: user.id },
-      item: { $or: [{ rarity: "rare" }, { rarity: "unique" }] },
-    },
-  });
+  const userItems = await strapi.entityService.findMany(
+    "api::inventory.inventory",
+    {
+      fields: ["updatedAt"],
+      filters: {
+        serial_number: 1,
+        users_permissions_user: { id: user.id },
+        item: { $or: [{ rarity: "rare" }, { rarity: "unique" }] },
+      },
+      sort: "updatedAt",
+      start: 0,
+      limit: progress.achievement.goal,
+    }
+  );
 
-  const now = new Date();
+  const count = userItems.length;
 
   const updatedProgresses = [];
 
@@ -25,7 +32,7 @@ async function verify(user: User, progress: AchievementProgress) {
         data: {
           progress: goal,
           completed: true,
-          completion_date: now,
+          completion_date: userItems[goal - 1].updatedAt,
         },
       }
     );
