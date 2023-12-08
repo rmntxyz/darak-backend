@@ -19,7 +19,7 @@ async function verify(user: User, quest: DailyQuestProgress) {
   );
 
   if (history.length === 0) {
-    return null;
+    return quest;
   }
 
   let { id, current_draw, longest_draw, last_draw_date } = user.streak;
@@ -27,7 +27,19 @@ async function verify(user: User, quest: DailyQuestProgress) {
   const lastRefTimestamp = getRefTimestamp(last_draw_date);
 
   if (lastRefTimestamp === refTimestamp) {
-    throw new Error("already draw today");
+    // 만약 퀘스트 완료는 했는데 보상을 받지 못한 경우에 생겼다고 가정한다.
+    // claim_rewards가 실패한 경우가 해당된다.
+    // is_completed 만 false로 변경하고 진입하면 여기로 들어오게 된다.
+    // is_completed만 true로 변경시켜준다.
+    // 그러면 이후에 claim_rewards가 실행될 것이다.
+    return await strapi
+      .service("api::daily-quest-progress.daily-quest-progress")
+      .update(quest.id, {
+        ...progressDefaultOptions,
+        data: {
+          is_completed: true,
+        },
+      });
   }
 
   if (lastRefTimestamp === refTimestamp - 86400000) {
