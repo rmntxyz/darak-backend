@@ -24,7 +24,7 @@ export default factories.createCoreService(
         } else if (reward.type === "star_point") {
           await strapi
             .service("api::star-point.star-point")
-            .updateStarPoint(user.star_point, amount, "achievement_reward");
+            .updateStarPoint(user.id, amount, "achievement_reward");
         } else if (reward.type === "item") {
           const { item, amount } = reward;
 

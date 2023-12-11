@@ -170,24 +170,10 @@ function drawItem(info: DrawInfo) {
 }
 
 async function deductStarPoint(user: User, cost: number, userItems: number[]) {
-  const { star_point } = user;
-
   await strapi.db.transaction(async () => {
-    let starPoint = star_point;
-
-    if (!starPoint) {
-      starPoint = await strapi
-        .service("api::star-point.star-point")
-        .getStarPoint(user.id);
-    }
-
-    if (starPoint.amount >= cost) {
-      await strapi
-        .service("api::star-point.star-point")
-        .updateStarPoint(starPoint, -cost, "item_draw", userItems);
-    } else {
-      throw ErrorCode.NOT_ENOUGH_STAR_POINTS;
-    }
+    await strapi
+      .service("api::star-point.star-point")
+      .updateStarPoint(user.id, -cost, "item_draw", userItems);
   });
 }
 
