@@ -374,4 +374,62 @@ export default {
 
     return trades;
   },
+
+  "send-unpaid-star-points": async (ctx) => {
+    const list: { userId: number; histories: StarPointHistory[] }[] =
+      await strapi.service("api::admin.admin").getUnrewardedHistory();
+
+    for (const { userId, histories } of list) {
+      const last = histories[histories.length - 1];
+      let amount = last.remaining - last.change;
+
+      const restHistories = await strapi.entityService.findMany(
+        "api::star-point-history.star-point-history",
+        {
+          filters: {
+            star_point: { user: { id: userId } },
+            id: { $gt: last.id },
+          },
+        }
+      );
+
+      const exclusionIndex = histories.length - 1;
+      const allHistories = [...histories, ...restHistories];
+
+      for (let i = 0; i < allHistories.length; i++) {
+        const history = allHistories[i];
+        const change = history.change;
+
+        if (i !== exclusionIndex) {
+          amount += change;
+        }
+
+        await strapi.entityService.update(
+          "api::star-point-history.star-point-history",
+          history.id,
+          {
+            data: {
+              remaining: amount,
+            },
+          }
+        );
+      }
+
+      await strapi.entityService.update(
+        "api::star-point.star-point",
+        last.star_point.id,
+        {
+          data: {
+            amount,
+          },
+        }
+      );
+
+      console.log({ userId, amount });
+    }
+
+    console.log("completed");
+
+    return 200;
+  },
 };

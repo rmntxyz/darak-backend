@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { ErrorCode } from "../../../constant";
 
 export default factories.createCoreService(
   "api::star-point.star-point",
@@ -35,11 +36,19 @@ export default factories.createCoreService(
     },
 
     async updateStarPoint(
-      starPoint: StarPoint,
+      userId: number,
       change: number,
       detail: StarPointChangeDetail,
       userItems: number[] = []
     ) {
+      const starPoint = await strapi
+        .service("api::star-point.star-point")
+        .getStarPoint(userId);
+
+      if (starPoint.amount + change < 0) {
+        throw ErrorCode.NOT_ENOUGH_STAR_POINTS;
+      }
+
       const updated = await strapi.entityService.update(
         "api::star-point.star-point",
         starPoint.id,

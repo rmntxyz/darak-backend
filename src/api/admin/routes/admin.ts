@@ -81,5 +81,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/admin/send-unpaid-star-points",
+      handler: "admin.send-unpaid-star-points",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
