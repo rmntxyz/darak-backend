@@ -12,4 +12,7 @@ export default ({ env }) => ({
       },
     },
   },
+  publisher: {
+    enabled: true,
+  },
 });

@@ -398,7 +398,7 @@ offset ${pageNum - 1} * ${pageSize};
             partnerItems: [],
           };
         }
-        acc[each.roomId].proposerItems.push(each.itemId);
+        acc[each.roomId].proposerItems!.push(each.itemId);
         return acc;
       }, tradeInfo);
     trade.partner_items
@@ -410,7 +410,7 @@ offset ${pageNum - 1} * ${pageSize};
             partnerItems: [],
           };
         }
-        acc[each.roomId].partnerItems.push(each.itemId);
+        acc[each.roomId].partnerItems!.push(each.itemId);
         return acc;
       }, tradeInfo);
 

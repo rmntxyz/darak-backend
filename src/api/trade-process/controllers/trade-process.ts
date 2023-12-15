@@ -442,7 +442,7 @@ export default {
       const now = Date.now();
       const promises = [];
 
-      for (const trade of trades) {
+      for (const trade of trades as Trade[]) {
         if (
           (trade.status === "proposed" ||
             trade.status === "counter_proposed") &&
@@ -547,7 +547,7 @@ export default {
 
       const list = [];
 
-      for (const trade of trades) {
+      for (const trade of trades as Trade[]) {
         if (trade.proposer.id === userId) {
           if (!trade.proposer_read) {
             const updated = await strapi.entityService.update(

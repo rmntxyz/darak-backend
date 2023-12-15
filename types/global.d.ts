@@ -27,6 +27,28 @@ type User = {
   daily_quest_progresses: DailyQuestProgress[];
 };
 
+type Creator = {};
+
+type WebToon = {};
+
+type Room = {
+  id: number;
+  name: string;
+  desc: string;
+  users: User[];
+  rid: string;
+  draws: Draw[];
+  creator: Creator[];
+  items: Item[];
+  image_empty: { url: string };
+  image_complete: { url: string };
+  start_date: Date;
+  end_date: Date;
+  webtoon: WebToon;
+  user_rooms: UserRoom[];
+  key_scenes: { url: string }[];
+};
+
 type StarPoint = {
   id: number;
   amount: number;
@@ -97,6 +119,7 @@ type Item = {
 };
 
 type Draw = {
+  id: number;
   cost: number;
   currency_type: string;
   draws_per_cost: number;
@@ -123,6 +146,7 @@ type Inventory = {
   item: Item;
   status: UserItemStatus;
   users_permissions_user: User;
+  updatedAt: Date;
 };
 
 type UserItemStatus = null | "owned" | "trading" | "auctioning";

@@ -53,6 +53,10 @@ module.exports = (plugin) => {
       }
     );
 
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
     if (user.star_point === null) {
       user.star_point = await strapi
         .service("api::star-point.star-point")

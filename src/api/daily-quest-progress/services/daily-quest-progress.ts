@@ -42,7 +42,7 @@ export default factories.createCoreService(
     async getTodayQuest(userId: number) {
       const inProgresses = await getDailyQuestProgresses(userId);
 
-      if (inProgresses.length > 0) {
+      if (inProgresses!.length > 0) {
         return inProgresses;
       }
 
@@ -50,7 +50,7 @@ export default factories.createCoreService(
         .query("api::daily-quest.daily-quest")
         .findMany({});
 
-      const quests = [];
+      const quests: any[] = [];
 
       for (const dailyQuest of dailyQuests) {
         const quest = await strapi.entityService.create(
@@ -117,7 +117,7 @@ export default factories.createCoreService(
 
     async verifyAll(userId: number) {
       // get all daily quests
-      let progresses = [];
+      let progresses: any = [];
 
       await strapi.db.transaction(async () => {
         const dailyQuestProgresses = await strapi
@@ -154,7 +154,7 @@ export default factories.createCoreService(
     },
 
     async claimRewards(userId: number, progressId: number) {
-      let results = null;
+      let results: any = null;
 
       await strapi.db.transaction(async () => {
         const progress = await strapi.entityService.findOne(

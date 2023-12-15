@@ -75,7 +75,7 @@ export default {
   },
 
   "check-user-room": async (ctx) => {
-    const userRooms: UserRoom[] = await strapi.entityService.findMany(
+    const userRooms = await strapi.entityService.findMany(
       "api::user-room.user-room",
       {
         populate: {
@@ -94,7 +94,7 @@ export default {
       }
     );
 
-    for (const userRoom of userRooms) {
+    for (const userRoom of userRooms as UserRoom[]) {
       const id = userRoom.id;
       const userId = userRoom.user.id;
       // if (!(id === 166 && userId === 45)) {
@@ -124,7 +124,7 @@ export default {
   },
 
   "reset-owned-items": async (ctx) => {
-    const userRooms: UserRoom[] = await strapi.entityService.findMany(
+    const userRooms = await strapi.entityService.findMany(
       "api::user-room.user-room",
       {
         populate: {
@@ -143,7 +143,7 @@ export default {
       }
     );
 
-    for (const userRoom of userRooms) {
+    for (const userRoom of userRooms as UserRoom[]) {
       const id = userRoom.id;
       const userId = userRoom.user.id;
 
@@ -242,7 +242,7 @@ export default {
         let completed = false;
         let duration = null;
 
-        for (const userItem of userItems) {
+        for (const userItem of userItems as Inventory[]) {
           const itemId = userItem.item.id;
           if (!itemIds.has(itemId)) {
             itemIds.set(itemId, 0);
@@ -394,7 +394,7 @@ export default {
       );
 
       const exclusionIndex = histories.length - 1;
-      const allHistories = [...histories, ...restHistories];
+      const allHistories = [...histories, ...(restHistories as any[])];
 
       for (let i = 0; i < allHistories.length; i++) {
         const history = allHistories[i];
