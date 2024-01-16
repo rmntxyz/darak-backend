@@ -2,6 +2,15 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/rooms",
+      handler: "room.get-all-rooms",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/room/:roomName",
       handler: "room.get-room-by-name",
       config: {

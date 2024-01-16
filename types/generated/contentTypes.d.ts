@@ -1607,9 +1607,24 @@ export interface ApiRoomRoom extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    name: Attribute.String;
-    desc: Attribute.Text;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     users: Attribute.Relation<
       'api::room.room',
       'manyToMany',
@@ -1623,22 +1638,52 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       'api::creator.creator'
     >;
     items: Attribute.Relation<'api::room.room', 'oneToMany', 'api::item.item'>;
-    image_empty: Attribute.Media;
-    image_complete: Attribute.Media;
-    start_date: Attribute.DateTime;
-    end_date: Attribute.DateTime;
+    image_empty: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    image_complete: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    start_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    end_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     webtoon: Attribute.Relation<
       'api::room.room',
       'manyToOne',
       'api::webtoon.webtoon'
     >;
-    display_order: Attribute.Integer;
+    display_order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     user_rooms: Attribute.Relation<
       'api::room.room',
       'oneToMany',
       'api::user-room.user-room'
     >;
-    key_scenes: Attribute.Media;
+    key_scenes: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1646,6 +1691,12 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::room.room', 'oneToOne', 'admin::user'> &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::room.room',
+      'oneToMany',
+      'api::room.room'
+    >;
+    locale: Attribute.String;
   };
 }
 

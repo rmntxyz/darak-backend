@@ -74,7 +74,19 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
   async findRooomByRoomName(roomName: string) {
     return await strapi.entityService.findMany("api::room.room", {
       ...roomsDefaultOptions,
-      filters: { rid: roomName },
+      filters: {
+        rid: roomName,
+        publishedAt: { $ne: null },
+      },
+    });
+  },
+
+  async findAll() {
+    return await strapi.entityService.findMany("api::room.room", {
+      ...roomsDefaultOptions,
+      filters: {
+        publishedAt: { $ne: null },
+      },
     });
   },
 
