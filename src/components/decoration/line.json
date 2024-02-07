@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_decoration_lines",
+  "info": {
+    "displayName": "line",
+    "icon": "pencil"
+  },
+  "options": {},
+  "attributes": {
+    "attribute": {
+      "type": "json"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "deco_items",
+  "info": {
+    "singularName": "deco-item",
+    "pluralName": "deco-items",
+    "displayName": "DecoItem"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "name": {
+      "type": "string"
+    },
+    "uploader": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "deco_items"
+    },
+    "desc": {
+      "type": "text"
+    }
+  }
+}

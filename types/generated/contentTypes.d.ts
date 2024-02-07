@@ -758,6 +758,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::achievement-progress.achievement-progress'
     >;
+    deco_items: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::deco-item.deco-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1199,6 +1204,43 @@ export interface ApiDailyQuestProgressDailyQuestProgress
   };
 }
 
+export interface ApiDecoItemDecoItem extends Schema.CollectionType {
+  collectionName: 'deco_items';
+  info: {
+    singularName: 'deco-item';
+    pluralName: 'deco-items';
+    displayName: 'DecoItem';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    image: Attribute.Media;
+    name: Attribute.String;
+    uploader: Attribute.Relation<
+      'api::deco-item.deco-item',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    desc: Attribute.Text;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::deco-item.deco-item',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::deco-item.deco-item',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiDrawDraw extends Schema.CollectionType {
   collectionName: 'draws';
   info: {
@@ -1607,24 +1649,9 @@ export interface ApiRoomRoom extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
-  pluginOptions: {
-    i18n: {
-      localized: true;
-    };
-  };
   attributes: {
-    name: Attribute.String &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    desc: Attribute.Text &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    name: Attribute.String;
+    desc: Attribute.Text;
     users: Attribute.Relation<
       'api::room.room',
       'manyToMany',
@@ -1638,52 +1665,24 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       'api::creator.creator'
     >;
     items: Attribute.Relation<'api::room.room', 'oneToMany', 'api::item.item'>;
-    image_empty: Attribute.Media &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    image_complete: Attribute.Media &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    start_date: Attribute.DateTime &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
-    end_date: Attribute.DateTime &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    image_empty: Attribute.Media;
+    image_complete: Attribute.Media;
+    start_date: Attribute.DateTime;
+    end_date: Attribute.DateTime;
     webtoon: Attribute.Relation<
       'api::room.room',
       'manyToOne',
       'api::webtoon.webtoon'
     >;
-    display_order: Attribute.Integer &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    display_order: Attribute.Integer;
     user_rooms: Attribute.Relation<
       'api::room.room',
       'oneToMany',
       'api::user-room.user-room'
     >;
-    key_scenes: Attribute.Media &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
+    key_scenes: Attribute.Media;
+    items_sprite_image: Attribute.Media;
+    items_sprite_json: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1691,12 +1690,6 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::room.room', 'oneToOne', 'admin::user'> &
       Attribute.Private;
-    localizations: Attribute.Relation<
-      'api::room.room',
-      'oneToMany',
-      'api::room.room'
-    >;
-    locale: Attribute.String;
   };
 }
 
@@ -1894,6 +1887,41 @@ export interface ApiTradeTrade extends Schema.CollectionType {
   };
 }
 
+export interface ApiUserDecorationUserDecoration extends Schema.CollectionType {
+  collectionName: 'user_decorations';
+  info: {
+    singularName: 'user-decoration';
+    pluralName: 'user-decorations';
+    displayName: 'UserDecoration';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    items: Attribute.Component<'decoration.item', true>;
+    deco_items: Attribute.Component<'decoration.deco-item', true>;
+    texts: Attribute.Component<'decoration.text', true>;
+    lines: Attribute.Component<'decoration.line', true>;
+    snapshot: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-decoration.user-decoration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-decoration.user-decoration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserRoomUserRoom extends Schema.CollectionType {
   collectionName: 'user_rooms';
   info: {
@@ -2075,6 +2103,7 @@ declare module '@strapi/strapi' {
       'api::creator.creator': ApiCreatorCreator;
       'api::daily-quest.daily-quest': ApiDailyQuestDailyQuest;
       'api::daily-quest-progress.daily-quest-progress': ApiDailyQuestProgressDailyQuestProgress;
+      'api::deco-item.deco-item': ApiDecoItemDecoItem;
       'api::draw.draw': ApiDrawDraw;
       'api::draw-history.draw-history': ApiDrawHistoryDrawHistory;
       'api::episode.episode': ApiEpisodeEpisode;
@@ -2090,6 +2119,7 @@ declare module '@strapi/strapi' {
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::streak.streak': ApiStreakStreak;
       'api::trade.trade': ApiTradeTrade;
+      'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
       'api::user-room.user-room': ApiUserRoomUserRoom;
       'api::webtoon.webtoon': ApiWebtoonWebtoon;
       'api::webtoon-outlink.webtoon-outlink': ApiWebtoonOutlinkWebtoonOutlink;

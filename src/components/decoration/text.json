@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_decoration_texts",
+  "info": {
+    "displayName": "text",
+    "icon": "strikeThrough"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    },
+    "attribute": {
+      "type": "json"
+    }
+  }
+}

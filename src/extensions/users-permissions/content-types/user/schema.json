@@ -143,6 +143,12 @@
       "relation": "oneToMany",
       "target": "api::achievement-progress.achievement-progress",
       "mappedBy": "user"
+    },
+    "deco_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::deco-item.deco-item",
+      "mappedBy": "uploader"
     }
   }
 }

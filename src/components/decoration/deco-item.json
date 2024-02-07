@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_decoration_deco_items",
+  "info": {
+    "displayName": "deco_item",
+    "icon": "emotionHappy",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "deco_item": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::deco-item.deco-item"
+    },
+    "attribute": {
+      "type": "json"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_decorations",
+  "info": {
+    "singularName": "user-decoration",
+    "pluralName": "user-decorations",
+    "displayName": "UserDecoration",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "items": {
+      "displayName": "item",
+      "type": "component",
+      "repeatable": true,
+      "component": "decoration.item"
+    },
+    "deco_items": {
+      "displayName": "deco_item",
+      "type": "component",
+      "repeatable": true,
+      "component": "decoration.deco-item"
+    },
+    "texts": {
+      "displayName": "text",
+      "type": "component",
+      "repeatable": true,
+      "component": "decoration.text"
+    },
+    "lines": {
+      "displayName": "line",
+      "type": "component",
+      "repeatable": true,
+      "component": "decoration.line"
+    },
+    "snapshot": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}
