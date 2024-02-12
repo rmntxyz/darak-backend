@@ -93,5 +93,26 @@ module.exports = (plugin) => {
     });
   };
 
+  plugin.controllers.auth.saveDeviceToken = async (ctx) => {
+    var res = await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      ctx.state.user.id,
+      {
+        data: { device_token: ctx.request.body.token },
+      }
+    );
+    ctx.body = res;
+  };
+
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/auth/device-token",
+    handler: "auth.saveDeviceToken",
+    config: {
+      prefix: "",
+      policies: [],
+    },
+  });
+
   return plugin;
 };

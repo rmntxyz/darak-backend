@@ -155,6 +155,9 @@
       "relation": "oneToMany",
       "target": "api::user-decoration.user-decoration",
       "mappedBy": "user"
+    },
+    "device_token": {
+      "type": "string"
     }
   }
 }
