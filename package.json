@@ -21,6 +21,7 @@
     "better-sqlite3": "8.0.1",
     "deep-diff": "^1.0.2",
     "pg": "^8.11.2",
+    "strapi-plugin-fcm": "^1.0.8",
     "strapi-plugin-publisher": "1.3.8"
   },
   "engines": {

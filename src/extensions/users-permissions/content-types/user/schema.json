@@ -149,6 +149,12 @@
       "relation": "oneToMany",
       "target": "api::deco-item.deco-item",
       "mappedBy": "uploader"
+    },
+    "user_decorations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-decoration.user-decoration",
+      "mappedBy": "user"
     }
   }
 }
