@@ -1,0 +1,5 @@
+/**
+ * fcm service
+ */
+
+export default () => ({});

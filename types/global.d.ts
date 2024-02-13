@@ -256,3 +256,17 @@ type AchievementProgress = {
   milestone_progresses: AchievementProgress[];
   belongs_to: AchievementProgress;
 };
+
+interface ExtendedStrapi extends Strapi {
+  notification: {
+    subscribeTopic: (token: string, topic: string) => Promise<Messaging>;
+    unsubscribeTopic: (token: string, topic: string) => Promise<Messaging>;
+    sendNotificationToTopic: (topic: string, data: any) => Promise<Messaging>;
+    sendNotification: (token: string, data: any) => Promise<Messaging>;
+    sendEachNotification: (messages: Message[]) => Promise<Messaging>;
+    sendMulticastNotification: (
+      tokens: string[],
+      data: any
+    ) => Promise<Messaging>;
+  };
+}

@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { Message } from "firebase-admin/lib/messaging/messaging-api";
 
 export default {
   /**
@@ -26,21 +27,21 @@ export default {
       strapi.firebase = admin;
     };
 
-    let firebase = admin.initializeApp({
+    const firebase = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
 
     //Make Firebase available everywhere
     strapi.firebase = firebase;
 
-    let messaging = firebase.messaging();
+    const messaging = firebase.messaging();
 
-    let sendNotification = (fcm, data) => {
-      let message = {
+    const sendNotification = (fcm, data) => {
+      const message = {
         ...data,
         token: fcm,
       };
-      messaging
+      return messaging
         .send(message)
         .then((res) => {
           console.log(res);
@@ -50,12 +51,12 @@ export default {
         });
     };
 
-    let sendMulticastNotification = (fcms, data) => {
-      let message = {
+    const sendMulticastNotification = (fcms, data) => {
+      const message = {
         ...data,
         tokens: fcms,
       };
-      messaging
+      return messaging
         .sendEachForMulticast(message)
         .then((res) => {
           console.log(res);
@@ -65,12 +66,12 @@ export default {
         });
     };
 
-    let sendNotificationToTopic = (topic_name, data) => {
-      let message = {
+    const sendNotificationToTopic = (topic_name, data) => {
+      const message = {
         ...data,
         topic: topic_name,
       };
-      messaging
+      return messaging
         .send(message)
         .then((res) => {
           console.log(res);
@@ -80,8 +81,8 @@ export default {
         });
     };
 
-    let subscribeTopic = (fcm, topic_name) => {
-      messaging
+    const subscribeTopic = (fcm, topic_name) => {
+      return messaging
         .subscribeToTopic(fcm, topic_name)
         .then((res) => {
           console.log(res);
@@ -91,9 +92,20 @@ export default {
         });
     };
 
-    let unsubscribeTopic = (fcm, topic_name) => {
-      messaging
+    const unsubscribeTopic = (fcm, topic_name) => {
+      return messaging
         .unsubscribeFromTopic(fcm, topic_name)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    const sendEachNotification = (messages: Message[]) => {
+      return messaging
+        .sendEach(messages)
         .then((res) => {
           console.log(res);
         })
@@ -111,6 +123,7 @@ export default {
       sendNotificationToTopic,
       sendNotification,
       sendMulticastNotification,
+      sendEachNotification,
     };
   },
 };
