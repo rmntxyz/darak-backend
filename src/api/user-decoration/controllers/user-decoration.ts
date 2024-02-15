@@ -8,7 +8,7 @@ export default factories.createCoreController(
   "api::user-decoration.user-decoration",
   ({ strapi }) => ({
     "get-decorations-with-rooms": async (ctx) => {
-      const { userId } = ctx.params;
+      const userId = ctx.state.user?.id;
 
       if (!userId) {
         return ctx.badRequest("User id is required");
