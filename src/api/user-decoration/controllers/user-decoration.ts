@@ -7,7 +7,7 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
   "api::user-decoration.user-decoration",
   ({ strapi }) => ({
-    "get-decorations": async (ctx) => {
+    "get-decorations-with-rooms": async (ctx) => {
       const { userId } = ctx.params;
 
       if (!userId) {
@@ -23,8 +23,8 @@ export default factories.createCoreController(
         .findUserDecorations(userId);
 
       return {
-        userRooms,
-        userDecorations,
+        user_rooms: userRooms,
+        user_decorations: userDecorations,
       };
     },
     "create-decoration": async (ctx) => {

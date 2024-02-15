@@ -5,7 +5,7 @@
 import { factories } from "@strapi/strapi";
 
 const decorationDefaultOptions = {
-  fields: ["id", "user", "items", "deco_items", "texts", "lines", "snapshot"],
+  fields: ["id", "items", "deco_items", "texts", "lines", "snapshot"],
   populate: {
     items: {
       fields: ["id", "item", "attribute"],

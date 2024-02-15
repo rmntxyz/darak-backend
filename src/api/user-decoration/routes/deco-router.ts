@@ -2,8 +2,8 @@ export default {
   routes: [
     {
       method: "GET",
-      path: "/decorations",
-      handler: "user-decoration.get-decorations",
+      path: "/decorations/with-rooms",
+      handler: "user-decoration.get-decorations-with-rooms",
       config: {
         policies: [],
         middlewares: [],
