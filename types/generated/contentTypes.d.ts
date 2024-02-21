@@ -763,12 +763,12 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::deco-item.deco-item'
     >;
+    device_token: Attribute.String;
     user_decorations: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToMany',
       'api::user-decoration.user-decoration'
     >;
-    device_token: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1423,7 +1423,9 @@ export interface ApiInventoryInventory extends Schema.CollectionType {
       'manyToOne',
       'api::item.item'
     >;
-    status: Attribute.Enumeration<['owned', 'trading', 'auctioning']>;
+    status: Attribute.Enumeration<
+      ['owned', 'trading', 'auctioning', 'decorated']
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1905,16 +1907,16 @@ export interface ApiUserDecorationUserDecoration extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    items: Attribute.Component<'decoration.item', true>;
+    user_items: Attribute.Component<'decoration.item', true>;
     deco_items: Attribute.Component<'decoration.deco-item', true>;
     texts: Attribute.Component<'decoration.text', true>;
     lines: Attribute.Component<'decoration.line', true>;
-    snapshot: Attribute.Media;
     user: Attribute.Relation<
       'api::user-decoration.user-decoration',
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    snapshot: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

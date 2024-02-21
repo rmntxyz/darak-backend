@@ -18,7 +18,7 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
-    const serviceAccount = JSON.parse(process.env.GCS_SERVICE_ACCOUNT);
+    const serviceAccount = JSON.parse(process.env.GCS_FCM_SERVICE_ACCOUNT);
 
     module.exports = async () => {
       admin.initializeApp({

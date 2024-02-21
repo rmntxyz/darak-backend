@@ -36,7 +36,8 @@
       "enum": [
         "owned",
         "trading",
-        "auctioning"
+        "auctioning",
+        "decorated"
       ]
     }
   }

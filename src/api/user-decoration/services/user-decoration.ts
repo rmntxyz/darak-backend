@@ -5,30 +5,39 @@
 import { factories } from "@strapi/strapi";
 
 const decorationDefaultOptions = {
-  fields: ["id", "items", "deco_items", "texts", "lines", "snapshot"],
+  fields: ["id"],
   populate: {
-    items: {
-      fields: ["id", "item", "attribute"],
+    user_items: {
       populate: {
-        item: {
-          fields: ["name", "image", "desc", "rarity"],
+        user_item: {
+          fields: ["serial_number", "status"],
+          populate: {
+            item: {
+              fields: ["id"],
+            },
+            users_permissions_user: {
+              fields: ["id"],
+            },
+          },
         },
       },
     },
     deco_items: {
-      fields: ["id", "deco_item", "attribute"],
       populate: {
         deco_item: {
-          fields: ["name", "image", "desc"],
+          fields: ["name", "desc"],
+          populate: {
+            image: {
+              fields: ["url"],
+            },
+          },
         },
       },
     },
-    texts: {
-      fields: ["id", "text", "attribute"],
-    },
-    lines: {
-      fields: ["id", "attribute"],
-    },
+    texts: true,
+    lines: true,
+    user: { fields: ["id"] },
+    snapshot: { fields: ["url"] },
   },
 };
 

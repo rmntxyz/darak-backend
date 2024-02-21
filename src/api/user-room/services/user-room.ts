@@ -96,6 +96,11 @@ export default factories.createCoreService(
                 },
                 items: {
                   fields: ["category", "rarity"],
+                  populate: {
+                    image: {
+                      fields: ["url"],
+                    },
+                  },
                 },
               },
             },
@@ -125,6 +130,11 @@ export default factories.createCoreService(
                 },
                 items: {
                   fields: ["category", "rarity"],
+                  populate: {
+                    image: {
+                      fields: ["url"],
+                    },
+                  },
                 },
               },
             },

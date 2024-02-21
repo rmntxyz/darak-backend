@@ -150,14 +150,14 @@
       "target": "api::deco-item.deco-item",
       "mappedBy": "uploader"
     },
+    "device_token": {
+      "type": "string"
+    },
     "user_decorations": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::user-decoration.user-decoration",
       "mappedBy": "user"
-    },
-    "device_token": {
-      "type": "string"
     }
   }
 }

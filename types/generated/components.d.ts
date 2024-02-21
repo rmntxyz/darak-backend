@@ -31,11 +31,16 @@ export interface DecorationDecoItem extends Schema.Component {
 export interface DecorationItem extends Schema.Component {
   collectionName: 'components_decoration_items';
   info: {
-    displayName: 'item';
+    displayName: 'User_item';
     icon: 'cube';
+    description: '';
   };
   attributes: {
-    item: Attribute.Relation<'decoration.item', 'oneToOne', 'api::item.item'>;
+    user_item: Attribute.Relation<
+      'decoration.item',
+      'oneToOne',
+      'api::inventory.inventory'
+    >;
     attribute: Attribute.JSON;
   };
 }

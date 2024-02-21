@@ -1,15 +1,16 @@
 {
   "collectionName": "components_decoration_items",
   "info": {
-    "displayName": "item",
-    "icon": "cube"
+    "displayName": "User_item",
+    "icon": "cube",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "item": {
+    "user_item": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::item.item"
+      "target": "api::inventory.inventory"
     },
     "attribute": {
       "type": "json"
