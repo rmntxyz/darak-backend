@@ -1003,10 +1003,30 @@ export interface ApiBadgeBadge extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    name: Attribute.String;
-    desc: Attribute.Text;
-    image: Attribute.Media;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     achievement: Attribute.Relation<
       'api::badge.badge',
       'oneToOne',
@@ -1027,6 +1047,12 @@ export interface ApiBadgeBadge extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::badge.badge',
+      'oneToMany',
+      'api::badge.badge'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -1041,20 +1067,60 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    name: Attribute.String;
-    desc: Attribute.Text;
-    twitter: Attribute.String;
-    instagram: Attribute.String;
-    email: Attribute.Email;
-    profile_image: Attribute.Media;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    twitter: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    instagram: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    email: Attribute.Email &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    profile_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     rooms: Attribute.Relation<
       'api::creator.creator',
       'oneToMany',
       'api::room.room'
     >;
-    cover_image: Attribute.Media;
-    cid: Attribute.String;
+    cover_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    cid: Attribute.UID;
     followers: Attribute.Relation<
       'api::creator.creator',
       'manyToMany',
@@ -1080,6 +1146,12 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::creator.creator',
+      'oneToMany',
+      'api::creator.creator'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -1290,12 +1362,37 @@ export interface ApiEpisodeEpisode extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    title: Attribute.String;
-    episode_number: Attribute.Integer;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    episode_number: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     episode_id: Attribute.UID;
-    thumbnail: Attribute.Media;
-    images: Attribute.Media;
+    thumbnail: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    images: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     webtoon: Attribute.Relation<
       'api::episode.episode',
       'manyToOne',
@@ -1316,6 +1413,12 @@ export interface ApiEpisodeEpisode extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::episode.episode',
+      'oneToMany',
+      'api::episode.episode'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -1616,9 +1719,24 @@ export interface ApiRoomRoom extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    name: Attribute.String;
-    desc: Attribute.Text;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     users: Attribute.Relation<
       'api::room.room',
       'manyToMany',
@@ -1632,24 +1750,64 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       'api::creator.creator'
     >;
     items: Attribute.Relation<'api::room.room', 'oneToMany', 'api::item.item'>;
-    image_empty: Attribute.Media;
-    image_complete: Attribute.Media;
-    start_date: Attribute.DateTime;
-    end_date: Attribute.DateTime;
+    image_empty: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    image_complete: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    start_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    end_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     webtoon: Attribute.Relation<
       'api::room.room',
       'manyToOne',
       'api::webtoon.webtoon'
     >;
-    display_order: Attribute.Integer;
+    display_order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     user_rooms: Attribute.Relation<
       'api::room.room',
       'oneToMany',
       'api::user-room.user-room'
     >;
-    key_scenes: Attribute.Media;
-    items_sprite_image: Attribute.Media;
-    items_sprite_json: Attribute.JSON;
+    key_scenes: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    items_sprite_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    items_sprite_json: Attribute.JSON &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1657,6 +1815,12 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::room.room', 'oneToOne', 'admin::user'> &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::room.room',
+      'oneToMany',
+      'api::room.room'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -1952,18 +2116,48 @@ export interface ApiWebtoonWebtoon extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    title: Attribute.String;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     episodes: Attribute.Relation<
       'api::webtoon.webtoon',
       'oneToMany',
       'api::episode.episode'
     >;
     webtoon_id: Attribute.UID;
-    cover_image: Attribute.Media;
-    volume: Attribute.Integer;
-    desc: Attribute.RichText;
-    release_date: Attribute.DateTime;
+    cover_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    volume: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    release_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     creator: Attribute.Relation<
       'api::webtoon.webtoon',
       'manyToOne',
@@ -1994,6 +2188,12 @@ export interface ApiWebtoonWebtoon extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::webtoon.webtoon',
+      'oneToMany',
+      'api::webtoon.webtoon'
+    >;
+    locale: Attribute.String;
   };
 }
 

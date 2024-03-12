@@ -12,10 +12,13 @@ export default factories.createCoreService(
         filters: { publishedAt: { $ne: null } },
         populate: {
           creator: {
-            fields: ["name", "cid", "email", "twitter", "instagram"],
+            fields: ["name", "desc", "cid", "email", "twitter", "instagram"],
             populate: {
               profile_image: {
                 fields: ["url"],
+              },
+              localizations: {
+                fields: ["name", "desc", "locale"],
               },
             },
           },
@@ -28,6 +31,9 @@ export default factories.createCoreService(
               image_complete: {
                 fields: ["url"],
               },
+              localizations: {
+                fields: ["name", "locale"],
+              },
             },
           },
           webtoon_outlinks: {
@@ -35,6 +41,14 @@ export default factories.createCoreService(
           },
           episodes: {
             fields: ["title", "episode_number", "episode_id"],
+            populate: {
+              localizations: {
+                fields: ["title", "locale"],
+              },
+            },
+          },
+          localizations: {
+            fields: ["title", "desc", "locale"],
           },
         },
       });
@@ -57,6 +71,9 @@ export default factories.createCoreService(
                 cover_image: {
                   fields: ["url"],
                 },
+                localizations: {
+                  fields: ["name", "desc", "locale"],
+                },
               },
             },
             cover_image: {
@@ -67,6 +84,9 @@ export default factories.createCoreService(
               populate: {
                 image_complete: {
                   fields: ["url"],
+                },
+                localizations: {
+                  fields: ["name", "locale"],
                 },
               },
             },
@@ -82,7 +102,13 @@ export default factories.createCoreService(
                 images: {
                   fields: ["url"],
                 },
+                localizations: {
+                  fields: ["title", "locale"],
+                },
               },
+            },
+            localizations: {
+              fields: ["title", "desc", "locale"],
             },
           },
         }

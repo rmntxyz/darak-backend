@@ -325,10 +325,18 @@ export const achievementOptions = {
         image: {
           fields: ["url"],
         },
+        localizations: {
+          fields: ["name", "desc", "locale"],
+        },
       },
     },
     milestones: {
       fields: ["aid", "goal", "title", "desc"],
+      populate: {
+        localizations: {
+          fields: ["title", "desc", "locale"],
+        },
+      },
     },
     rewards: {
       fields: ["type", "amount"],
@@ -345,6 +353,9 @@ export const achievementOptions = {
           },
         },
       },
+    },
+    localizations: {
+      fields: ["title", "desc", "locale"],
     },
   },
 };

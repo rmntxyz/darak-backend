@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::webtoon.webtoon",
@@ -11,6 +12,23 @@ export default factories.createCoreController(
       const webtoonList = await strapi
         .service("api::webtoon.webtoon")
         .getWebtoonList();
+
+      const { locale } = ctx.query;
+
+      webtoonList.forEach((webtoon) => {
+        applyLocalizations(webtoon, locale);
+
+        applyLocalizations(webtoon.creator, locale);
+
+        webtoon.episodes.forEach((episode) => {
+          applyLocalizations(episode, locale);
+        });
+
+        webtoon.rooms.forEach((room) => {
+          applyLocalizations(room, locale);
+        });
+      });
+
       return webtoonList;
     },
 

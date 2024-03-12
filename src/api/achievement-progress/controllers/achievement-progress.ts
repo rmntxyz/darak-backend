@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::achievement-progress.achievement-progress",
@@ -17,6 +18,26 @@ export default factories.createCoreController(
       const result = await strapi
         .service("api::achievement-progress.achievement-progress")
         .getAchievementList(userId);
+
+      const { locale } = ctx.query;
+
+      // result is object
+      for (let key in result) {
+        console.log(result[key]);
+        const { achievement, milestone_progresses } = result[key];
+        applyLocalizations(achievement, locale);
+        applyLocalizations(achievement.badge, locale);
+
+        achievement.milestones.forEach((milestone) => {
+          applyLocalizations(milestone, locale);
+          applyLocalizations(milestone.badge, locale);
+        });
+
+        milestone_progresses.forEach(({ achievement }) => {
+          applyLocalizations(achievement, locale);
+          applyLocalizations(achievement.badge, locale);
+        });
+      }
 
       return result;
     },
