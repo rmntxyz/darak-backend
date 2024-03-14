@@ -23,7 +23,6 @@ export default factories.createCoreController(
 
       // result is object
       for (let key in result) {
-        console.log(result[key]);
         const { achievement, milestone_progresses } = result[key];
         applyLocalizations(achievement, locale);
         applyLocalizations(achievement.badge, locale);

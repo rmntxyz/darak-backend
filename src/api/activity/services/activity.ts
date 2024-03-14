@@ -23,12 +23,26 @@ export default factories.createCoreService(
           },
           room: {
             fields: ["id", "name", "rid"],
+            populate: {
+              localizations: {
+                fields: ["name", "locale"],
+              },
+            },
           },
           item: {
             fields: ["id", "name", "rarity"],
             populate: {
               room: {
                 fields: ["id", "name", "rid"],
+                populate: {
+                  localizations: {
+                    fields: ["name", "locale"],
+                  },
+                },
+              },
+
+              localizations: {
+                fields: ["name", "locale"],
               },
             },
           },

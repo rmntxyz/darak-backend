@@ -63,6 +63,9 @@ export default ({ strapi }) => ({
               thumbnail: {
                 fields: ["url"],
               },
+              localizations: {
+                fields: ["name", "desc", "locale"],
+              },
             },
             data: { current_serial_number: current_serial_number + 1 },
           }

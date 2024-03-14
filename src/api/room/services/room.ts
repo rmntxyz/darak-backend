@@ -35,6 +35,9 @@ const roomsDefaultOptions = {
         additional_images: {
           fields: ["url"],
         },
+        localizations: {
+          fields: ["name", "desc", "locale"],
+        },
       },
     },
     creator: {
@@ -42,6 +45,9 @@ const roomsDefaultOptions = {
       populate: {
         profile_image: {
           fields: ["url"],
+        },
+        localizations: {
+          fields: ["name", "desc", "locale"],
         },
       },
     },
@@ -57,15 +63,24 @@ const roomsDefaultOptions = {
             images: {
               fields: ["url"],
             },
+            localizations: {
+              fields: ["title", "locale"],
+            },
           },
         },
         webtoon_outlinks: {
           fields: ["platform", "url"],
         },
         cover_image: {
-          populate: ["url"],
+          fields: ["url"],
+        },
+        localizations: {
+          fields: ["title", "desc", "locale"],
         },
       },
+    },
+    localizations: {
+      fields: ["name", "desc", "locale"],
     },
   },
 };
@@ -122,6 +137,9 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
             "attribute",
             "current_serial_number",
           ],
+          localizations: {
+            fields: ["name", "desc", "locale"],
+          },
         },
         creator: {
           fields: ["name", "desc", "cid"],
@@ -129,10 +147,16 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
             profile_image: {
               fields: ["url"],
             },
+            localizations: {
+              fields: ["name", "desc", "locale"],
+            },
           },
         },
         user_rooms: {
           fields: ["id"],
+        },
+        localizations: {
+          fields: ["name", "desc", "locale"],
         },
       },
     });

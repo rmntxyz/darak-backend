@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::activity.activity",
@@ -16,6 +17,15 @@ export default factories.createCoreController(
         const activities = await strapi
           .service("api::activity.activity")
           .findActivityList(category, duration, limit);
+
+        if (activities.length !== 0) {
+          const { locale } = ctx.query;
+
+          activities.forEach((activity) => {
+            applyLocalizations(activity.room, locale);
+            applyLocalizations(activity.item, locale);
+          });
+        }
 
         return activities;
       } catch (err) {

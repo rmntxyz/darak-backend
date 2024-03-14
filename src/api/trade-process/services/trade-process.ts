@@ -41,6 +41,14 @@ export const tradeDetailOptions = {
             },
             room: {
               fields: ["name"],
+              populate: {
+                localizations: {
+                  fields: ["name", "locale"],
+                },
+              },
+            },
+            localizations: {
+              fields: ["name", "locale"],
             },
           },
         },
@@ -57,6 +65,14 @@ export const tradeDetailOptions = {
             },
             room: {
               fields: ["name"],
+              populate: {
+                localizations: {
+                  fields: ["name", "locale"],
+                },
+              },
+            },
+            localizations: {
+              fields: ["name", "locale"],
             },
           },
         },

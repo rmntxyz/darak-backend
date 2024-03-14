@@ -5,7 +5,7 @@
 import { factories } from "@strapi/strapi";
 
 const defaultCreatorOptions = {
-  fields: ["name", "cid", "email", "twitter", "instagram"],
+  fields: ["name", "desc", "cid", "email", "twitter", "instagram"],
   populate: {
     profile_image: {
       fields: ["url"],
