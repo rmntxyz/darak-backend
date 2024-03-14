@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::user-decoration.user-decoration",
@@ -18,6 +19,13 @@ export default factories.createCoreController(
         .service("api::user-room.user-room")
         .getUserRooms(userId);
 
+      // localizations
+      const { locale } = ctx.query;
+
+      userRooms.forEach((userRoom) => {
+        applyLocalizations(userRoom.room, locale);
+      });
+
       const userDecorations = await strapi
         .service("api::user-decoration.user-decoration")
         .findUserDecorations(userId);
@@ -27,6 +35,7 @@ export default factories.createCoreController(
         user_decorations: userDecorations,
       };
     },
+
     "create-decoration": async (ctx) => {
       const { userId } = ctx.params;
       if (!userId) {
@@ -39,6 +48,7 @@ export default factories.createCoreController(
 
       return userDecoration;
     },
+
     "update-decoration": async (ctx) => {
       const { userId, decoId } = ctx.params;
 

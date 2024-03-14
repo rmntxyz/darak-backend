@@ -28,6 +28,9 @@ export default ({ strapi }) => ({
             additional_images: {
               fields: ["url"],
             },
+            localizations: {
+              fields: ["name", "desc", "locale"],
+            },
           },
         },
       },

@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::user-room.user-room",
@@ -29,6 +30,13 @@ export default factories.createCoreController(
         if (filtered.length === 0) {
           return [];
         }
+
+        //localizations
+        const { locale } = ctx.query;
+
+        filtered.forEach((userRoom) => {
+          applyLocalizations(userRoom.room, locale);
+        });
 
         await strapi.db.query("api::user-room.user-room").updateMany({
           where: {
@@ -69,6 +77,11 @@ export default factories.createCoreController(
             initial_completion_checked: true,
           },
         });
+
+        //localizations
+        const { locale } = ctx.query;
+
+        applyLocalizations(userRoom.room, locale);
 
         return [
           {

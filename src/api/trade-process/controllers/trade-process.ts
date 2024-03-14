@@ -3,6 +3,7 @@
  */
 
 import { ErrorCode, TRADE_ITEM_LIMIT } from "../../../constant";
+import { applyLocalizations } from "../../../utils";
 import {
   tradeDefaultOptions,
   tradeDetailOptions,
@@ -461,6 +462,25 @@ export default {
 
       await Promise.all(promises);
 
+      if (trades.length > 0) {
+        // localizations
+        const { locale } = ctx.query;
+
+        for (const trade of trades as Trade[]) {
+          const { proposer_items, partner_items } = trade;
+
+          proposer_items.forEach((userItem) => {
+            applyLocalizations(userItem.item, locale);
+            applyLocalizations(userItem.item.room, locale);
+          });
+
+          partner_items.forEach((userItem) => {
+            applyLocalizations(userItem.item, locale);
+            applyLocalizations(userItem.item.room, locale);
+          });
+        }
+      }
+
       return trades;
     });
   },
@@ -478,11 +498,30 @@ export default {
       return ctx.badRequest("tradeId parameter is required");
     }
 
-    return await strapi.entityService.findOne(
+    const trade = await strapi.entityService.findOne(
       "api::trade.trade",
       tradeId,
       tradeDetailOptions
     );
+
+    if (trade) {
+      // localizations
+      const { locale } = ctx.query;
+
+      const { proposer_items, partner_items } = trade;
+
+      proposer_items.forEach((userItem) => {
+        applyLocalizations(userItem.item, locale);
+        applyLocalizations(userItem.item.room, locale);
+      });
+
+      partner_items.forEach((userItem) => {
+        applyLocalizations(userItem.item, locale);
+        applyLocalizations(userItem.item.room, locale);
+      });
+    }
+
+    return trade;
   },
 
   "read-trade-status": async (ctx) => {

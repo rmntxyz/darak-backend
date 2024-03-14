@@ -29,7 +29,34 @@ export default factories.createCoreController(
         // localizations
         const { locale } = ctx.query;
 
-        if (locale) {
+        applyLocalizations(room, locale);
+
+        applyLocalizations(room.creator, locale);
+
+        if (room.webtoon) {
+          applyLocalizations(room.webtoon, locale);
+
+          room.webtoon.episodes.forEach((episode) => {
+            applyLocalizations(episode, locale);
+          });
+        }
+
+        room.items.forEach((item) => {
+          applyLocalizations(item, locale);
+        });
+      }
+
+      return room;
+    },
+
+    "get-all-rooms": async (ctx) => {
+      const rooms = await strapi.service("api::room.room").findAll();
+
+      if (rooms.length !== 0) {
+        // localizations
+        const { locale } = ctx.query;
+
+        rooms.forEach((room) => {
           applyLocalizations(room, locale);
 
           applyLocalizations(room.creator, locale);
@@ -45,38 +72,7 @@ export default factories.createCoreController(
           room.items.forEach((item) => {
             applyLocalizations(item, locale);
           });
-        }
-      }
-
-      return room;
-    },
-
-    "get-all-rooms": async (ctx) => {
-      const rooms = await strapi.service("api::room.room").findAll();
-
-      if (rooms.length !== 0) {
-        // localizations
-        const { locale } = ctx.query;
-
-        if (locale) {
-          rooms.forEach((room) => {
-            applyLocalizations(room, locale);
-
-            applyLocalizations(room.creator, locale);
-
-            if (room.webtoon) {
-              applyLocalizations(room.webtoon, locale);
-
-              room.webtoon.episodes.forEach((episode) => {
-                applyLocalizations(episode, locale);
-              });
-            }
-
-            room.items.forEach((item) => {
-              applyLocalizations(item, locale);
-            });
-          });
-        }
+        });
       }
 
       return rooms;
@@ -97,25 +93,23 @@ export default factories.createCoreController(
         // localizations
         const { locale } = ctx.query;
 
-        if (locale) {
-          rooms.forEach((room) => {
-            applyLocalizations(room, locale);
+        rooms.forEach((room) => {
+          applyLocalizations(room, locale);
 
-            applyLocalizations(room.creator, locale);
+          applyLocalizations(room.creator, locale);
 
-            if (room.webtoon) {
-              applyLocalizations(room.webtoon, locale);
+          if (room.webtoon) {
+            applyLocalizations(room.webtoon, locale);
 
-              room.webtoon.episodes.forEach((episode) => {
-                applyLocalizations(episode, locale);
-              });
-            }
-
-            room.items.forEach((item) => {
-              applyLocalizations(item, locale);
+            room.webtoon.episodes.forEach((episode) => {
+              applyLocalizations(episode, locale);
             });
+          }
+
+          room.items.forEach((item) => {
+            applyLocalizations(item, locale);
           });
-        }
+        });
       }
 
       return rooms;
@@ -133,17 +127,15 @@ export default factories.createCoreController(
         // localizations
         const { locale } = ctx.query;
 
-        if (locale) {
-          rooms.forEach((room) => {
-            applyLocalizations(room, locale);
+        rooms.forEach((room) => {
+          applyLocalizations(room, locale);
 
-            applyLocalizations(room.creator, locale);
+          applyLocalizations(room.creator, locale);
 
-            room.items.forEach((item) => {
-              applyLocalizations(item, locale);
-            });
+          room.items.forEach((item) => {
+            applyLocalizations(item, locale);
           });
-        }
+        });
       }
 
       return rooms;

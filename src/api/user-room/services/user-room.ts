@@ -77,6 +77,7 @@ export default factories.createCoreService(
           .updateRoomCompletion(updatedUserRoom);
       }
     },
+
     async getUserRooms(userId: number) {
       const userRooms = await strapi.entityService.findMany(
         "api::user-room.user-room",
@@ -101,6 +102,9 @@ export default factories.createCoreService(
                       fields: ["url"],
                     },
                   },
+                },
+                localizations: {
+                  fields: ["name", "locale"],
                 },
               },
             },
@@ -135,6 +139,9 @@ export default factories.createCoreService(
                       fields: ["url"],
                     },
                   },
+                },
+                localizations: {
+                  fields: ["name", "locale"],
                 },
               },
             },
@@ -185,6 +192,9 @@ export default factories.createCoreService(
                   },
                   items: {
                     fields: ["category", "rarity"],
+                  },
+                  localizations: {
+                    fields: ["name", "locale"],
                   },
                 },
               },

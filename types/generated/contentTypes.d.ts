@@ -1517,27 +1517,91 @@ export interface ApiItemItem extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    name: Attribute.String;
-    desc: Attribute.Text;
-    item_code: Attribute.Integer & Attribute.Unique & Attribute.DefaultTo<-1>;
-    category: Attribute.Enumeration<['decoration', 'built-in']>;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    item_code: Attribute.Integer &
+      Attribute.Unique &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<-1>;
+    category: Attribute.Enumeration<['decoration', 'built-in']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     rarity: Attribute.Enumeration<
       ['none', 'common', 'uncommon', 'rare', 'super_rare', 'unique']
     > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
       Attribute.DefaultTo<'none'>;
-    price: Attribute.Integer & Attribute.Required;
+    price: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     inventories: Attribute.Relation<
       'api::item.item',
       'oneToMany',
       'api::inventory.inventory'
     >;
-    image: Attribute.Media;
-    current_serial_number: Attribute.Integer & Attribute.Required;
-    thumbnail: Attribute.Media;
+    image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    current_serial_number: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    thumbnail: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     room: Attribute.Relation<'api::item.item', 'manyToOne', 'api::room.room'>;
-    attribute: Attribute.JSON;
-    additional_images: Attribute.Media;
+    attribute: Attribute.JSON &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    additional_images: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1545,6 +1609,12 @@ export interface ApiItemItem extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::item.item', 'oneToOne', 'admin::user'> &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::item.item',
+      'oneToMany',
+      'api::item.item'
+    >;
+    locale: Attribute.String;
   };
 }
 
