@@ -489,7 +489,7 @@ offset ${pageNum - 1} * ${pageSize};
       .changeItemsStatus(changeToOwned, "owned");
 
     return await strapi.entityService.update("api::trade.trade", id, {
-      ...tradeDefaultOptions,
+      ...tradeDetailOptions,
       data: {
         status,
         history: [

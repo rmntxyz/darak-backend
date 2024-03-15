@@ -471,12 +471,16 @@ export default {
 
           proposer_items.forEach((userItem) => {
             applyLocalizations(userItem.item, locale);
-            applyLocalizations(userItem.item.room, locale);
+            if (userItem.item.room) {
+              applyLocalizations(userItem.item.room, locale);
+            }
           });
 
           partner_items.forEach((userItem) => {
             applyLocalizations(userItem.item, locale);
-            applyLocalizations(userItem.item.room, locale);
+            if (userItem.item.room) {
+              applyLocalizations(userItem.item.room, locale);
+            }
           });
         }
       }
@@ -512,12 +516,16 @@ export default {
 
       proposer_items.forEach((userItem) => {
         applyLocalizations(userItem.item, locale);
-        applyLocalizations(userItem.item.room, locale);
+        if (userItem.item.room) {
+          applyLocalizations(userItem.item.room, locale);
+        }
       });
 
       partner_items.forEach((userItem) => {
         applyLocalizations(userItem.item, locale);
-        applyLocalizations(userItem.item.room, locale);
+        if (userItem.item.room) {
+          applyLocalizations(userItem.item.room, locale);
+        }
       });
     }
 
