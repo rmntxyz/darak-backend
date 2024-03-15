@@ -33,7 +33,7 @@ export default {
       handler: "trade-process.propose-trade",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
     {
@@ -42,7 +42,7 @@ export default {
       handler: "trade-process.counter-propose-trade",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
     {
@@ -51,7 +51,7 @@ export default {
       handler: "trade-process.accept-trade",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
     {
@@ -87,7 +87,7 @@ export default {
       handler: "trade-process.cancel-trade",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
   ],

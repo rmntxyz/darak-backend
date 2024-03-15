@@ -8,7 +8,7 @@ export default ({ strapi }) => ({
   async drawRandom(userId: number, drawId: number) {
     let items = [];
 
-    await strapi.db.transaction(async () => {
+    await strapi.db.transaction(async ({ trx }) => {
       const drawCount = await strapi
         .service("api::draw-history.draw-history")
         .getDailyDrawCountByDraw(userId, drawId);
@@ -48,11 +48,17 @@ export default ({ strapi }) => ({
       const userItems = [];
 
       for (const itemId of itemIds) {
-        const item = await strapi.entityService.findOne(
-          "api::item.item",
-          itemId
-        );
-        const { current_serial_number } = item;
+        // const item = await strapi.entityService.findOne(
+        //   "api::item.item",
+        //   itemId
+        // );
+        // const { current_serial_number } = item;
+        const [{ current_serial_number }] = await strapi.db
+          .connection("items")
+          .transacting(trx)
+          .forUpdate()
+          .where("id", itemId)
+          .select("current_serial_number");
 
         const updatedItem = await strapi.entityService.update(
           "api::item.item",
