@@ -80,6 +80,25 @@ export default factories.createCoreController(
         .service("api::achievement-progress.achievement-progress")
         .getVerifiedList(userId);
 
+      const { locale } = ctx.query;
+
+      // result is object
+      for (let key in result) {
+        const { achievement, milestone_progresses } = result[key];
+        applyLocalizations(achievement, locale);
+        applyLocalizations(achievement.badge, locale);
+
+        achievement.milestones.forEach((milestone) => {
+          applyLocalizations(milestone, locale);
+          applyLocalizations(milestone.badge, locale);
+        });
+
+        milestone_progresses.forEach(({ achievement }) => {
+          applyLocalizations(achievement, locale);
+          applyLocalizations(achievement.badge, locale);
+        });
+      }
+
       return result;
     },
 
