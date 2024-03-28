@@ -22,51 +22,49 @@ export default factories.createCoreController(
         return ctx.badRequest("invalid userItems");
       }
 
-      return await strapi.db.transaction(async () => {
-        // get inventories by inventory id
-        const inventories: Inventory[] = await strapi.entityService.findMany(
-          "api::inventory.inventory",
-          {
-            filters: {
-              id: userItems,
+      // get inventories by inventory id
+      const inventories: Inventory[] = await strapi.entityService.findMany(
+        "api::inventory.inventory",
+        {
+          filters: {
+            id: userItems,
+          },
+          fields: ["status"],
+          populate: {
+            users_permissions_user: {
+              fields: ["id"],
             },
-            fields: ["status"],
-            populate: {
-              users_permissions_user: {
-                fields: ["id"],
-              },
-            },
-          }
+          },
+        }
+      );
+
+      if (inventories.some((inventory) => inventory.status === "trading")) {
+        const invalid = inventories.find(
+          (inventory) => inventory.status === "trading"
         );
+        return ctx.badRequest(
+          `item(${invalid.id}) status is invalid: ${invalid.status}`,
+          ErrorCode.INVALID_ITEMS_STATUS
+        );
+      }
 
-        if (inventories.some((inventory) => inventory.status === "trading")) {
-          const invalid = inventories.find(
-            (inventory) => inventory.status === "trading"
-          );
-          return ctx.badRequest(
-            `item(${invalid.id}) status is invalid: ${invalid.status}`,
-            ErrorCode.INVALID_ITEMS_STATUS
-          );
-        }
+      if (
+        inventories.some(
+          (inventory) => inventory.users_permissions_user?.id !== userId
+        )
+      ) {
+        const notOwned = inventories.find(
+          (inventory) => inventory.users_permissions_user?.id !== userId
+        );
+        return ctx.badRequest(
+          `item(${notOwned.id}) not owned by user`,
+          ErrorCode.ITEM_NOT_OWNED
+        );
+      }
 
-        if (
-          inventories.some(
-            (inventory) => inventory.users_permissions_user?.id !== userId
-          )
-        ) {
-          const notOwned = inventories.find(
-            (inventory) => inventory.users_permissions_user?.id !== userId
-          );
-          return ctx.badRequest(
-            `item(${notOwned.id}) not owned by user`,
-            ErrorCode.ITEM_NOT_OWNED
-          );
-        }
-
-        return await strapi
-          .service("api::inventory.inventory")
-          .sell(userId, userItems);
-      });
+      return await strapi
+        .service("api::inventory.inventory")
+        .sell(userId, userItems);
     },
 
     "sell-by-item-id": async (ctx) => {
@@ -80,49 +78,44 @@ export default factories.createCoreController(
         ctx.request.body.data
       );
 
-      return await strapi.db.transaction(async () => {
-        const userItems = [];
-        for (const itemId in data) {
-          if (typeof data[itemId] !== "number") {
-            return ctx.badRequest("invalid data", ErrorCode.NON_NUMERIC_INPUT);
-          }
-
-          const quantity = data[itemId];
-
-          // get inventories by user id and item id
-          const inventories: Inventory[] = await strapi.entityService.findMany(
-            "api::inventory.inventory",
-            {
-              filters: {
-                users_permissions_user: { id: userId },
-                item: { id: itemId },
-              },
-              fields: ["id", "serial_number", "status"],
-              sort: {
-                serial_number: "desc",
-              },
-            }
-          );
-
-          const filtered = inventories.filter(
-            (inventory) => inventory.status !== "trading"
-          );
-
-          if (filtered.length < quantity) {
-            return ctx.badRequest(
-              "invalid quantity",
-              ErrorCode.NOT_ENOUGH_ITEMS
-            );
-          }
-
-          const userItemIds = filtered.map((inventory) => inventory.id);
-          userItems.push(...userItemIds.slice(0, quantity));
+      const userItems = [];
+      for (const itemId in data) {
+        if (typeof data[itemId] !== "number") {
+          return ctx.badRequest("invalid data", ErrorCode.NON_NUMERIC_INPUT);
         }
 
-        return await strapi
-          .service("api::inventory.inventory")
-          .sell(userId, userItems);
-      });
+        const quantity = data[itemId];
+
+        // get inventories by user id and item id
+        const inventories: Inventory[] = await strapi.entityService.findMany(
+          "api::inventory.inventory",
+          {
+            filters: {
+              users_permissions_user: { id: userId },
+              item: { id: itemId },
+            },
+            fields: ["id", "serial_number", "status"],
+            sort: {
+              serial_number: "desc",
+            },
+          }
+        );
+
+        const filtered = inventories.filter(
+          (inventory) => inventory.status !== "trading"
+        );
+
+        if (filtered.length < quantity) {
+          return ctx.badRequest("invalid quantity", ErrorCode.NOT_ENOUGH_ITEMS);
+        }
+
+        const userItemIds = filtered.map((inventory) => inventory.id);
+        userItems.push(...userItemIds.slice(0, quantity));
+      }
+
+      return await strapi
+        .service("api::inventory.inventory")
+        .sell(userId, userItems);
     },
 
     transfer: async (ctx) => {},

@@ -96,7 +96,13 @@ type DailyQuest = {
 };
 
 type Reward = {
-  type: "freebie" | "star_point" | "item" | "exp";
+  type:
+    | "freebie"
+    | "star_point"
+    | "item"
+    | "exp"
+    | "trading_credit"
+    | "wheel_spin";
   amount: number;
   item?: Item;
 };

@@ -127,6 +127,7 @@ export default ({ strapi }) => ({
         }
       );
 
+      // FIXME: deduct currency is not safe because of concurrent access
       if (currency_type === "freebie") {
         await deductFreebie(user, cost);
       } else if (currency_type === "star_point") {

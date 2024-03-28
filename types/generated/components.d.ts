@@ -68,36 +68,7 @@ export interface DecorationText extends Schema.Component {
   };
 }
 
-export interface LeaderboardLeaderboardRecord extends Schema.Component {
-  collectionName: 'components_record_leaderboard_records';
-  info: {
-    displayName: 'record';
-    icon: 'server';
-    description: '';
-  };
-  attributes: {
-    ranking: Attribute.JSON;
-    date: Attribute.DateTime;
-  };
-}
-
-export interface RewardReward extends Schema.Component {
-  collectionName: 'components_reward_rewards';
-  info: {
-    displayName: 'reward';
-    icon: 'oneToMany';
-    description: '';
-  };
-  attributes: {
-    rewards: Attribute.Relation<
-      'reward.reward',
-      'oneToMany',
-      'api::reward.reward'
-    >;
-  };
-}
-
-export interface TradeHistoryTradeHistory extends Schema.Component {
+export interface HistoryTradeHistory extends Schema.Component {
   collectionName: 'components_trade_history_trade_histories';
   info: {
     displayName: 'trade_history';
@@ -120,6 +91,80 @@ export interface TradeHistoryTradeHistory extends Schema.Component {
   };
 }
 
+export interface HistoryTrading extends Schema.Component {
+  collectionName: 'components_history_tradings';
+  info: {
+    displayName: 'TradingCredit';
+    icon: 'bulletList';
+    description: '';
+  };
+  attributes: {
+    date: Attribute.DateTime;
+    detail: Attribute.Enumeration<['trade_success', 'gacha_result']>;
+    change: Attribute.Integer;
+    remaining: Attribute.Integer;
+  };
+}
+
+export interface HistoryWheelSpin extends Schema.Component {
+  collectionName: 'components_history_wheel_spins';
+  info: {
+    displayName: 'WheelSpin';
+    icon: 'bulletList';
+  };
+  attributes: {
+    date: Attribute.DateTime;
+    detail: Attribute.Enumeration<['wheeling', 'gacha_result']>;
+    change: Attribute.Integer;
+    remaining: Attribute.Integer;
+  };
+}
+
+export interface LeaderboardLeaderboardRecord extends Schema.Component {
+  collectionName: 'components_record_leaderboard_records';
+  info: {
+    displayName: 'record';
+    icon: 'server';
+    description: '';
+  };
+  attributes: {
+    ranking: Attribute.JSON;
+    date: Attribute.DateTime;
+  };
+}
+
+export interface RewardGachaReward extends Schema.Component {
+  collectionName: 'components_reward_gacha_rewards';
+  info: {
+    displayName: 'GachaReward';
+    icon: 'cube';
+  };
+  attributes: {
+    reward: Attribute.Relation<
+      'reward.gacha-reward',
+      'oneToOne',
+      'api::reward.reward'
+    >;
+    probability: Attribute.Decimal;
+  };
+}
+
+export interface RewardReward extends Schema.Component {
+  collectionName: 'components_reward_rewards';
+  info: {
+    displayName: 'reward';
+    icon: 'oneToMany';
+    description: '';
+  };
+  attributes: {
+    rewards: Attribute.Relation<
+      'reward.reward',
+      'oneToMany',
+      'api::reward.reward'
+    >;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Shared {
     export interface Components {
@@ -128,9 +173,12 @@ declare module '@strapi/strapi' {
       'decoration.item': DecorationItem;
       'decoration.line': DecorationLine;
       'decoration.text': DecorationText;
+      'history.trade-history': HistoryTradeHistory;
+      'history.trading': HistoryTrading;
+      'history.wheel-spin': HistoryWheelSpin;
       'leaderboard.leaderboard-record': LeaderboardLeaderboardRecord;
+      'reward.gacha-reward': RewardGachaReward;
       'reward.reward': RewardReward;
-      'trade-history.trade-history': TradeHistoryTradeHistory;
     }
   }
 }

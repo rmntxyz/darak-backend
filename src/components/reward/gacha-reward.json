@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_reward_gacha_rewards",
+  "info": {
+    "displayName": "GachaReward",
+    "icon": "cube"
+  },
+  "options": {},
+  "attributes": {
+    "reward": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::reward.reward"
+    },
+    "probability": {
+      "type": "decimal"
+    }
+  }
+}

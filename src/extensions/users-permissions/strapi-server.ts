@@ -114,5 +114,26 @@ module.exports = (plugin) => {
     },
   });
 
+  plugin.controllers.user.saveLanguage = async (ctx) => {
+    var res = await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      ctx.state.user.id,
+      {
+        data: { language: ctx.request.body.code },
+      }
+    );
+    ctx.body = res;
+  };
+
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/users/language",
+    handler: "user.saveLanguage",
+    config: {
+      prefix: "",
+      policies: [],
+    },
+  });
+
   return plugin;
 };

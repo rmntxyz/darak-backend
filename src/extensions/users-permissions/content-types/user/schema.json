@@ -158,6 +158,26 @@
       "relation": "oneToMany",
       "target": "api::user-decoration.user-decoration",
       "mappedBy": "user"
+    },
+    "wheel_spin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wheel-spin.wheel-spin",
+      "mappedBy": "user"
+    },
+    "trading_credit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::trading-credit.trading-credit",
+      "mappedBy": "user"
+    },
+    "language": {
+      "type": "enumeration",
+      "enum": [
+        "ko",
+        "en",
+        "ja"
+      ]
     }
   }
 }

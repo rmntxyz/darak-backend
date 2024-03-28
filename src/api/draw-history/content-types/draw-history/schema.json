@@ -29,6 +29,9 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::inventory.inventory"
+    },
+    "multiply": {
+      "type": "integer"
     }
   }
 }

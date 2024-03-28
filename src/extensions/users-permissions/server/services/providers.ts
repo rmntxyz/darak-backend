@@ -113,6 +113,16 @@ export default ({ strapi }) => {
       }
     );
 
+    const createdStarPoint = await strapi.entityService.create(
+      "api::star-point.star-point",
+      {
+        data: {
+          amount: 0,
+          publishedAt: date,
+        },
+      }
+    );
+
     // Retrieve default role.
     const defaultRole = await strapi
       .query("plugin::users-permissions.role")
@@ -127,6 +137,7 @@ export default ({ strapi }) => {
       confirmed: true,
       freebie: createdFreebie.id,
       streak: createdStreak.id,
+      star_point: createdStarPoint.id,
       level: 1,
       experience: 0,
     };

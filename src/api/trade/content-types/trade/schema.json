@@ -31,7 +31,7 @@
       "displayName": "trade_history",
       "type": "component",
       "repeatable": true,
-      "component": "trade-history.trade-history"
+      "component": "history.trade-history"
     },
     "proposer_items": {
       "type": "relation",

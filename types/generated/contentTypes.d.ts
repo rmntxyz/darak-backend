@@ -769,6 +769,17 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::user-decoration.user-decoration'
     >;
+    wheel_spin: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::wheel-spin.wheel-spin'
+    >;
+    trading_credit: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::trading-credit.trading-credit'
+    >;
+    language: Attribute.Enumeration<['ko', 'en', 'ja']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1333,6 +1344,7 @@ export interface ApiDrawHistoryDrawHistory extends Schema.CollectionType {
       'oneToMany',
       'api::inventory.inventory'
     >;
+    multiply: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1454,6 +1466,37 @@ export interface ApiFreebieFreebie extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::freebie.freebie',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGachaInfoGachaInfo extends Schema.CollectionType {
+  collectionName: 'gacha_infos';
+  info: {
+    singularName: 'gacha-info';
+    pluralName: 'gacha-infos';
+    displayName: 'GachaInfo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    probability: Attribute.Decimal;
+    rewards: Attribute.Component<'reward.gacha-reward', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::gacha-info.gacha-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::gacha-info.gacha-info',
       'oneToOne',
       'admin::user'
     > &
@@ -1753,7 +1796,9 @@ export interface ApiRewardReward extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    type: Attribute.Enumeration<['freebie', 'star_point', 'exp', 'item']>;
+    type: Attribute.Enumeration<
+      ['freebie', 'star_point', 'item', 'trading_credit', 'wheel_spin', 'exp']
+    >;
     amount: Attribute.Integer;
     item: Attribute.Relation<
       'api::reward.reward',
@@ -2047,7 +2092,7 @@ export interface ApiTradeTrade extends Schema.CollectionType {
         'expired'
       ]
     >;
-    history: Attribute.Component<'trade-history.trade-history', true>;
+    history: Attribute.Component<'history.trade-history', true>;
     proposer_items: Attribute.Relation<
       'api::trade.trade',
       'oneToMany',
@@ -2081,6 +2126,43 @@ export interface ApiTradeTrade extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::trade.trade',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTradingCreditTradingCredit extends Schema.CollectionType {
+  collectionName: 'trading_credits';
+  info: {
+    singularName: 'trading-credit';
+    pluralName: 'trading-credits';
+    displayName: 'TradingCredit';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    amount: Attribute.Integer;
+    history: Attribute.Component<'history.trading', true>;
+    user: Attribute.Relation<
+      'api::trading-credit.trading-credit',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::trading-credit.trading-credit',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::trading-credit.trading-credit',
       'oneToOne',
       'admin::user'
     > &
@@ -2321,6 +2403,43 @@ export interface ApiWebtoonOutlinkWebtoonOutlink extends Schema.CollectionType {
   };
 }
 
+export interface ApiWheelSpinWheelSpin extends Schema.CollectionType {
+  collectionName: 'wheel_spins';
+  info: {
+    singularName: 'wheel-spin';
+    pluralName: 'wheel-spins';
+    displayName: 'WheelSpin';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    amount: Attribute.Integer;
+    history: Attribute.Component<'history.wheel-spin', true>;
+    user: Attribute.Relation<
+      'api::wheel-spin.wheel-spin',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::wheel-spin.wheel-spin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::wheel-spin.wheel-spin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Shared {
     export interface ContentTypes {
@@ -2350,6 +2469,7 @@ declare module '@strapi/strapi' {
       'api::draw-history.draw-history': ApiDrawHistoryDrawHistory;
       'api::episode.episode': ApiEpisodeEpisode;
       'api::freebie.freebie': ApiFreebieFreebie;
+      'api::gacha-info.gacha-info': ApiGachaInfoGachaInfo;
       'api::inventory.inventory': ApiInventoryInventory;
       'api::item.item': ApiItemItem;
       'api::leaderboard.leaderboard': ApiLeaderboardLeaderboard;
@@ -2361,10 +2481,12 @@ declare module '@strapi/strapi' {
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::streak.streak': ApiStreakStreak;
       'api::trade.trade': ApiTradeTrade;
+      'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
       'api::user-room.user-room': ApiUserRoomUserRoom;
       'api::webtoon.webtoon': ApiWebtoonWebtoon;
       'api::webtoon-outlink.webtoon-outlink': ApiWebtoonOutlinkWebtoonOutlink;
+      'api::wheel-spin.wheel-spin': ApiWheelSpinWheelSpin;
     }
   }
 }

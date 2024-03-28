@@ -17,8 +17,10 @@
       "enum": [
         "freebie",
         "star_point",
-        "exp",
-        "item"
+        "item",
+        "trading_credit",
+        "wheel_spin",
+        "exp"
       ]
     },
     "amount": {

@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_history_tradings",
+  "info": {
+    "displayName": "TradingCredit",
+    "icon": "bulletList",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "trade_success",
+        "gacha_result"
+      ]
+    },
+    "change": {
+      "type": "integer"
+    },
+    "remaining": {
+      "type": "integer"
+    }
+  }
+}

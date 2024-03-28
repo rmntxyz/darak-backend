@@ -34,7 +34,7 @@ export default {
       for (let i = 0; i < filteredUsers.length; i += splitSize) {
         messagesSplit.push(
           filteredUsers.slice(i, i + splitSize).map((user) => ({
-            data: {
+            notification: {
               title: format(title, user),
               body: format(body, user),
             },

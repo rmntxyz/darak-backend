@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "trading_credits",
+  "info": {
+    "singularName": "trading-credit",
+    "pluralName": "trading-credits",
+    "displayName": "TradingCredit",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "integer"
+    },
+    "history": {
+      "displayName": "Trading",
+      "type": "component",
+      "repeatable": true,
+      "component": "history.trading"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "trading_credit"
+    }
+  }
+}

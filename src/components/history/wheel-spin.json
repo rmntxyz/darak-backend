@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_history_wheel_spins",
+  "info": {
+    "displayName": "WheelSpin",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "wheeling",
+        "gacha_result"
+      ]
+    },
+    "change": {
+      "type": "integer"
+    },
+    "remaining": {
+      "type": "integer"
+    }
+  }
+}

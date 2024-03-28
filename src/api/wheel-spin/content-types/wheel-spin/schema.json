@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wheel_spins",
+  "info": {
+    "singularName": "wheel-spin",
+    "pluralName": "wheel-spins",
+    "displayName": "WheelSpin",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "integer"
+    },
+    "history": {
+      "displayName": "WheelSpin",
+      "type": "component",
+      "repeatable": true,
+      "component": "history.wheel-spin"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "wheel_spin"
+    }
+  }
+}

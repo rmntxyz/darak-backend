@@ -45,9 +45,11 @@ export default {
         .send(message)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
@@ -60,9 +62,11 @@ export default {
         .sendEachForMulticast(message)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
@@ -75,9 +79,11 @@ export default {
         .send(message)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
@@ -86,9 +92,11 @@ export default {
         .subscribeToTopic(fcm, topic_name)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
@@ -97,9 +105,11 @@ export default {
         .unsubscribeFromTopic(fcm, topic_name)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
@@ -108,9 +118,11 @@ export default {
         .sendEach(messages)
         .then((res) => {
           console.log(res);
+          return res;
         })
         .catch((error) => {
           console.log(error);
+          return error;
         });
     };
 
