@@ -1,20 +1,19 @@
 {
-  "collectionName": "components_reward_gacha_rewards",
+  "collectionName": "components_reward_relays",
   "info": {
-    "displayName": "GachaReward",
-    "icon": "cube",
+    "displayName": "relay",
+    "icon": "bulletList",
     "description": ""
   },
   "options": {},
   "attributes": {
-    "probability": {
-      "type": "decimal"
-    },
     "rewards": {
-      "displayName": "with_amount",
       "type": "component",
       "repeatable": true,
       "component": "reward.with-amount"
+    },
+    "score": {
+      "type": "integer"
     }
   }
 }

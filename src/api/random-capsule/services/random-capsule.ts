@@ -5,29 +5,50 @@
 import { ErrorCode } from "../../../constant";
 
 export default ({ strapi }) => ({
-  async drawWithCoin(userId, gachaInfo, draw, multiply) {
+  async drawWithCoin(
+    userId,
+    gachaInfo,
+    draw,
+    multiply
+  ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
-      deductCurrency(userId, draw, multiply);
+      await deductCurrency(userId, draw, multiply);
+
+      let result;
 
       const random = Math.random();
       if (random < gachaInfo.probability) {
-        const reward = drawReward(gachaInfo, multiply);
-        await addReward(userId, draw.id, reward, multiply);
-        return { [reward.type]: reward.amount };
+        const rewards = drawReward(gachaInfo);
+
+        for (const reward of rewards) {
+          await addRewardToUser(userId, draw.id, reward, multiply);
+        }
+
+        result = { rewards, multiply };
       } else {
         const itemId = await drawItem(draw.draw_info, multiply);
-        const item = await addItem(userId, draw.id, itemId, multiply);
-        return { item };
+        const item = await addItemToUser(userId, draw.id, itemId, multiply);
+
+        result = { rewards: [{ type: "item", detail: item }], multiply };
       }
+
+      // fetch one of the token consumption events if it exists
+      // cosnt event = await strapi.entityService.findMay("api::token-event.token-event", { filters: { ... } });
+
+      // handle relay rewards here...
+      // e.g. handleRelayRewards(userId, rewards, event, multiply);
+
+      return result;
     });
   },
 
-  async drawWithStarPoint(userId, draw, multiply) {
-    deductCurrency(userId, draw, multiply);
+  async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
+    await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
-    const item = await addItem(userId, draw.id, itemId, multiply);
-    return { item };
+    const item = await addItemToUser(userId, draw.id, itemId, multiply);
+
+    return { rewards: [{ type: "item", detail: item }], multiply };
   },
 });
 
@@ -44,26 +65,37 @@ async function deductCurrency(userId: number, draw: Draw, multiply: number) {
   }
 }
 
-function drawReward(gachaInfo, multiply) {
+function drawReward(gachaInfo) {
   const random_number = Math.random();
 
   let total_probability = 0;
-  for (const each of gachaInfo.rewards) {
+  for (const each of gachaInfo.reward_table) {
     total_probability += each.probability;
     if (random_number < total_probability) {
-      each.reward.amount *= multiply;
-      return each.reward;
+      return each.rewards;
     }
   }
 }
 
+/**
+ *
+ * TODO: localizations
+ * @param info
+ * @param multiply
+ * @returns
+ */
 function drawItem(info: DrawInfo, multiply: number) {
   const random = Math.random();
 
-  // TODO: Apply probability table according to multiplier
+  // console.log("before", info);
+  applyMultiply(info, multiply);
+  // console.log("after", info);
+
   let total_probability = 0;
+
   for (const [_, { items, probability }] of Object.entries(info)) {
     total_probability += probability;
+
     if (random < total_probability) {
       const item = items[Math.floor(Math.random() * items.length)];
       return item;
@@ -71,43 +103,124 @@ function drawItem(info: DrawInfo, multiply: number) {
   }
 }
 
-async function addReward(
+function applyMultiply(info: DrawInfo, multiply: number) {
+  // common, uncommon 은 확률 감소
+  // rare, unique, secret, variant는 확률 증가
+  // rare와 unique, secret, variant 가 증가된 만큼 common, uncommon은 각각의 비율로 감소
+  if (multiply === 1) {
+    return info;
+  }
+
+  const lowerRarities = ["common", "uncommon"];
+  const higherRarities = ["rare", "unique", "variant", "secret"];
+
+  calcProbability(info, lowerRarities, higherRarities, multiply);
+
+  return info;
+}
+
+function calcProbability(
+  info: DrawInfo,
+  lowerRarities: string[],
+  higherRarities: string[],
+  multiply: number
+) {
+  const higherTotal = higherRarities.reduce((acc, rarity) => {
+    if (info[rarity]) {
+      acc += info[rarity].probability;
+    }
+    return acc;
+  }, 0);
+
+  const higherIncreases = higherTotal * multiply;
+
+  const lowerTotal = lowerRarities.reduce((acc, rarity) => {
+    if (info[rarity]) {
+      acc += info[rarity].probability;
+    }
+    return acc;
+  }, 0);
+
+  if (higherIncreases > 1) {
+    lowerRarities.forEach((rarity) => {
+      if (info[rarity]) {
+        info[rarity].probability = 0;
+      }
+    });
+
+    const filtered = higherRarities.filter((rarity) => info[rarity]);
+    if (filtered.length == 1) {
+      info[filtered[0]].probability = 1;
+      return info;
+    } else {
+      const [low, ...high] = filtered;
+      return calcProbability(info, [low], high, multiply);
+    }
+  }
+
+  higherRarities.forEach((rarity) => {
+    if (info[rarity]) {
+      info[rarity].probability *= multiply;
+    }
+  });
+
+  lowerRarities.forEach((rarity) => {
+    if (info[rarity]) {
+      info[rarity].probability =
+        (info[rarity].probability / lowerTotal) * (1 - higherIncreases);
+    }
+  });
+
+  return info;
+}
+
+async function addRewardToUser(
   userId: number,
   drawId: number,
   reward: Reward,
   multiply: number
 ) {
-  switch (reward.type) {
-    case "star_point":
-      await strapi
-        .service("api::star-point.star-point")
-        .updateStarPoint(userId, reward.amount, "item_draw");
-      break;
-    case "freebie":
-      await strapi
-        .service("api::freebie.freebie")
-        .updateFreebie(userId, reward.amount);
-      break;
-    case "trading_credit":
-      // TODO: implement trading credit
-      break;
-    case "wheel_spin":
-      // TODO: implement wheel spin
-      break;
+  if (reward) {
+    switch (reward.type) {
+      case "freebie":
+        await strapi
+          .service("api::freebie.freebie")
+          .updateFreebie(userId, reward.amount * multiply);
+        break;
+      case "star_point":
+        await strapi
+          .service("api::star-point.star-point")
+          .updateStarPoint(userId, reward.amount * multiply, "item_draw");
+        break;
+      case "wheel_spin":
+        await strapi
+          .service("api::wheel-spin.wheel-spin")
+          .updateWheelSpin(userId, reward.amount * multiply, "gacha_result");
+        break;
+      case "trading_credit":
+        await strapi
+          .service("api::trading-credit.trading-credit")
+          .updateTradingCredit(
+            userId,
+            reward.amount * multiply,
+            "gacha_result"
+          );
+        break;
+    }
   }
 
   await strapi.entityService.create("api::draw-history.draw-history", {
     data: {
       draw: drawId,
       users_permissions_user: userId,
-      draw_result: { [reward.type]: reward.amount },
+      draw_result: { type: reward.type, amount: reward.amount },
       multiply,
       publishedAt: new Date(),
     },
   });
 }
 
-async function addItem(
+async function addItemToUser(
   userId: number,
   drawId: number,
   itemId: number,
@@ -115,7 +228,7 @@ async function addItem(
 ) {
   const userItems = [];
 
-  await strapi.db.transaction(async ({ trx }) => {
+  return await strapi.db.transaction(async ({ trx }) => {
     const [{ current_serial_number }] = await strapi.db
       .connection("items")
       .transacting(trx)

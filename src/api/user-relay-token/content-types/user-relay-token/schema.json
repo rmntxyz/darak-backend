@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_relay_tokens",
+  "info": {
+    "singularName": "user-relay-token",
+    "pluralName": "user-relay-tokens",
+    "displayName": "UserRelayToken",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "relay_groups": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::relay-group.relay-group",
+      "mappedBy": "tokens"
+    }
+  }
+}

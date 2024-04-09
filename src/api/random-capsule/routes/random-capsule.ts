@@ -9,5 +9,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/random-capsule/test",
+      handler: "random-capsule.test",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

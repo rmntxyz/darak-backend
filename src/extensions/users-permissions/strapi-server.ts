@@ -39,6 +39,12 @@ module.exports = (plugin) => {
           star_point: {
             fields: ["amount"],
           },
+          wheel_spin: {
+            fields: ["amount"],
+          },
+          trading_credit: {
+            fields: ["amount"],
+          },
           rooms: {
             fields: ["name", "desc", "rid"],
             populate: {
@@ -57,10 +63,25 @@ module.exports = (plugin) => {
       return ctx.unauthorized();
     }
 
+    // TEMP
     if (user.star_point === null) {
       user.star_point = await strapi
         .service("api::star-point.star-point")
         .getStarPoint(user.id);
+    }
+
+    // TEMP
+    if (user.wheel_spin === null) {
+      user.wheel_spin = await strapi
+        .service("api::wheel-spin.wheel-spin")
+        .getWheelSpin(user.id);
+    }
+    // TEMP
+
+    if (user.trading_credit === null) {
+      user.trading_credit = await strapi
+        .service("api::trading-credit.trading-credit")
+        .getTradingCredit(user.id);
     }
 
     const freebie = await strapi

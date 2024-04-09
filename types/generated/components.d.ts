@@ -133,19 +133,50 @@ export interface LeaderboardLeaderboardRecord extends Schema.Component {
   };
 }
 
+export interface RelayToken extends Schema.Component {
+  collectionName: 'components_relay_tokens';
+  info: {
+    displayName: 'token';
+    icon: 'database';
+  };
+  attributes: {};
+}
+
 export interface RewardGachaReward extends Schema.Component {
   collectionName: 'components_reward_gacha_rewards';
   info: {
     displayName: 'GachaReward';
     icon: 'cube';
+    description: '';
   };
   attributes: {
-    reward: Attribute.Relation<
-      'reward.gacha-reward',
-      'oneToOne',
-      'api::reward.reward'
-    >;
     probability: Attribute.Decimal;
+    rewards: Attribute.Component<'reward.with-amount', true>;
+  };
+}
+
+export interface RewardRelayRanking extends Schema.Component {
+  collectionName: 'components_reward_relay_rankings';
+  info: {
+    displayName: 'relay_ranking';
+    icon: 'bulletList';
+  };
+  attributes: {
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    ranking: Attribute.Integer;
+  };
+}
+
+export interface RewardRelay extends Schema.Component {
+  collectionName: 'components_reward_relays';
+  info: {
+    displayName: 'relay';
+    icon: 'bulletList';
+    description: '';
+  };
+  attributes: {
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    score: Attribute.Integer;
   };
 }
 
@@ -165,6 +196,20 @@ export interface RewardReward extends Schema.Component {
   };
 }
 
+export interface RewardWithAmount extends Schema.Component {
+  collectionName: 'components_reward_with_amounts';
+  info: {
+    displayName: 'with_amount';
+    icon: 'bulletList';
+  };
+  attributes: {
+    type: Attribute.Enumeration<
+      ['freebie', 'star_point', 'item', 'trading_credit', 'wheel_spin', 'exp']
+    >;
+    amount: Attribute.Integer;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Shared {
     export interface Components {
@@ -177,8 +222,12 @@ declare module '@strapi/strapi' {
       'history.trading': HistoryTrading;
       'history.wheel-spin': HistoryWheelSpin;
       'leaderboard.leaderboard-record': LeaderboardLeaderboardRecord;
+      'relay.token': RelayToken;
       'reward.gacha-reward': RewardGachaReward;
+      'reward.relay-ranking': RewardRelayRanking;
+      'reward.relay': RewardRelay;
       'reward.reward': RewardReward;
+      'reward.with-amount': RewardWithAmount;
     }
   }
 }

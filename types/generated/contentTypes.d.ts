@@ -1479,13 +1479,14 @@ export interface ApiGachaInfoGachaInfo extends Schema.CollectionType {
     singularName: 'gacha-info';
     pluralName: 'gacha-infos';
     displayName: 'GachaInfo';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
     probability: Attribute.Decimal;
-    rewards: Attribute.Component<'reward.gacha-reward', true>;
+    reward_table: Attribute.Component<'reward.gacha-reward', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1777,6 +1778,89 @@ export interface ApiQuestProgressQuestProgress extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::quest-progress.quest-progress',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiRelayRelay extends Schema.CollectionType {
+  collectionName: 'relays';
+  info: {
+    singularName: 'relay';
+    pluralName: 'relays';
+    displayName: 'Relay';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    reward_table: Attribute.Component<'reward.relay', true>;
+    start_date: Attribute.DateTime;
+    end_date: Attribute.DateTime;
+    banner: Attribute.Media;
+    token_image: Attribute.Media;
+    group_size: Attribute.Integer;
+    ranking_rewards: Attribute.Component<'reward.relay-ranking', true>;
+    relay_groups: Attribute.Relation<
+      'api::relay.relay',
+      'oneToMany',
+      'api::relay-group.relay-group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::relay.relay',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::relay.relay',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiRelayGroupRelayGroup extends Schema.CollectionType {
+  collectionName: 'relay_groups';
+  info: {
+    singularName: 'relay-group';
+    pluralName: 'relay-groups';
+    displayName: 'RelayGroup';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    tokens: Attribute.Relation<
+      'api::relay-group.relay-group',
+      'manyToMany',
+      'api::user-relay-token.user-relay-token'
+    >;
+    relay: Attribute.Relation<
+      'api::relay-group.relay-group',
+      'manyToOne',
+      'api::relay.relay'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::relay-group.relay-group',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::relay-group.relay-group',
       'oneToOne',
       'admin::user'
     > &
@@ -2146,12 +2230,17 @@ export interface ApiTradingCreditTradingCredit extends Schema.CollectionType {
   };
   attributes: {
     amount: Attribute.Integer;
-    history: Attribute.Component<'history.trading', true>;
     user: Attribute.Relation<
       'api::trading-credit.trading-credit',
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    histories: Attribute.Relation<
+      'api::trading-credit.trading-credit',
+      'oneToMany',
+      'api::trading-credit-history.trading-credit-history'
+    >;
+    max: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2163,6 +2252,45 @@ export interface ApiTradingCreditTradingCredit extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::trading-credit.trading-credit',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTradingCreditHistoryTradingCreditHistory
+  extends Schema.CollectionType {
+  collectionName: 'trading_credit_histories';
+  info: {
+    singularName: 'trading-credit-history';
+    pluralName: 'trading-credit-histories';
+    displayName: 'TradingCreditHistory';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    detail: Attribute.Enumeration<['gacha_result', 'trade']>;
+    date: Attribute.DateTime;
+    change: Attribute.Integer;
+    result: Attribute.Integer;
+    trading_credit: Attribute.Relation<
+      'api::trading-credit-history.trading-credit-history',
+      'manyToOne',
+      'api::trading-credit.trading-credit'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::trading-credit-history.trading-credit-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::trading-credit-history.trading-credit-history',
       'oneToOne',
       'admin::user'
     > &
@@ -2203,6 +2331,47 @@ export interface ApiUserDecorationUserDecoration extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::user-decoration.user-decoration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUserRelayTokenUserRelayToken extends Schema.CollectionType {
+  collectionName: 'user_relay_tokens';
+  info: {
+    singularName: 'user-relay-token';
+    pluralName: 'user-relay-tokens';
+    displayName: 'UserRelayToken';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::user-relay-token.user-relay-token',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    amount: Attribute.Integer;
+    relay_groups: Attribute.Relation<
+      'api::user-relay-token.user-relay-token',
+      'manyToMany',
+      'api::relay-group.relay-group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-relay-token.user-relay-token',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-relay-token.user-relay-token',
       'oneToOne',
       'admin::user'
     > &
@@ -2416,11 +2585,15 @@ export interface ApiWheelSpinWheelSpin extends Schema.CollectionType {
   };
   attributes: {
     amount: Attribute.Integer;
-    history: Attribute.Component<'history.wheel-spin', true>;
     user: Attribute.Relation<
       'api::wheel-spin.wheel-spin',
       'oneToOne',
       'plugin::users-permissions.user'
+    >;
+    histories: Attribute.Relation<
+      'api::wheel-spin.wheel-spin',
+      'oneToMany',
+      'api::wheel-spin-history.wheel-spin-history'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2433,6 +2606,45 @@ export interface ApiWheelSpinWheelSpin extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::wheel-spin.wheel-spin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiWheelSpinHistoryWheelSpinHistory
+  extends Schema.CollectionType {
+  collectionName: 'wheel_spin_histories';
+  info: {
+    singularName: 'wheel-spin-history';
+    pluralName: 'wheel-spin-histories';
+    displayName: 'WheelSpinHistory';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    detail: Attribute.Enumeration<['gacha_result', 'spin']>;
+    date: Attribute.DateTime;
+    change: Attribute.Integer;
+    result: Attribute.Integer;
+    wheel_spin: Attribute.Relation<
+      'api::wheel-spin-history.wheel-spin-history',
+      'manyToOne',
+      'api::wheel-spin.wheel-spin'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::wheel-spin-history.wheel-spin-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::wheel-spin-history.wheel-spin-history',
       'oneToOne',
       'admin::user'
     > &
@@ -2475,6 +2687,8 @@ declare module '@strapi/strapi' {
       'api::leaderboard.leaderboard': ApiLeaderboardLeaderboard;
       'api::quest.quest': ApiQuestQuest;
       'api::quest-progress.quest-progress': ApiQuestProgressQuestProgress;
+      'api::relay.relay': ApiRelayRelay;
+      'api::relay-group.relay-group': ApiRelayGroupRelayGroup;
       'api::reward.reward': ApiRewardReward;
       'api::room.room': ApiRoomRoom;
       'api::star-point.star-point': ApiStarPointStarPoint;
@@ -2482,11 +2696,14 @@ declare module '@strapi/strapi' {
       'api::streak.streak': ApiStreakStreak;
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
+      'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;
       'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
+      'api::user-relay-token.user-relay-token': ApiUserRelayTokenUserRelayToken;
       'api::user-room.user-room': ApiUserRoomUserRoom;
       'api::webtoon.webtoon': ApiWebtoonWebtoon;
       'api::webtoon-outlink.webtoon-outlink': ApiWebtoonOutlinkWebtoonOutlink;
       'api::wheel-spin.wheel-spin': ApiWheelSpinWheelSpin;
+      'api::wheel-spin-history.wheel-spin-history': ApiWheelSpinHistoryWheelSpinHistory;
     }
   }
 }

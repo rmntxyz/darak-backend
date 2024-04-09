@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_reward_with_amounts",
+  "info": {
+    "displayName": "with_amount",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "freebie",
+        "star_point",
+        "item",
+        "trading_credit",
+        "wheel_spin",
+        "exp"
+      ]
+    },
+    "amount": {
+      "type": "integer"
+    }
+  }
+}

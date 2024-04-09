@@ -70,6 +70,25 @@ type StarPointChangeDetail =
   | "achievement_reward"
   | "quest_reward";
 
+type WheelSpinChangeDetail = "gacha_result" | "spin";
+
+type TradingCreditChangeDetail = "gacha_result" | "trade";
+
+type CapsuleResult = {
+  rewards: {
+    type:
+      | "freebie"
+      | "star_point"
+      | "item"
+      | "exp"
+      | "trading_credit"
+      | "wheel_spin";
+    amount?: number;
+    detail?: Partial<Item>;
+  }[];
+  multiply: number;
+};
+
 type DailyQuestProgress = {
   id: number;
   daily_quest: DailyQuest;

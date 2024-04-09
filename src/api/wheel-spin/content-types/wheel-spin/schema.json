@@ -15,17 +15,17 @@
     "amount": {
       "type": "integer"
     },
-    "history": {
-      "displayName": "WheelSpin",
-      "type": "component",
-      "repeatable": true,
-      "component": "history.wheel-spin"
-    },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "wheel_spin"
+    },
+    "histories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::wheel-spin-history.wheel-spin-history",
+      "mappedBy": "wheel_spin"
     }
   }
 }

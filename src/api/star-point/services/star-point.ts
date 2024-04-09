@@ -52,7 +52,7 @@ export default factories.createCoreService(
             "star_points_user_links.star_point_id"
           )
           .where("star_points_user_links.user_id", userId)
-          .select("star_points.amount");
+          .select("star_points.*");
 
         if (starPoint.amount + change < 0) {
           throw ErrorCode.NOT_ENOUGH_STAR_POINTS;

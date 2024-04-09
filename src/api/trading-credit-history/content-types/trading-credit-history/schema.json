@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "trading_credit_histories",
+  "info": {
+    "singularName": "trading-credit-history",
+    "pluralName": "trading-credit-histories",
+    "displayName": "TradingCreditHistory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "gacha_result",
+        "trade"
+      ]
+    },
+    "date": {
+      "type": "datetime"
+    },
+    "change": {
+      "type": "integer"
+    },
+    "result": {
+      "type": "integer"
+    },
+    "trading_credit": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::trading-credit.trading-credit",
+      "inversedBy": "histories"
+    }
+  }
+}

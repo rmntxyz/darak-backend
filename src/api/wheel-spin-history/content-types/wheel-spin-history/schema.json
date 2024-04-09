@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wheel_spin_histories",
+  "info": {
+    "singularName": "wheel-spin-history",
+    "pluralName": "wheel-spin-histories",
+    "displayName": "WheelSpinHistory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "gacha_result",
+        "spin"
+      ]
+    },
+    "date": {
+      "type": "datetime"
+    },
+    "change": {
+      "type": "integer"
+    },
+    "result": {
+      "type": "integer"
+    },
+    "wheel_spin": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::wheel-spin.wheel-spin",
+      "inversedBy": "histories"
+    }
+  }
+}

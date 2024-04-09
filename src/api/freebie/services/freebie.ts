@@ -69,12 +69,12 @@ export default factories.createCoreService(
           .transacting(trx)
           .forUpdate()
           .join(
-            "freebie_user_links",
-            "freebie.id",
-            "freebie_user_links.freebie_id"
+            "freebies_users_permissions_user_links",
+            "freebies.id",
+            "freebies_users_permissions_user_links.freebie_id"
           )
-          .where("freebie_user_links.user_id", userId)
-          .select("freebie.*");
+          .where("freebies_users_permissions_user_links.user_id", userId)
+          .select("freebies.*");
 
         // refresh freebie
         freebie = this.recalculate(freebie);

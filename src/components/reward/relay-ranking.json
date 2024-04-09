@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_reward_relay_rankings",
+  "info": {
+    "displayName": "relay_ranking",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    },
+    "ranking": {
+      "type": "integer"
+    }
+  }
+}

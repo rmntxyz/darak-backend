@@ -123,6 +123,26 @@ export default ({ strapi }) => {
       }
     );
 
+    const createdWheelSpin = await strapi.entityService.create(
+      "api::wheel-spin.wheel-spin",
+      {
+        data: {
+          amount: 0,
+          publishedAt: date,
+        },
+      }
+    );
+
+    const createdTradingCredit = await strapi.entityService.create(
+      "api::trading-credit.trading-credit",
+      {
+        data: {
+          amount: 0,
+          publishedAt: date,
+        },
+      }
+    );
+
     // Retrieve default role.
     const defaultRole = await strapi
       .query("plugin::users-permissions.role")
@@ -138,6 +158,8 @@ export default ({ strapi }) => {
       freebie: createdFreebie.id,
       streak: createdStreak.id,
       star_point: createdStarPoint.id,
+      wheel_spin: createdWheelSpin.id,
+      trading_credit: createdTradingCredit.id,
       level: 1,
       experience: 0,
     };

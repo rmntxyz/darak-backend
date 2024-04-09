@@ -15,17 +15,20 @@
     "amount": {
       "type": "integer"
     },
-    "history": {
-      "displayName": "Trading",
-      "type": "component",
-      "repeatable": true,
-      "component": "history.trading"
-    },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "trading_credit"
+    },
+    "histories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::trading-credit-history.trading-credit-history",
+      "mappedBy": "trading_credit"
+    },
+    "max": {
+      "type": "integer"
     }
   }
 }

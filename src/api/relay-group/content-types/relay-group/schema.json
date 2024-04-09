@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "relay_groups",
+  "info": {
+    "singularName": "relay-group",
+    "pluralName": "relay-groups",
+    "displayName": "RelayGroup",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "tokens": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-relay-token.user-relay-token",
+      "inversedBy": "relay_groups"
+    },
+    "relay": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::relay.relay",
+      "inversedBy": "relay_groups"
+    }
+  }
+}

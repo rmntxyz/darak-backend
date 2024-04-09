@@ -1,0 +1,68 @@
+{
+  "kind": "collectionType",
+  "collectionName": "relays",
+  "info": {
+    "singularName": "relay",
+    "pluralName": "relays",
+    "displayName": "Relay",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "reward_table": {
+      "displayName": "relay",
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.relay"
+    },
+    "start_date": {
+      "type": "datetime"
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "banner": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "token_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "group_size": {
+      "type": "integer"
+    },
+    "ranking_rewards": {
+      "displayName": "relay_ranking",
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.relay-ranking"
+    },
+    "relay_groups": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::relay-group.relay-group",
+      "mappedBy": "relay"
+    }
+  }
+}

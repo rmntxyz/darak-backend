@@ -5,6 +5,15 @@
 import { ErrorCode } from "../../../constant";
 
 export default {
+  test: async (ctx, next) => {
+    const userId = ctx.state.user?.id;
+
+    const result = await strapi
+      .service("api::relay.relay")
+      .getCurrentRelay(userId);
+
+    return result;
+  },
   gacha: async (ctx, next) => {
     const userId = ctx.state.user?.id;
 
@@ -31,18 +40,21 @@ export default {
     })) as Draw;
 
     if (!draw) {
-      throw ErrorCode.DRAW_NOT_FOUND;
+      return ctx.badRequest("not found drawId", ErrorCode.DRAW_NOT_FOUND);
     }
 
     const { room, currency_type } = draw;
     const now = new Date().toISOString();
 
     if (room.start_date > now) {
-      throw ErrorCode.DRAW_NOT_STARTED;
+      return ctx.internalServerError(
+        "not started yet",
+        ErrorCode.DRAW_NOT_STARTED
+      );
     }
 
     if (room.end_date < now) {
-      throw ErrorCode.DRAW_ENDED;
+      return ctx.internalServerError("already ended", ErrorCode.DRAW_ENDED);
     }
 
     if (currency_type === "freebie") {
@@ -52,9 +64,9 @@ export default {
         {
           fields: ["probability"],
           populate: {
-            rewards: {
+            reward_table: {
               populate: {
-                reward: {
+                rewards: {
                   fields: ["type", "amount"],
                 },
               },

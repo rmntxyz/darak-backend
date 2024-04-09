@@ -40,7 +40,7 @@ export const ErrorCode = {
 
   /* Custom errors */
 
-  // Trading
+  // Trade
   TRADE_EXPIRED: {
     code: 1001,
     message: "Trade expired",
@@ -89,6 +89,10 @@ export const ErrorCode = {
     code: 1012,
     message: "Item limit exceeded",
   },
+  NOT_ENOUGH_TRADING_CREDITS: {
+    code: 1013,
+    message: "Not enough trading credits",
+  },
 
   // Inventory Management
   INVALID_ITEMS_STATUS: {
@@ -132,6 +136,12 @@ export const ErrorCode = {
   DRAW_ENDED: {
     code: 3006,
     message: "Draw ended",
+  },
+
+  // wheel spins
+  NOT_ENOUGH_WHEEL_SPINS: {
+    code: 4001,
+    message: "Not enough wheel spins",
   },
 };
 
