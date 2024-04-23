@@ -55,7 +55,7 @@ export default ({ strapi }) => ({
       multiply,
     };
 
-    checkRelayEvent(userId, result);
+    await checkRelayEvent(userId, result);
 
     return result;
   },
@@ -188,32 +188,7 @@ async function addRewardToUser(
   multiply: number
 ) {
   if (reward) {
-    switch (reward.type) {
-      case "freebie":
-        await strapi
-          .service("api::freebie.freebie")
-          .updateFreebie(userId, reward.amount * multiply);
-        break;
-      case "star_point":
-        await strapi
-          .service("api::star-point.star-point")
-          .updateStarPoint(userId, reward.amount * multiply, "item_draw");
-        break;
-      case "wheel_spin":
-        await strapi
-          .service("api::wheel-spin.wheel-spin")
-          .updateWheelSpin(userId, reward.amount * multiply, "gacha_result");
-        break;
-      case "trading_credit":
-        await strapi
-          .service("api::trading-credit.trading-credit")
-          .updateTradingCredit(
-            userId,
-            reward.amount * multiply,
-            "gacha_result"
-          );
-        break;
-    }
+    await updateRewards(userId, reward, multiply);
   }
 
   await strapi.entityService.create("api::draw-history.draw-history", {
@@ -225,6 +200,31 @@ async function addRewardToUser(
       publishedAt: new Date(),
     },
   });
+}
+
+async function updateRewards(userId: number, reward: Reward, multiply: number) {
+  switch (reward.type) {
+    case "freebie":
+      await strapi
+        .service("api::freebie.freebie")
+        .updateFreebie(userId, reward.amount * multiply);
+      break;
+    case "star_point":
+      await strapi
+        .service("api::star-point.star-point")
+        .updateStarPoint(userId, reward.amount * multiply, "item_draw");
+      break;
+    case "wheel_spin":
+      await strapi
+        .service("api::wheel-spin.wheel-spin")
+        .updateWheelSpin(userId, reward.amount * multiply, "gacha_result");
+      break;
+    case "trading_credit":
+      await strapi
+        .service("api::trading-credit.trading-credit")
+        .updateTradingCredit(userId, reward.amount * multiply, "gacha_result");
+      break;
+  }
 }
 
 async function addItemToUser(
@@ -316,9 +316,12 @@ async function checkRelayEvent(userId: number, result: CapsuleResult) {
         .service("api::relay.relay")
         .claimRewards(userId, relay);
 
+      // item은 일단 없다고 가정한다.
+      for (const reward of rewards) {
+        await updateRewards(userId, reward, 1);
+      }
+
       result.events.push({ type: "relay", amount: tokens, total, rewards });
     }
   }
-
-  return;
 }

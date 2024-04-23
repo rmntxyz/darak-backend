@@ -8,7 +8,7 @@ async function verify(relay: Relay, result: CapsuleResult) {
     const target = rewards.find((reward) => {
       if (reward_type === reward.type) {
         if (reward_type === "item") {
-          if (reward.detail.rarity) {
+          if (rarity) {
             return reward.detail.rarity === rarity;
           } else {
             return true;
