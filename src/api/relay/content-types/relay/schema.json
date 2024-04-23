@@ -63,6 +63,22 @@
       "relation": "oneToMany",
       "target": "api::relay-group.relay-group",
       "mappedBy": "relay"
+    },
+    "detail": {
+      "type": "json"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "probability",
+        "reward_related"
+      ]
+    },
+    "user_relay_tokens": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-relay-token.user-relay-token",
+      "mappedBy": "relay"
     }
   }
 }

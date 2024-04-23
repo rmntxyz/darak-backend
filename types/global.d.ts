@@ -74,17 +74,27 @@ type WheelSpinChangeDetail = "gacha_result" | "spin";
 
 type TradingCreditChangeDetail = "gacha_result" | "trade";
 
+type RewardType =
+  | "freebie"
+  | "star_point"
+  | "item"
+  | "exp"
+  | "trading_credit"
+  | "wheel_spin";
+
+type RewardDetail = {
+  type: RewardType;
+  amount?: number;
+  detail?: Partial<Item>;
+};
+
 type CapsuleResult = {
-  rewards: {
-    type:
-      | "freebie"
-      | "star_point"
-      | "item"
-      | "exp"
-      | "trading_credit"
-      | "wheel_spin";
-    amount?: number;
-    detail?: Partial<Item>;
+  rewards: RewardDetail[];
+  events?: {
+    type: "relay";
+    amount: number;
+    total: number;
+    rewards: RewardDetail[];
   }[];
   multiply: number;
 };
@@ -115,13 +125,7 @@ type DailyQuest = {
 };
 
 type Reward = {
-  type:
-    | "freebie"
-    | "star_point"
-    | "item"
-    | "exp"
-    | "trading_credit"
-    | "wheel_spin";
+  type: RewardType;
   amount: number;
   item?: Item;
 };
@@ -172,6 +176,63 @@ type Inventory = {
   status: UserItemStatus;
   users_permissions_user: User;
   updatedAt: Date;
+};
+
+type RelayConditionType = "probaility" | "rarity" | "collectibles";
+
+type Relay = {
+  id: number;
+  type: RelayConditionType;
+  title: string;
+  reward_table: RelayReward[];
+  start_date: Date;
+  end_date: Date;
+  detail: RelayDetail;
+  group_size: number;
+  banner: { url: string };
+  token_image: { url: string };
+  relay_groups: RelayGroup[];
+  ranking_reward: RelayRankingReward[];
+};
+
+type RelayReward = {
+  rewards: { type: string; amount: number }[];
+  score: number;
+};
+
+type RelayDetail = {
+  conditions: {
+    amount: number;
+    probability?: number;
+    reward_type?: RewardType;
+    rarity?: "common" | "uncommon" | "rare" | "unique" | "secret" | "variant";
+  }[];
+};
+
+type RelayGroup = {
+  id: number;
+  tokens: RelayToken[];
+  relay: Relay;
+};
+
+type RelayToken = {
+  id: number;
+  user: User;
+  amount: number;
+  history: RelayTokenHistory[];
+  relay_group: RelayGroup;
+};
+
+type RelayTokenHistory = {
+  id: number;
+  score: number;
+  date: Date;
+  rewards: { type: string; amount: number }[];
+};
+
+type RelayRankingReward = {
+  ranking: number;
+  rewards: { type: string; amount: number }[];
 };
 
 type UserItemStatus = null | "owned" | "trading" | "auctioning";

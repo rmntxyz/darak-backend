@@ -20,11 +20,23 @@
     "amount": {
       "type": "integer"
     },
-    "relay_groups": {
+    "relay_group": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::relay-group.relay-group",
-      "mappedBy": "tokens"
+      "inversedBy": "tokens"
+    },
+    "history": {
+      "displayName": "relay",
+      "type": "component",
+      "repeatable": true,
+      "component": "history.relay"
+    },
+    "relay": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::relay.relay",
+      "inversedBy": "user_relay_tokens"
     }
   }
 }

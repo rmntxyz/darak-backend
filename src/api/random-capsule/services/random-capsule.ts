@@ -12,9 +12,9 @@ export default ({ strapi }) => ({
     multiply
   ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
-      await deductCurrency(userId, draw, multiply);
+      // await deductCurrency(userId, draw, multiply);
 
-      let result;
+      let result: CapsuleResult;
 
       const random = Math.random();
       if (random < gachaInfo.probability) {
@@ -32,11 +32,8 @@ export default ({ strapi }) => ({
         result = { rewards: [{ type: "item", detail: item }], multiply };
       }
 
-      // fetch one of the token consumption events if it exists
-      // cosnt event = await strapi.entityService.findMay("api::token-event.token-event", { filters: { ... } });
-
-      // handle relay rewards here...
-      // e.g. handleRelayRewards(userId, rewards, event, multiply);
+      result.events = [];
+      await checkRelayEvent(userId, result);
 
       return result;
     });
@@ -46,9 +43,21 @@ export default ({ strapi }) => ({
     await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
-    const item = await addItemToUser(userId, draw.id, itemId, multiply);
+    const item: Partial<Item> = await addItemToUser(
+      userId,
+      draw.id,
+      itemId,
+      multiply
+    );
 
-    return { rewards: [{ type: "item", detail: item }], multiply };
+    const result: CapsuleResult = {
+      rewards: [{ type: "item", detail: item }],
+      multiply,
+    };
+
+    checkRelayEvent(userId, result);
+
+    return result;
   },
 });
 
@@ -87,9 +96,7 @@ function drawReward(gachaInfo) {
 function drawItem(info: DrawInfo, multiply: number) {
   const random = Math.random();
 
-  // console.log("before", info);
   applyMultiply(info, multiply);
-  // console.log("after", info);
 
   let total_probability = 0;
 
@@ -292,4 +299,26 @@ async function addItemToUser(
 
     return updatedItem;
   });
+}
+
+async function checkRelayEvent(userId: number, result: CapsuleResult) {
+  const relay = await strapi
+    .service("api::relay.relay")
+    .getCurrentRelay(userId);
+
+  if (relay) {
+    const tokens = await strapi
+      .service("api::relay.relay")
+      .verify(userId, relay, result);
+
+    if (tokens > 0) {
+      const { rewards, total } = await strapi
+        .service("api::relay.relay")
+        .claimRewards(userId, relay);
+
+      result.events.push({ type: "relay", amount: tokens, total, rewards });
+    }
+  }
+
+  return;
 }

@@ -68,6 +68,33 @@ export interface DecorationText extends Schema.Component {
   };
 }
 
+export interface HistoryRelayRewards extends Schema.Component {
+  collectionName: 'components_history_relay_rewards';
+  info: {
+    displayName: 'relay_rewards';
+    icon: 'bulletList';
+  };
+  attributes: {
+    type: Attribute.Enumeration<
+      ['freebie', 'star_point', 'item', 'trading_credit', 'wheel_spin', 'exp']
+    >;
+    amount: Attribute.Integer;
+  };
+}
+
+export interface HistoryRelay extends Schema.Component {
+  collectionName: 'components_history_relays';
+  info: {
+    displayName: 'relay';
+    icon: 'bulletList';
+    description: '';
+  };
+  attributes: {
+    score: Attribute.Integer;
+    date: Attribute.DateTime;
+  };
+}
+
 export interface HistoryTradeHistory extends Schema.Component {
   collectionName: 'components_trade_history_trade_histories';
   info: {
@@ -218,6 +245,8 @@ declare module '@strapi/strapi' {
       'decoration.item': DecorationItem;
       'decoration.line': DecorationLine;
       'decoration.text': DecorationText;
+      'history.relay-rewards': HistoryRelayRewards;
+      'history.relay': HistoryRelay;
       'history.trade-history': HistoryTradeHistory;
       'history.trading': HistoryTrading;
       'history.wheel-spin': HistoryWheelSpin;

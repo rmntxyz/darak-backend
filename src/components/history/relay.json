@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_history_relays",
+  "info": {
+    "displayName": "relay",
+    "icon": "bulletList",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "score": {
+      "type": "integer"
+    },
+    "date": {
+      "type": "datetime"
+    }
+  }
+}

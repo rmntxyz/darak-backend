@@ -1810,6 +1810,13 @@ export interface ApiRelayRelay extends Schema.CollectionType {
       'oneToMany',
       'api::relay-group.relay-group'
     >;
+    detail: Attribute.JSON;
+    type: Attribute.Enumeration<['probability', 'reward_related']>;
+    user_relay_tokens: Attribute.Relation<
+      'api::relay.relay',
+      'oneToMany',
+      'api::user-relay-token.user-relay-token'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1840,15 +1847,16 @@ export interface ApiRelayGroupRelayGroup extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    tokens: Attribute.Relation<
-      'api::relay-group.relay-group',
-      'manyToMany',
-      'api::user-relay-token.user-relay-token'
-    >;
     relay: Attribute.Relation<
       'api::relay-group.relay-group',
       'manyToOne',
       'api::relay.relay'
+    >;
+    num_members: Attribute.Integer;
+    tokens: Attribute.Relation<
+      'api::relay-group.relay-group',
+      'oneToMany',
+      'api::user-relay-token.user-relay-token'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2356,10 +2364,16 @@ export interface ApiUserRelayTokenUserRelayToken extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     amount: Attribute.Integer;
-    relay_groups: Attribute.Relation<
+    relay_group: Attribute.Relation<
       'api::user-relay-token.user-relay-token',
-      'manyToMany',
+      'manyToOne',
       'api::relay-group.relay-group'
+    >;
+    history: Attribute.Component<'history.relay', true>;
+    relay: Attribute.Relation<
+      'api::user-relay-token.user-relay-token',
+      'manyToOne',
+      'api::relay.relay'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

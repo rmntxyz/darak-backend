@@ -6,7 +6,8 @@ import { ErrorCode } from "../../../constant";
 
 export default {
   test: async (ctx, next) => {
-    const userId = ctx.state.user?.id;
+    // const userId = ctx.state.user?.id;
+    const { userId } = ctx.query;
 
     const result = await strapi
       .service("api::relay.relay")

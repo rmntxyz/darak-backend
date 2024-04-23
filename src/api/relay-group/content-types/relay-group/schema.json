@@ -12,17 +12,20 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "tokens": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::user-relay-token.user-relay-token",
-      "inversedBy": "relay_groups"
-    },
     "relay": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::relay.relay",
       "inversedBy": "relay_groups"
+    },
+    "num_members": {
+      "type": "integer"
+    },
+    "tokens": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-relay-token.user-relay-token",
+      "mappedBy": "relay_group"
     }
   }
 }
