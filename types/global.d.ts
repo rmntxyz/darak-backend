@@ -178,7 +178,7 @@ type Inventory = {
   updatedAt: Date;
 };
 
-type RelayConditionType = "probaility" | "rarity" | "collectibles";
+type RelayConditionType = "probaility" | "reward_related";
 
 type Relay = {
   id: number;

@@ -40,7 +40,7 @@ export default ({ strapi }) => ({
   },
 
   async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
-    await deductCurrency(userId, draw, multiply);
+    // await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
     const item: Partial<Item> = await addItemToUser(
@@ -54,6 +54,8 @@ export default ({ strapi }) => ({
       rewards: [{ type: "item", detail: item }],
       multiply,
     };
+
+    result.events = [];
 
     await checkRelayEvent(userId, result);
 
