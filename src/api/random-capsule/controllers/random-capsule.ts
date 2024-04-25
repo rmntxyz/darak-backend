@@ -2,7 +2,7 @@
  * A set of functions called "actions" for `random-capsule`
  */
 
-import { ErrorCode } from "../../../constant";
+import { ErrorCode, AVAILABLE_MULTIPLY } from "../../../constant";
 
 export default {
   test: async (ctx, next) => {
@@ -30,6 +30,10 @@ export default {
 
     if (!multiply) {
       multiply = 1;
+    }
+
+    if (!AVAILABLE_MULTIPLY.includes(multiply)) {
+      return ctx.badRequest("invalid multiply", ErrorCode.INVALID_MULTIPLY);
     }
 
     const draw = (await strapi.entityService.findOne("api::draw.draw", drawId, {

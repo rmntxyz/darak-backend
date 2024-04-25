@@ -137,6 +137,10 @@ export const ErrorCode = {
     code: 3006,
     message: "Draw ended",
   },
+  INVALID_MULTIPLY: {
+    code: 3007,
+    message: "Invalid multiply",
+  },
 
   // wheel spins
   NOT_ENOUGH_WHEEL_SPINS: {
@@ -151,47 +155,4 @@ export const TRADE_ITEM_LIMIT = 5;
 
 export const DAILY_DRAW_LIMIT = 5;
 
-export const MULTIPLIER_TABLE = {
-  1: {
-    common: 60,
-    uncommon: 33.85,
-    rare: 5,
-    unique: 1,
-    secret: 0.15,
-  },
-  2: {
-    common: 55,
-    uncommon: 32.7,
-    rare: 10,
-    unique: 2,
-    secret: 0.3,
-  },
-  3: {
-    common: 50,
-    uncommon: 31.55,
-    rare: 15,
-    unique: 3,
-    secret: 0.45,
-  },
-  5: {
-    common: 40,
-    uncommon: 29.25,
-    rare: 25,
-    unique: 5,
-    secret: 0.75,
-  },
-  10: {
-    common: 15,
-    uncommon: 23.5,
-    rare: 50,
-    unique: 10,
-    secret: 1.5,
-  },
-  20: {
-    common: 0,
-    uncommon: 0,
-    rare: 60,
-    unique: 30,
-    secret: 10,
-  },
-};
+export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];

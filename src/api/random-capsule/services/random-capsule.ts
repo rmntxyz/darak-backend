@@ -12,6 +12,7 @@ export default ({ strapi }) => ({
     multiply
   ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
+      // FIXME: delete this
       // await deductCurrency(userId, draw, multiply);
 
       let result: CapsuleResult;
@@ -40,6 +41,7 @@ export default ({ strapi }) => ({
   },
 
   async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
+    // FIXME: delete this
     // await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
