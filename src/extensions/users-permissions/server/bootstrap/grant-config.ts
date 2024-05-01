@@ -37,6 +37,14 @@ export default (baseURL) => ({
     callback: `${baseURL}/kakao/callback`,
     scope: ["profile", "account_email"],
   },
+  apple: {
+    enabled: true,
+    icon: "apple",
+    key: "",
+    secret: "",
+    callback: `${baseURL}/apple/callback`,
+    scope: ["name", "email"],
+  },
   github: {
     enabled: false,
     icon: "github",

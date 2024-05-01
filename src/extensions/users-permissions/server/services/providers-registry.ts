@@ -3,6 +3,7 @@
 import assert from "assert";
 import jwt from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
+import AppleSignIn from "apple-sign-in-rest";
 
 const getCognitoPayload = async ({ idToken, jwksUrl, purest }) => {
   const {
@@ -150,6 +151,20 @@ const getInitialProviders = ({ purest }) => ({
     // .catch((err) => {
     //   console.log(err);
     // });
+  },
+
+  async apple({ accessToken }) {
+    const appleSignIn = new AppleSignIn({
+      clientId: process.env.APPLE_CLIENT_ID,
+      teamId: process.env.APPLE_TEAM_ID,
+      keyIdentifier: process.env.APPLE_KEY_ID,
+      privateKey: process.env.APPLE_PRIVATE_KEY,
+    });
+
+    return appleSignIn.verifyIdToken(accessToken, {}).then((body) => ({
+      username: body.email.split("@")[0],
+      email: body.email,
+    }));
   },
   async github({ accessToken }) {
     const github = purest({

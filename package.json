@@ -18,6 +18,7 @@
     "@strapi/plugin-i18n": "4.13.7",
     "@strapi/plugin-users-permissions": "4.13.7",
     "@strapi/strapi": "4.13.7",
+    "apple-sign-in-rest": "^1.0.3",
     "better-sqlite3": "8.0.1",
     "deep-diff": "^1.0.2",
     "firebase-admin": "^12.0.0",
