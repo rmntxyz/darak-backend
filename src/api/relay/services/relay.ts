@@ -15,57 +15,58 @@ export default factories.createCoreService(
       const relay = await strapi.db.transaction(async ({ trx }) => {
         const now = new Date().toISOString();
 
-        const relay = (
-          await strapi.entityService.findMany("api::relay.relay", {
-            filters: {
-              start_date: { $lte: now },
-              end_date: { $gt: now },
-              publishedAt: { $ne: null },
-            },
-            fields: [
-              "id",
-              "type",
-              "start_date",
-              "end_date",
-              "group_size",
-              "detail",
-            ],
-            populate: {
-              reward_table: {
-                populate: {
-                  rewards: true,
-                },
+        const relay =
+          (
+            await strapi.entityService.findMany("api::relay.relay", {
+              filters: {
+                start_date: { $lte: now },
+                end_date: { $gt: now },
+                publishedAt: { $ne: null },
               },
-              banner: { field: ["url"] },
-              token_image: { field: ["url"] },
-              relay_groups: {
-                filters: {
-                  tokens: {
-                    user: {
-                      id: userId,
-                    },
+              fields: [
+                "id",
+                "type",
+                "start_date",
+                "end_date",
+                "group_size",
+                "detail",
+              ],
+              populate: {
+                reward_table: {
+                  populate: {
+                    rewards: true,
                   },
                 },
-                fields: ["id"],
-                populate: {
-                  tokens: {
-                    fields: ["amount"],
-                    populate: {
+                banner: { field: ["url"] },
+                token_image: { field: ["url"] },
+                relay_groups: {
+                  filters: {
+                    tokens: {
                       user: {
-                        fields: ["id", "username"],
-                        // populate: {
-                        //   profile_image: {
-                        //     fields: ["url"],
-                        //   }
-                        // }
+                        id: userId,
+                      },
+                    },
+                  },
+                  fields: ["id"],
+                  populate: {
+                    tokens: {
+                      fields: ["amount"],
+                      populate: {
+                        user: {
+                          fields: ["id", "username"],
+                          // populate: {
+                          //   profile_image: {
+                          //     fields: ["url"],
+                          //   }
+                          // }
+                        },
                       },
                     },
                   },
                 },
               },
-            },
-          })
-        )[0];
+            })
+          )[0] || null;
 
         if (relay && relay.relay_groups.length === 0) {
           // lock relays
