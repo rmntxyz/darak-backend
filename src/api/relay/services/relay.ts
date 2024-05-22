@@ -160,6 +160,110 @@ export default factories.createCoreService(
       return relay;
     },
 
+    async settlePastRelay(userId: number) {
+      const results = await strapi.db.transaction(async ({ trx }) => {
+        const now = new Date().toISOString();
+
+        const tokens = await strapi.entityService.findMany(
+          "api::user-relay-token.user-relay-token",
+          {
+            filters: {
+              user: { id: userId },
+              relay: { $not: null },
+              $or: [
+                {
+                  result_settled: false,
+                },
+                {
+                  result_settled: { $null: true },
+                },
+              ],
+            },
+            populate: {
+              relay: {
+                filters: {
+                  end_date: { $lt: now },
+                  publishedAt: { $ne: null },
+                },
+                populate: {
+                  ranking_rewards: {
+                    populate: {
+                      rewards: true,
+                    },
+                  },
+                },
+              },
+              relay_group: {
+                populate: {
+                  tokens: true,
+                },
+              },
+            },
+          }
+        );
+
+        const promises = tokens.map(async (token) => {
+          // sort token.relay_group.tokens by amount
+          token.relay_group.tokens.sort((a, b) => b.amount - a.amount);
+
+          let rank = 1;
+          const rankMap = token.relay_group.tokens.reduce((acc, cur, idx) => {
+            if (acc[cur.amount] === undefined) {
+              acc[cur.amount] = rank++;
+            }
+            return acc;
+          }, {});
+
+          const rankOfUser = rankMap[token.amount];
+
+          // update user-relay-token's result_settled
+          await strapi.entityService.update(
+            "api::user-relay-token.user-relay-token",
+            token.id,
+            {
+              data: {
+                result_settled: true,
+              },
+            }
+          );
+
+          // claim rewards
+          // 랭크에 매핑된 순위가 리워드에 존재하면 그 리워드를 받는다.
+          // 만약 ranking_rewards에 매칭되는 순위가 없다면, 해당 ranking_rewards의 마지막 리워드를 받는다.
+
+          token.relay.ranking_rewards.sort((a, b) => a.ranking - b.ranking);
+
+          const rewards: Reward[] = [];
+          for (const list of token.relay.ranking_rewards) {
+            if (list.ranking === rankOfUser) {
+              rewards.push(...list.rewards);
+              break;
+            }
+          }
+          if (rewards.length === 0) {
+            rewards.push(
+              ...token.relay.ranking_rewards[
+                token.relay.ranking_rewards.length - 1
+              ].rewards
+            );
+          }
+
+          for (const reward of rewards) {
+            await updateRewards(userId, reward);
+          }
+
+          return {
+            relay: token.relay,
+            rewards,
+          };
+        });
+
+        return Promise.all(promises);
+      });
+
+      return results;
+    },
+
     async verify(userId: number, relay: Relay, result: CapsuleResult) {
       return relayHandler.verify(userId, relay, result);
     },
@@ -169,3 +273,28 @@ export default factories.createCoreService(
     },
   })
 );
+
+async function updateRewards(userId: number, reward: Reward) {
+  switch (reward.type) {
+    case "freebie":
+      await strapi
+        .service("api::freebie.freebie")
+        .updateFreebie(userId, reward.amount);
+      break;
+    case "star_point":
+      await strapi
+        .service("api::star-point.star-point")
+        .updateStarPoint(userId, reward.amount, "relay_ranking_reward");
+      break;
+    case "wheel_spin":
+      await strapi
+        .service("api::wheel-spin.wheel-spin")
+        .updateWheelSpin(userId, reward.amount, "relay_ranking_reward");
+      break;
+    case "trading_credit":
+      await strapi
+        .service("api::trading-credit.trading-credit")
+        .updateTradingCredit(userId, reward.amount, "relay_ranking_reward");
+      break;
+  }
+}

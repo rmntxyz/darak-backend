@@ -37,6 +37,10 @@
       "relation": "manyToOne",
       "target": "api::relay.relay",
       "inversedBy": "user_relay_tokens"
+    },
+    "result_settled": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

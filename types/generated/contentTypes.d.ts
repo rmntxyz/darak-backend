@@ -2092,7 +2092,16 @@ export interface ApiStarPointHistoryStarPointHistory
       'api::star-point.star-point'
     >;
     detail: Attribute.Enumeration<
-      ['item_sale', 'item_draw', 'achievement_reward', 'quest_reward']
+      [
+        'item_sale',
+        'item_draw',
+        'gacha_result',
+        'spin',
+        'relay_reward',
+        'relay_ranking_reward',
+        'achievement_reward',
+        'quest_reward'
+      ]
     >;
     inventories: Attribute.Relation<
       'api::star-point-history.star-point-history',
@@ -2274,12 +2283,23 @@ export interface ApiTradingCreditHistoryTradingCreditHistory
     singularName: 'trading-credit-history';
     pluralName: 'trading-credit-histories';
     displayName: 'TradingCreditHistory';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    detail: Attribute.Enumeration<['gacha_result', 'trade']>;
+    detail: Attribute.Enumeration<
+      [
+        'gacha_result',
+        'trade',
+        'spin',
+        'relay_reward',
+        'relay_ranking_reward',
+        'achievement_reward',
+        'quest_reward'
+      ]
+    >;
     date: Attribute.DateTime;
     change: Attribute.Integer;
     result: Attribute.Integer;
@@ -2375,6 +2395,7 @@ export interface ApiUserRelayTokenUserRelayToken extends Schema.CollectionType {
       'manyToOne',
       'api::relay.relay'
     >;
+    result_settled: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2634,12 +2655,22 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
     singularName: 'wheel-spin-history';
     pluralName: 'wheel-spin-histories';
     displayName: 'WheelSpinHistory';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    detail: Attribute.Enumeration<['gacha_result', 'spin']>;
+    detail: Attribute.Enumeration<
+      [
+        'gacha_result',
+        'spin',
+        'relay_reward',
+        'relay_ranking_reward',
+        'achievement_reward',
+        'quest_reward'
+      ]
+    >;
     date: Attribute.DateTime;
     change: Attribute.Integer;
     result: Attribute.Integer;

@@ -104,9 +104,14 @@ module.exports = (plugin) => {
       .service("api::draw-history.draw-history")
       .getDailyDrawCount(user.id);
 
+    const relay = await strapi
+      .service("api::relay.relay")
+      .getCurrentRelay(user.id);
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
+      relay,
       achievement_progresses: achievementProgresses,
       daily_quest_progresses: dailyQuestProgresses,
       daily_trade_count: dailyTradeCount,
