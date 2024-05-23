@@ -8,11 +8,11 @@ const Handler = {
 
 export default {
   verify: async (userId: number, relay: Relay, result: CapsuleResult) => {
-    const type = relay.type;
-    const handler = Handler[type];
+    const condition = relay.condition;
+    const handler = Handler[condition];
 
     if (!handler) {
-      throw new Error("Invalid relay type");
+      throw new Error("Invalid relay condition");
     }
 
     const tokens = await handler.verify(relay, result);

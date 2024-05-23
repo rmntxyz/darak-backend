@@ -1811,12 +1811,13 @@ export interface ApiRelayRelay extends Schema.CollectionType {
       'api::relay-group.relay-group'
     >;
     detail: Attribute.JSON;
-    type: Attribute.Enumeration<['probability', 'reward_related']>;
+    condition: Attribute.Enumeration<['probability', 'reward_related']>;
     user_relay_tokens: Attribute.Relation<
       'api::relay.relay',
       'oneToMany',
       'api::user-relay-token.user-relay-token'
     >;
+    type: Attribute.Enumeration<['relay_only', 'with_group_ranking']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

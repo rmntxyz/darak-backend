@@ -80,7 +80,8 @@ type RewardType =
   | "item"
   | "exp"
   | "trading_credit"
-  | "wheel_spin";
+  | "wheel_spin"
+  | "event_token";
 
 type RewardDetail = {
   type: RewardType;
@@ -180,9 +181,12 @@ type Inventory = {
 
 type RelayConditionType = "probaility" | "reward_related";
 
+type RelayType = "relay_only" | "with_group_ranking";
+
 type Relay = {
   id: number;
-  type: RelayConditionType;
+  condition: RelayConditionType;
+  type: RelayType;
   title: string;
   reward_table: RelayReward[];
   start_date: Date;

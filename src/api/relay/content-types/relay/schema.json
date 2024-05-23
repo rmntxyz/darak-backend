@@ -67,7 +67,7 @@
     "detail": {
       "type": "json"
     },
-    "type": {
+    "condition": {
       "type": "enumeration",
       "enum": [
         "probability",
@@ -79,6 +79,13 @@
       "relation": "oneToMany",
       "target": "api::user-relay-token.user-relay-token",
       "mappedBy": "relay"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "relay_only",
+        "with_group_ranking"
+      ]
     }
   }
 }

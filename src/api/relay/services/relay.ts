@@ -12,40 +12,172 @@ export default factories.createCoreService(
     async getCurrentRelay(userId: number) {
       // between start_date and end_date
 
-      const relay = await strapi.db.transaction(async ({ trx }) => {
+      const relays = await strapi.db.transaction(async ({ trx }) => {
         const now = new Date().toISOString();
 
-        const relay =
-          (
-            await strapi.entityService.findMany("api::relay.relay", {
-              filters: {
-                start_date: { $lte: now },
-                end_date: { $gt: now },
-                publishedAt: { $ne: null },
-              },
-              fields: [
-                "id",
-                "type",
-                "start_date",
-                "end_date",
-                "group_size",
-                "detail",
-              ],
+        const relays = await strapi.entityService.findMany("api::relay.relay", {
+          filters: {
+            start_date: { $lte: now },
+            end_date: { $gt: now },
+            publishedAt: { $ne: null },
+          },
+          fields: [
+            "id",
+            "type",
+            "condition",
+            "start_date",
+            "end_date",
+            "group_size",
+            "detail",
+          ],
+          populate: {
+            reward_table: {
               populate: {
-                reward_table: {
-                  populate: {
-                    rewards: true,
+                rewards: true,
+              },
+            },
+            banner: { field: ["url"] },
+            token_image: { field: ["url"] },
+            user_relay_tokens: {
+              filters: {
+                user: {
+                  id: userId,
+                },
+              },
+              fields: ["amount"],
+              populate: {
+                user: {
+                  fields: ["id", "username"],
+                },
+              },
+            },
+            ranking_rewards: {
+              populate: {
+                rewards: true,
+              },
+            },
+            relay_groups: {
+              filters: {
+                tokens: {
+                  user: {
+                    id: userId,
                   },
                 },
-                banner: { field: ["url"] },
-                token_image: { field: ["url"] },
-                relay_groups: {
-                  filters: {
-                    tokens: {
-                      user: {
-                        id: userId,
-                      },
+              },
+              fields: ["id"],
+              populate: {
+                tokens: {
+                  fields: ["amount"],
+                  populate: {
+                    user: {
+                      fields: ["id", "username"],
+                      // populate: {
+                      //   profile_image: {
+                      //     fields: ["url"],
+                      //   }
+                      // }
                     },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        for (const relay of relays) {
+          if (relay && relay.user_relay_tokens.length === 0) {
+            if (relay.type === "relay_only") {
+              const userToken = await strapi.entityService.create(
+                "api::user-relay-token.user-relay-token",
+                {
+                  fields: ["amount"],
+                  populate: {
+                    user: {
+                      fields: ["id", "username"],
+                    },
+                  },
+                  data: {
+                    user: { id: userId },
+                    relay: { id: relay.id },
+                    amount: 0,
+                    publishedAt: new Date(),
+                  },
+                }
+              );
+              relay.user_relay_tokens = [userToken];
+            } else if (relay.type === "with_group_ranking") {
+              // lock relays
+              await strapi.db
+                .connection("relays")
+                .transacting(trx)
+                .forUpdate()
+                .where("id", relay.id)
+                .select("relays.*");
+
+              // check tokens
+              const groups = await strapi.db
+                .connection("relay_groups")
+                .transacting(trx)
+                .forUpdate()
+                .join(
+                  "relay_groups_relay_links",
+                  "relay_groups.id",
+                  "relay_groups_relay_links.relay_group_id"
+                )
+                .where("relay_groups_relay_links.relay_id", relay.id)
+                .select("relay_groups.*");
+
+              let group;
+
+              const availableGroups = groups.filter((group) => {
+                return group.num_members < relay.group_size;
+              });
+
+              if (availableGroups.length === 0) {
+                //create group
+                group = await strapi.entityService.create(
+                  "api::relay-group.relay-group",
+                  {
+                    data: {
+                      relay: { id: relay.id },
+                      num_members: 0,
+                      publishedAt: new Date(),
+                    },
+                    fields: ["id", "num_members"],
+                  }
+                );
+              } else {
+                // find minimum group
+                group = availableGroups.reduce((prev, curr) =>
+                  prev.num_members < curr.num_members ? prev : curr
+                );
+              }
+
+              const userToken = await strapi.entityService.create(
+                "api::user-relay-token.user-relay-token",
+                {
+                  fields: ["amount"],
+                  populate: {
+                    user: {
+                      fields: ["id", "username"],
+                    },
+                  },
+                  data: {
+                    user: { id: userId },
+                    relay: { id: relay.id },
+                    relay_group: { id: group.id },
+                    amount: 0,
+                    publishedAt: new Date(),
+                  },
+                }
+              );
+
+              const updated = await strapi.entityService.update(
+                "api::relay-group.relay-group",
+                group.id,
+                {
+                  data: {
+                    num_members: group.num_members + 1,
                   },
                   fields: ["id"],
                   populate: {
@@ -54,111 +186,23 @@ export default factories.createCoreService(
                       populate: {
                         user: {
                           fields: ["id", "username"],
-                          // populate: {
-                          //   profile_image: {
-                          //     fields: ["url"],
-                          //   }
-                          // }
                         },
                       },
                     },
                   },
-                },
-              },
-            })
-          )[0] || null;
+                }
+              );
 
-        if (relay && relay.relay_groups.length === 0) {
-          // lock relays
-          await strapi.db
-            .connection("relays")
-            .transacting(trx)
-            .forUpdate()
-            .select("relays.*");
-
-          // check tokens
-          const groups = await strapi.db
-            .connection("relay_groups")
-            .transacting(trx)
-            .forUpdate()
-            .join(
-              "relay_groups_relay_links",
-              "relay_groups.id",
-              "relay_groups_relay_links.relay_group_id"
-            )
-            .where("relay_groups_relay_links.relay_id", relay.id)
-            .select("relay_groups.*");
-
-          let group;
-
-          const availableGroups = groups.filter((group) => {
-            return group.num_members < relay.group_size;
-          });
-
-          if (availableGroups.length === 0) {
-            //create group
-            group = await strapi.entityService.create(
-              "api::relay-group.relay-group",
-              {
-                data: {
-                  relay: { id: relay.id },
-                  num_members: 0,
-                  publishedAt: new Date(),
-                },
-                fields: ["id", "num_members"],
-              }
-            );
-          } else {
-            // find minimum group
-            group = availableGroups.reduce((prev, curr) =>
-              prev.num_members < curr.num_members ? prev : curr
-            );
+              relay.user_relay_tokens = [userToken];
+              relay.relay_groups = [updated];
+            }
           }
-
-          await strapi.entityService.create(
-            "api::user-relay-token.user-relay-token",
-            {
-              data: {
-                user: { id: userId },
-                relay: { id: relay.id },
-                relay_group: { id: group.id },
-                amount: 0,
-                publishedAt: new Date(),
-              },
-            }
-          );
-
-          const updated = await strapi.entityService.update(
-            "api::relay-group.relay-group",
-            group.id,
-            {
-              data: {
-                num_members: group.num_members + 1,
-              },
-              fields: ["num_members"],
-              populate: {
-                relay: {
-                  fields: ["id"],
-                },
-                tokens: {
-                  fields: ["amount"],
-                  populate: {
-                    user: {
-                      fields: ["id", "username"],
-                    },
-                  },
-                },
-              },
-            }
-          );
-
-          relay.relay_groups = [updated];
         }
 
-        return relay;
+        return relays;
       });
 
-      return relay;
+      return relays;
     },
 
     async settlePastRelay(userId: number) {
@@ -277,6 +321,9 @@ export default factories.createCoreService(
 
 async function updateRewards(userId: number, reward: Reward) {
   switch (reward.type) {
+    case "event_token":
+      // do nothing
+      break;
     case "freebie":
       await strapi
         .service("api::freebie.freebie")
