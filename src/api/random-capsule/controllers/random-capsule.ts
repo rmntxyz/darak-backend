@@ -5,16 +5,6 @@
 import { ErrorCode, AVAILABLE_MULTIPLY } from "../../../constant";
 
 export default {
-  test: async (ctx, next) => {
-    // const userId = ctx.state.user?.id;
-    const { userId } = ctx.query;
-
-    const result = await strapi
-      .service("api::relay.relay")
-      .getCurrentRelay(userId);
-
-    return result;
-  },
   gacha: async (ctx, next) => {
     const userId = ctx.state.user?.id;
 

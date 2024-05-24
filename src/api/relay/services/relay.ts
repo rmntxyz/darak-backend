@@ -9,7 +9,7 @@ import relayHandler from "./handler";
 export default factories.createCoreService(
   "api::relay.relay",
   ({ strapi }) => ({
-    async getCurrentRelay(userId: number) {
+    async getCurrentRelays(userId: number) {
       // between start_date and end_date
 
       const relays = await strapi.db.transaction(async ({ trx }) => {
@@ -248,6 +248,21 @@ export default factories.createCoreService(
         );
 
         const promises = tokens.map(async (token) => {
+          // update user-relay-token's result_settled
+          await strapi.entityService.update(
+            "api::user-relay-token.user-relay-token",
+            token.id,
+            {
+              data: {
+                result_settled: true,
+              },
+            }
+          );
+
+          if (token.relay.type === "relay_only") {
+            return;
+          }
+
           // sort token.relay_group.tokens by amount
           token.relay_group.tokens.sort((a, b) => b.amount - a.amount);
 
@@ -260,17 +275,6 @@ export default factories.createCoreService(
           }, {});
 
           const rankOfUser = rankMap[token.amount];
-
-          // update user-relay-token's result_settled
-          await strapi.entityService.update(
-            "api::user-relay-token.user-relay-token",
-            token.id,
-            {
-              data: {
-                result_settled: true,
-              },
-            }
-          );
 
           // claim rewards
           // 랭크에 매핑된 순위가 리워드에 존재하면 그 리워드를 받는다.
@@ -306,7 +310,7 @@ export default factories.createCoreService(
         return Promise.all(promises);
       });
 
-      return results;
+      return results.filter((result) => result);
     },
 
     async verify(userId: number, relay: Relay, result: CapsuleResult) {

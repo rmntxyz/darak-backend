@@ -14,15 +14,15 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const result = await strapi
+      const relays = await strapi
         .service("api::relay.relay")
-        .getCurrentRelay(userId);
+        .getCurrentRelays(userId);
 
-      if (!result) {
+      if (relays && relays.length === 0) {
         return ctx.notFound("no current relay");
       }
 
-      return result;
+      return relays;
     },
     "settle-past-relay": async (ctx, next) => {
       const userId = ctx.state.user?.id;

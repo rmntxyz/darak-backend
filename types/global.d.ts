@@ -96,6 +96,7 @@ type CapsuleResult = {
     amount: number;
     total: number;
     rewards: RewardDetail[];
+    relay: Relay;
   }[];
   multiply: number;
 };

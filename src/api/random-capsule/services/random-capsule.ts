@@ -306,26 +306,34 @@ async function addItemToUser(
 }
 
 async function checkRelayEvent(userId: number, result: CapsuleResult) {
-  const relay = await strapi
+  const relays = await strapi
     .service("api::relay.relay")
-    .getCurrentRelay(userId);
+    .getCurrentRelays(userId);
 
-  if (relay) {
-    const tokens = await strapi
-      .service("api::relay.relay")
-      .verify(userId, relay, result);
-
-    if (tokens > 0) {
-      const { rewards, total } = await strapi
+  for (const relay of relays) {
+    if (relay) {
+      const tokens = await strapi
         .service("api::relay.relay")
-        .claimRewards(userId, relay);
+        .verify(userId, relay, result);
 
-      // item은 일단 없다고 가정한다.
-      for (const reward of rewards) {
-        await updateRewards(userId, reward, 1);
+      if (tokens > 0) {
+        const { rewards, total } = await strapi
+          .service("api::relay.relay")
+          .claimRewards(userId, relay);
+
+        // item은 relay reward로 일단 없다고 가정한다.
+        for (const reward of rewards) {
+          await updateRewards(userId, reward, 1);
+        }
+
+        result.events.push({
+          type: "relay",
+          amount: tokens,
+          total,
+          rewards,
+          relay,
+        });
       }
-
-      result.events.push({ type: "relay", amount: tokens, total, rewards });
     }
   }
 }
