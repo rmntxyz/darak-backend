@@ -2016,6 +2016,12 @@ export interface ApiRoomRoom extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    unlock_conditions: Attribute.JSON &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2101,7 +2107,8 @@ export interface ApiStarPointHistoryStarPointHistory
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
-        'quest_reward'
+        'quest_reward',
+        'room_unlock'
       ]
     >;
     inventories: Attribute.Relation<
@@ -2444,6 +2451,7 @@ export interface ApiUserRoomUserRoom extends Schema.CollectionType {
     duration: Attribute.BigInteger;
     owned_items: Attribute.JSON;
     initial_completion_checked: Attribute.Boolean & Attribute.DefaultTo<false>;
+    unlocked: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

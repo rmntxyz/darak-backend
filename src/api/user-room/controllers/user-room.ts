@@ -8,6 +8,24 @@ import { applyLocalizations } from "../../../utils";
 export default factories.createCoreController(
   "api::user-room.user-room",
   ({ strapi }) => ({
+    "unlock-room": async (ctx) => {
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
+      const { roomId } = ctx.request.body;
+
+      if (!roomId) {
+        return ctx.badRequest("roomId is required");
+      }
+
+      return await strapi
+        .service("api::user-room.user-room")
+        .unlockRoom(userId, roomId);
+    },
+
     "is-initial-completion": async (ctx) => {
       const userId = ctx.state.user?.id;
 
