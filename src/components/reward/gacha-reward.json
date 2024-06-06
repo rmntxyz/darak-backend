@@ -8,7 +8,7 @@
   "options": {},
   "attributes": {
     "probability": {
-      "type": "decimal"
+      "type": "float"
     },
     "rewards": {
       "displayName": "with_amount",

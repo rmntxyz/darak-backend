@@ -156,3 +156,11 @@ export const TRADE_ITEM_LIMIT = 5;
 export const DAILY_DRAW_LIMIT = 5;
 
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
+
+export const ITEM_PROBABILITY = {
+  common: 1,
+  uncommon: 0.3,
+  rare: 0.08,
+  unique: 0.015,
+  secret: 0.005,
+};

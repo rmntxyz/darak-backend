@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wheel_infos",
+  "info": {
+    "singularName": "wheel-info",
+    "pluralName": "wheel-infos",
+    "displayName": "WheelInfo",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "reward_table": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.gacha-reward"
+    },
+    "cost": {
+      "type": "integer"
+    }
+  }
+}

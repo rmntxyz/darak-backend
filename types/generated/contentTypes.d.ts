@@ -2616,6 +2616,38 @@ export interface ApiWebtoonOutlinkWebtoonOutlink extends Schema.CollectionType {
   };
 }
 
+export interface ApiWheelInfoWheelInfo extends Schema.CollectionType {
+  collectionName: 'wheel_infos';
+  info: {
+    singularName: 'wheel-info';
+    pluralName: 'wheel-infos';
+    displayName: 'WheelInfo';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    reward_table: Attribute.Component<'reward.gacha-reward', true>;
+    cost: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::wheel-info.wheel-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::wheel-info.wheel-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiWheelSpinWheelSpin extends Schema.CollectionType {
   collectionName: 'wheel_spins';
   info: {
@@ -2756,6 +2788,7 @@ declare module '@strapi/strapi' {
       'api::user-room.user-room': ApiUserRoomUserRoom;
       'api::webtoon.webtoon': ApiWebtoonWebtoon;
       'api::webtoon-outlink.webtoon-outlink': ApiWebtoonOutlinkWebtoonOutlink;
+      'api::wheel-info.wheel-info': ApiWheelInfoWheelInfo;
       'api::wheel-spin.wheel-spin': ApiWheelSpinWheelSpin;
       'api::wheel-spin-history.wheel-spin-history': ApiWheelSpinHistoryWheelSpinHistory;
     }

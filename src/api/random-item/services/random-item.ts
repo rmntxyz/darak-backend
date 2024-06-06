@@ -2,9 +2,71 @@
  * random-item service
  */
 
-import { DAILY_DRAW_LIMIT, ErrorCode } from "../../../constant";
+import {
+  DAILY_DRAW_LIMIT,
+  ErrorCode,
+  ITEM_PROBABILITY,
+} from "../../../constant";
 
 export default ({ strapi }) => ({
+  async getRandomItems(userId: number, count: number) {
+    return await strapi.db.transaction(async ({ trx }) => {
+      const userRooms = await strapi
+        .service("api::user-room.user-room")
+        .getUserRooms(userId);
+
+      const items = userRooms.reduce(
+        (acc, userRoom) => {
+          const { items } = userRoom.room;
+          const filtered = items.filter(
+            (item) => item.category === "decoration"
+          );
+          for (const item of filtered) {
+            acc[item.rarity].push(item);
+          }
+          return acc;
+        },
+        {
+          common: [],
+          uncommon: [],
+          rare: [],
+          unique: [],
+          secret: [],
+        }
+      );
+
+      const results = [];
+
+      for (let i = 0; i < count; i++) {
+        const random = Math.random();
+        let probability = 0;
+
+        for (const rarity of [
+          "secret",
+          "unique",
+          "rare",
+          "uncommon",
+          "common",
+        ]) {
+          const rarityItems = items[rarity];
+          probability += ITEM_PROBABILITY[rarity];
+
+          if (rarityItems.length === 0) {
+            continue;
+          }
+
+          if (random < probability && rarityItems.length > 0) {
+            const item =
+              rarityItems[Math.floor(Math.random() * rarityItems.length)];
+            results.push(item);
+            break;
+          }
+        }
+      }
+
+      return results;
+    });
+  },
   async drawRandom(userId: number, drawId: number) {
     let items = [];
 

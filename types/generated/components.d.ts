@@ -177,7 +177,7 @@ export interface RewardGachaReward extends Schema.Component {
     description: '';
   };
   attributes: {
-    probability: Attribute.Decimal;
+    probability: Attribute.Float;
     rewards: Attribute.Component<'reward.with-amount', true>;
   };
 }
@@ -228,6 +228,7 @@ export interface RewardWithAmount extends Schema.Component {
   info: {
     displayName: 'with_amount';
     icon: 'bulletList';
+    description: '';
   };
   attributes: {
     type: Attribute.Enumeration<

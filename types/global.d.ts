@@ -240,6 +240,14 @@ type RelayRankingReward = {
   rewards: { type: string; amount: number }[];
 };
 
+type WheelInfo = {
+  reward_table: {
+    probability: number;
+    rewards: Reward[];
+  }[];
+  cost: number;
+};
+
 type UserItemStatus = null | "owned" | "trading" | "auctioning";
 
 type TradeStatus =

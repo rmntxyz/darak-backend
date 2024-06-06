@@ -186,6 +186,7 @@ export default factories.createCoreService(
         {
           filters: {
             user: { id: userId },
+            unlocked: true,
           },
           populate: {
             user: {
@@ -281,6 +282,7 @@ export default factories.createCoreService(
               owned_items: {},
               initial_completion_checked: false,
               publishedAt: now,
+              unlocked: false,
             },
             populate: {
               user: {
