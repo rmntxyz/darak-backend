@@ -253,6 +253,9 @@ async function addItemToUser(
       {
         fields: ["id", "name", "desc", "rarity", "current_serial_number"],
         populate: {
+          room: {
+            fields: ["id"],
+          },
           thumbnail: {
             fields: ["url"],
           },
@@ -289,6 +292,14 @@ async function addItemToUser(
       .updateItemAquisition(userItem);
 
     userItems.push(userItem.id);
+
+    const userRoom = await strapi
+      .service("api::user-room.user-room")
+      .getUserRoom(userId, updatedItem.room.id);
+
+    await strapi
+      .service("api::user-room.user-room")
+      .updateItems(userRoom, [updatedItem.id], []);
 
     await strapi.entityService.create("api::draw-history.draw-history", {
       data: {
