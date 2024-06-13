@@ -4,6 +4,7 @@ type Freebie = {
   max: number;
   last_charged_at: number;
   charge_interval: number;
+  charge_amount: number;
 };
 
 type FreebieData = Partial<Freebie>;
@@ -72,7 +73,16 @@ type StarPointChangeDetail =
 
 type WheelSpinChangeDetail = "gacha_result" | "spin";
 
-type TradingCreditChangeDetail = "gacha_result" | "trade";
+type TradingCreditChangeDetail = "trade";
+
+type TradingCredit = {
+  id: number;
+  current: number;
+  max: number;
+  last_charged_at: number;
+  charge_interval: number;
+  charge_amount: number;
+};
 
 type RewardType =
   | "freebie"

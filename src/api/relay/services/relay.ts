@@ -343,10 +343,10 @@ async function updateRewards(userId: number, reward: Reward) {
         .service("api::wheel-spin.wheel-spin")
         .updateWheelSpin(userId, reward.amount, "relay_ranking_reward");
       break;
-    case "trading_credit":
-      await strapi
-        .service("api::trading-credit.trading-credit")
-        .updateTradingCredit(userId, reward.amount, "relay_ranking_reward");
-      break;
+    // case "trading_credit":
+    //   await strapi
+    //     .service("api::trading-credit.trading-credit")
+    //     .updateTradingCredit(userId, reward.amount, "relay_ranking_reward");
+    //   break;
   }
 }

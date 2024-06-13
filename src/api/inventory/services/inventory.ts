@@ -51,7 +51,15 @@ export default factories.createCoreService(
             .service("api::user-room.user-room")
             .getUserRoom(userId, roomId);
 
+          // if item to sell is only item in room, throw error
           const items = itemsToSellByRoom[roomId];
+
+          for (const id of items) {
+            if (userRoom.owned_items[id] === 1) {
+              throw "Cannot sell last item in room";
+            }
+          }
+
           await strapi
             .service("api::user-room.user-room")
             .updateItems(userRoom, [], items);

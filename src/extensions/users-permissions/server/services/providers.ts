@@ -89,10 +89,11 @@ export default ({ strapi }) => {
       "api::freebie.freebie",
       {
         data: {
-          max: 7,
-          current: 7,
+          max: 30,
+          current: 30,
           last_charged_at: (date.getTime() / 1000) | 0,
           charge_interval: 3600,
+          charge_amount: 3,
           publishedAt: date,
         },
       }
@@ -137,7 +138,11 @@ export default ({ strapi }) => {
       "api::trading-credit.trading-credit",
       {
         data: {
-          amount: 0,
+          max: 2,
+          current: 2,
+          last_charged_at: (date.getTime() / 1000) | 0,
+          charge_interval: 3600 * 12,
+          charge_amount: 1,
           publishedAt: date,
         },
       }

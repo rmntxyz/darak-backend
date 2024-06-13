@@ -1455,6 +1455,7 @@ export interface ApiFreebieFreebie extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     charge_interval: Attribute.Integer & Attribute.DefaultTo<3600>;
+    charge_amount: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2254,7 +2255,7 @@ export interface ApiTradingCreditTradingCredit extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    amount: Attribute.Integer;
+    current: Attribute.Integer;
     user: Attribute.Relation<
       'api::trading-credit.trading-credit',
       'oneToOne',
@@ -2266,6 +2267,9 @@ export interface ApiTradingCreditTradingCredit extends Schema.CollectionType {
       'api::trading-credit-history.trading-credit-history'
     >;
     max: Attribute.Integer;
+    charge_amount: Attribute.Integer;
+    charge_interval: Attribute.Integer;
+    last_charged_at: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

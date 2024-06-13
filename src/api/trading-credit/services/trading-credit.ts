@@ -16,22 +16,25 @@ export default factories.createCoreService(
             filters: {
               user: { id: userId },
             },
-            fields: ["amount"],
           }
         )
       )[0];
 
-      if (!tradingCredit) {
+      if (tradingCredit) {
+        tradingCredit = recalculate(tradingCredit);
+      } else {
         tradingCredit = await strapi.entityService.create(
           "api::trading-credit.trading-credit",
           {
             data: {
-              amount: 0,
-              max: 3,
+              current: 2,
+              max: 2,
+              last_charged_at: (Date.now() / 1000) | 0,
+              charge_interval: 3600 * 12,
+              charge_amount: 1,
               user: { id: userId },
               publishedAt: new Date(),
             },
-            fields: ["amount"],
           }
         );
       }
@@ -57,7 +60,7 @@ export default factories.createCoreService(
           .where("trading_credits_user_links.user_id", userId)
           .select("trading_credits.*");
 
-        if (tradingCredit.amount + change < 0) {
+        if (tradingCredit.current + change < 0) {
           throw ErrorCode.NOT_ENOUGH_TRADING_CREDITS;
         }
 
@@ -66,12 +69,11 @@ export default factories.createCoreService(
           tradingCredit.id,
           {
             data: {
-              amount: Math.min(
-                tradingCredit.amount + change,
+              current: Math.min(
+                tradingCredit.current + change,
                 tradingCredit.max
               ),
             },
-            fields: ["amount", "max"],
           }
         );
 
@@ -81,7 +83,7 @@ export default factories.createCoreService(
             data: {
               change,
               detail,
-              result: updated.amount,
+              result: updated.current,
               date: new Date(),
               trading_credit: { id: updated.id },
               publishedAt: new Date(),
@@ -94,3 +96,28 @@ export default factories.createCoreService(
     },
   })
 );
+
+function recalculate(tradingCredit: TradingCredit) {
+  let { current, max, last_charged_at, charge_interval, charge_amount } =
+    tradingCredit;
+
+  if (current < max) {
+    // 현재 시간
+    const now = (Date.now() / 1000) | 0;
+    // 충전 가능한 갯수
+    const limit_charges = max - current;
+
+    const diff_time = now - last_charged_at;
+    const multiple = Math.floor(diff_time / charge_interval);
+    const charges = Math.min(multiple * charge_amount, limit_charges);
+
+    if (multiple > 0) {
+      current += charges;
+      last_charged_at += multiple * charge_interval;
+
+      tradingCredit = { ...tradingCredit, current, last_charged_at };
+    }
+  }
+
+  return tradingCredit;
+}

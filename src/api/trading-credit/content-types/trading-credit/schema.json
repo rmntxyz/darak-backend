@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "amount": {
+    "current": {
       "type": "integer"
     },
     "user": {
@@ -28,6 +28,15 @@
       "mappedBy": "trading_credit"
     },
     "max": {
+      "type": "integer"
+    },
+    "charge_amount": {
+      "type": "integer"
+    },
+    "charge_interval": {
+      "type": "integer"
+    },
+    "last_charged_at": {
       "type": "integer"
     }
   }

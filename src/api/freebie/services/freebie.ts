@@ -8,8 +8,42 @@ import { ErrorCode } from "../../../constant";
 export default factories.createCoreService(
   "api::freebie.freebie",
   ({ strapi }) => ({
+    async getFreebie(userId: number) {
+      let freebie = (
+        await strapi.entityService.findMany("api::freebie.freebie", {
+          filters: {
+            user: { id: userId },
+          },
+        })
+      )[0];
+
+      if (freebie) {
+        freebie = this.recalculate(freebie);
+      } else {
+        freebie = await strapi.entityService.create("api::freebie.freebie", {
+          data: {
+            current: 30,
+            max: 30,
+            last_charged_at: (new Date().getTime() / 1000) | 0,
+            charge_interval: 3600,
+            charge_amount: 3,
+            user: { id: userId },
+            publishedAt: new Date(),
+          },
+        });
+      }
+
+      return freebie;
+    },
     async refresh(freebie: Freebie) {
-      let { id, current, max, last_charged_at, charge_interval } = freebie;
+      let {
+        id,
+        current,
+        max,
+        last_charged_at,
+        charge_interval,
+        charge_amount,
+      } = freebie;
 
       if (current < max) {
         // 현재 시간
@@ -18,14 +52,12 @@ export default factories.createCoreService(
         const limit_charges = max - current;
 
         const diff_time = now - last_charged_at;
-        const charges = Math.min(
-          Math.floor(diff_time / charge_interval),
-          limit_charges
-        );
+        const multiple = Math.floor(diff_time / charge_interval);
+        const charges = Math.min(multiple * charge_amount, limit_charges);
 
-        if (charges > 0) {
+        if (multiple > 0) {
           current += charges;
-          last_charged_at += charges * charge_interval;
+          last_charged_at += multiple * charge_interval;
 
           return await strapi
             .service("api::freebie.freebie")
@@ -37,7 +69,8 @@ export default factories.createCoreService(
     },
 
     recalculate(freebie: Freebie) {
-      let { current, max, last_charged_at, charge_interval } = freebie;
+      let { current, max, last_charged_at, charge_interval, charge_amount } =
+        freebie;
 
       if (current < max) {
         // 현재 시간
@@ -46,14 +79,12 @@ export default factories.createCoreService(
         const limit_charges = max - current;
 
         const diff_time = now - last_charged_at;
-        const charges = Math.min(
-          Math.floor(diff_time / charge_interval),
-          limit_charges
-        );
+        const multiple = Math.floor(diff_time / charge_interval);
+        const charges = Math.min(multiple * charge_amount, limit_charges);
 
-        if (charges > 0) {
+        if (multiple > 0) {
           current += charges;
-          last_charged_at += charges * charge_interval;
+          last_charged_at += multiple * charge_interval;
 
           freebie = { ...freebie, current, last_charged_at };
         }

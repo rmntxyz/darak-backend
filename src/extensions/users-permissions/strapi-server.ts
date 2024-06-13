@@ -42,9 +42,7 @@ module.exports = (plugin) => {
           wheel_spin: {
             fields: ["amount"],
           },
-          trading_credit: {
-            fields: ["amount"],
-          },
+          trading_credit: true,
           rooms: {
             fields: ["name", "desc", "rid"],
             populate: {
@@ -61,6 +59,12 @@ module.exports = (plugin) => {
 
     if (!user) {
       return ctx.unauthorized();
+    }
+
+    if (user.freebie === null) {
+      user.freebie = await strapi
+        .service("api::freebie.freebie")
+        .getFreebie(user.id);
     }
 
     // TEMP
@@ -96,13 +100,13 @@ module.exports = (plugin) => {
       .service("api::achievement-progress.achievement-progress")
       .getAchievementList(user.id);
 
-    const dailyTradeCount = await strapi
-      .service("api::trade-process.trade-process")
-      .getDailyTradeCount(user.id);
+    // const dailyTradeCount = await strapi
+    //   .service("api::trade-process.trade-process")
+    //   .getDailyTradeCount(user.id);
 
-    const dailyDrawCount = await strapi
-      .service("api::draw-history.draw-history")
-      .getDailyDrawCount(user.id);
+    // const dailyDrawCount = await strapi
+    //   .service("api::draw-history.draw-history")
+    //   .getDailyDrawCount(user.id);
 
     const relays = await strapi
       .service("api::relay.relay")
@@ -114,8 +118,8 @@ module.exports = (plugin) => {
       relays,
       achievement_progresses: achievementProgresses,
       daily_quest_progresses: dailyQuestProgresses,
-      daily_trade_count: dailyTradeCount,
-      daily_draw_count: dailyDrawCount,
+      daily_trade_count: 0,
+      daily_draw_count: 0,
     });
   };
 

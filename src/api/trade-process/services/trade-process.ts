@@ -1,3 +1,4 @@
+import { ErrorCode } from "../../../constant";
 import { getRefTimestamp } from "../../../utils";
 
 /**
@@ -146,6 +147,8 @@ group by
   INVENTORIES_USERS_PERMISSIONS_USER_LINKS.USER_ID,
   UP_USERS.USERNAME,
   USER_ITEMS.COUNT
+having
+  COUNT(*) >= 2
 order by
   COUNT desc, USER_COLLECTION_COUNT desc, USER_ID
 limit ${pageSize}
@@ -441,6 +444,19 @@ offset ${pageNum - 1} * ${pageSize};
         .service("api::user-room.user-room")
         .getUserRoom(trade.partner.id, roomId);
 
+      // if item to trade is only item in room, throw error
+      for (const id of proposerItems!) {
+        if (proposerRoom.owned_items[id] === 1) {
+          throw ErrorCode.NOT_ENOUGH_PROPOSER_ITEMS;
+        }
+      }
+
+      for (const id of partnerItems!) {
+        if (partnerRoom.owned_items[id] === 1) {
+          throw ErrorCode.NOT_ENOUGH_PARTNER_ITEMS;
+        }
+      }
+
       await strapi
         .service("api::user-room.user-room")
         .updateItems(proposerRoom, partnerItems, proposerItems);
@@ -505,6 +521,7 @@ offset ${pageNum - 1} * ${pageSize};
     });
   },
 
+  // DEPRECATED
   async getDailyTradeCount(userId: number) {
     // Check how many trades I have proposed per day
     const now = Date.now();

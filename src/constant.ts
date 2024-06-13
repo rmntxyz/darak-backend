@@ -93,6 +93,14 @@ export const ErrorCode = {
     code: 1013,
     message: "Not enough trading credits",
   },
+  NOT_ENOUGH_PROPOSER_ITEMS: {
+    code: 1014,
+    message: "not enough proposer items",
+  },
+  NOT_ENOUGH_PARTNER_ITEMS: {
+    code: 1015,
+    message: "not enough partner items",
+  },
 
   // Inventory Management
   INVALID_ITEMS_STATUS: {
