@@ -108,18 +108,21 @@ export default {
     }
 
     return await strapi.db.transaction(async () => {
-      // const count = await strapi
-      //   .service("api::trade-process.trade-process")
-      //   .getDailyTradeCount(userId);
-
-      // if (count >= DAY_LIMIT) {
-      //   return ctx.badRequest(
-      //     "daily trade limit exceeded",
-      //     ErrorCode.DAILY_TRADE_LIMIT_EXCEEDED
-      //   );
-      // }
-
       // check trading credit
+      const tradingCredit = await strapi
+        .service("api::trading-credit.trading-credit")
+        .getTradingCredit(userId);
+
+      if (tradingCredit.current <= 0) {
+        return ctx.badRequest(
+          "not enough trading credits",
+          ErrorCode.NOT_ENOUGH_TRADING_CREDITS
+        );
+      } else {
+        await strapi
+          .service("api::trading-credit.trading-credit")
+          .updateTradingCredit(userId, -1, "trade");
+      }
 
       // check if user has enough items in inventory to trade
       const proposerItemsInInventory = await strapi
