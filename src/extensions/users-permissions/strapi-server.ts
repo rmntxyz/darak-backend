@@ -80,8 +80,8 @@ module.exports = (plugin) => {
         .service("api::wheel-spin.wheel-spin")
         .getWheelSpin(user.id);
     }
-    // TEMP
 
+    // TEMP
     if (user.trading_credit === null) {
       user.trading_credit = await strapi
         .service("api::trading-credit.trading-credit")
@@ -91,6 +91,10 @@ module.exports = (plugin) => {
     const freebie = await strapi
       .service("api::freebie.freebie")
       .refresh(user.freebie);
+
+    const trading_credit = await strapi
+      .service("api::trading-credit.trading-credit")
+      .refresh(user.trading_credit);
 
     const dailyQuestProgresses = await strapi
       .service("api::daily-quest-progress.daily-quest-progress")
@@ -115,6 +119,7 @@ module.exports = (plugin) => {
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
+      trading_credit,
       relays,
       achievement_progresses: achievementProgresses,
       daily_quest_progresses: dailyQuestProgresses,

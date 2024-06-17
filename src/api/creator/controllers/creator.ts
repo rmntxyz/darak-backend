@@ -18,7 +18,7 @@ export default factories.createCoreController(
       creatorList.forEach((creator) => {
         applyLocalizations(creator, locale);
 
-        creator.forEach((room) => {
+        creator.rooms.forEach((room) => {
           applyLocalizations(room, locale);
         });
 

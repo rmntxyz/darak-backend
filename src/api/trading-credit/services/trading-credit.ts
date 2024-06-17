@@ -42,6 +42,25 @@ export default factories.createCoreService(
       return tradingCredit;
     },
 
+    async refresh(tradingCredit: TradingCredit) {
+      const refreshed = recalculate(tradingCredit);
+
+      if (refreshed.current !== tradingCredit.current) {
+        await strapi.entityService.update(
+          "api::trading-credit.trading-credit",
+          tradingCredit.id,
+          {
+            data: {
+              current: refreshed.current,
+              last_charged_at: refreshed.last_charged_at,
+            },
+          }
+        );
+      }
+
+      return refreshed;
+    },
+
     async updateTradingCredit(
       userId: number,
       change: number,
