@@ -2178,6 +2178,38 @@ export interface ApiStreakStreak extends Schema.CollectionType {
   };
 }
 
+export interface ApiStreakRewardStreakReward extends Schema.CollectionType {
+  collectionName: 'streak_rewards';
+  info: {
+    singularName: 'streak-reward';
+    pluralName: 'streak-rewards';
+    displayName: 'StreakReward';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    start_date: Attribute.DateTime;
+    end_date: Attribute.DateTime;
+    rewards: Attribute.Component<'reward.streak-rewards', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::streak-reward.streak-reward',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::streak-reward.streak-reward',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiTradeTrade extends Schema.CollectionType {
   collectionName: 'trades';
   info: {
@@ -2784,6 +2816,7 @@ declare module '@strapi/strapi' {
       'api::star-point.star-point': ApiStarPointStarPoint;
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::streak.streak': ApiStreakStreak;
+      'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;

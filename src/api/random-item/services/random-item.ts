@@ -3,61 +3,66 @@
  */
 
 import {
-  DAILY_DRAW_LIMIT,
   ErrorCode,
+  DAILY_DRAW_LIMIT,
   ITEM_PROBABILITY,
 } from "../../../constant";
 
 export default ({ strapi }) => ({
-  async getRandomItems(userId: number, count: number) {
+  async getRandomItemsFromUnlockedRooms(
+    userId: number,
+    count: number,
+    rarities: string[] = ["common", "uncommon", "rare", "unique", "secret"]
+  ) {
     return await strapi.db.transaction(async ({ trx }) => {
       const userRooms = await strapi
         .service("api::user-room.user-room")
         .getUserRooms(userId);
 
-      const items = userRooms.reduce(
-        (acc, userRoom) => {
-          const { items } = userRoom.room;
-          const filtered = items.filter(
-            (item) => item.category === "decoration"
-          );
-          for (const item of filtered) {
-            acc[item.rarity].push(item);
+      const itemCandidates = rarities.reduce((acc, rarity) => {
+        acc[rarity] = [];
+        return acc;
+      }, {});
+
+      for (const userRoom of userRooms) {
+        const { items } = userRoom.room;
+        const decorations = items.filter(
+          (item) => item.category === "decoration"
+        );
+
+        for (const item of decorations) {
+          if (itemCandidates[item.rarity]) {
+            itemCandidates[item.rarity].push(item);
           }
-          return acc;
-        },
-        {
-          common: [],
-          uncommon: [],
-          rare: [],
-          unique: [],
-          secret: [],
         }
-      );
+      }
 
       const results = [];
+
+      const filtered = ["secret", "unique", "rare", "uncommon", "common"]
+        .filter((rarity) => itemCandidates[rarity]?.length > 0)
+        .map((rarity) => ({
+          probability: ITEM_PROBABILITY[rarity],
+          items: itemCandidates[rarity],
+        }));
+
+      if (filtered.length === 0) {
+        throw ErrorCode.NOT_FOUND_ITEM_LIST;
+      }
+
+      // set probability of last one of filtered to 1
+      const last = filtered[filtered.length - 1];
+      last.probability = 1;
 
       for (let i = 0; i < count; i++) {
         const random = Math.random();
         let probability = 0;
 
-        for (const rarity of [
-          "secret",
-          "unique",
-          "rare",
-          "uncommon",
-          "common",
-        ]) {
-          const rarityItems = items[rarity];
-          probability += ITEM_PROBABILITY[rarity];
+        for (const { probability: p, items } of filtered) {
+          probability += p;
 
-          if (rarityItems.length === 0) {
-            continue;
-          }
-
-          if (random < probability && rarityItems.length > 0) {
-            const item =
-              rarityItems[Math.floor(Math.random() * rarityItems.length)];
+          if (random < probability && items.length > 0) {
+            const item = items[Math.floor(Math.random() * items.length)];
             results.push(item);
             break;
           }

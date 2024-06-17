@@ -223,6 +223,17 @@ export interface RewardReward extends Schema.Component {
   };
 }
 
+export interface RewardStreakRewards extends Schema.Component {
+  collectionName: 'components_reward_streak_rewards';
+  info: {
+    displayName: 'streak rewards';
+    icon: 'bulletList';
+  };
+  attributes: {
+    reward: Attribute.Component<'reward.with-amount', true>;
+  };
+}
+
 export interface RewardWithAmount extends Schema.Component {
   collectionName: 'components_reward_with_amounts';
   info: {
@@ -232,7 +243,19 @@ export interface RewardWithAmount extends Schema.Component {
   };
   attributes: {
     type: Attribute.Enumeration<
-      ['freebie', 'star_point', 'item', 'trading_credit', 'wheel_spin', 'exp']
+      [
+        'freebie',
+        'star_point',
+        'item',
+        'item_common',
+        'item_uncommon',
+        'item_rare',
+        'item_unique',
+        'item_secret',
+        'trading_credit',
+        'wheel_spin',
+        'exp'
+      ]
     >;
     amount: Attribute.Integer;
   };
@@ -257,6 +280,7 @@ declare module '@strapi/strapi' {
       'reward.relay-ranking': RewardRelayRanking;
       'reward.relay': RewardRelay;
       'reward.reward': RewardReward;
+      'reward.streak-rewards': RewardStreakRewards;
       'reward.with-amount': RewardWithAmount;
     }
   }

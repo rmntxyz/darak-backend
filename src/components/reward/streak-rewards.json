@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_reward_streak_rewards",
+  "info": {
+    "displayName": "streak rewards",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "reward": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    }
+  }
+}

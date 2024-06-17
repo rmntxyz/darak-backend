@@ -125,7 +125,7 @@ export default factories.createCoreService(
           case "item":
             const items = await strapi
               .service("api::random-item.random-item")
-              .getRandomItems(userId, reward.amount);
+              .getRandomItemsFromUnlockedRooms(userId, reward.amount);
 
             const itemIds = items.map((item) => item.id);
 

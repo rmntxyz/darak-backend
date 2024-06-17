@@ -13,6 +13,11 @@
         "freebie",
         "star_point",
         "item",
+        "item_common",
+        "item_uncommon",
+        "item_rare",
+        "item_unique",
+        "item_secret",
         "trading_credit",
         "wheel_spin",
         "exp"

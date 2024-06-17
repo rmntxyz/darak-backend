@@ -150,6 +150,12 @@ export const ErrorCode = {
     message: "Invalid multiply",
   },
 
+  // get random items
+  NOT_FOUND_ITEM_LIST: {
+    code: 5001,
+    message: "Not found item list",
+  },
+
   // wheel spins
   NOT_ENOUGH_WHEEL_SPINS: {
     code: 4001,
@@ -157,18 +163,18 @@ export const ErrorCode = {
   },
 };
 
-export const RANKING_LIMIT = 10;
-
-export const TRADE_ITEM_LIMIT = 5;
-
-export const DAILY_DRAW_LIMIT = 5;
+export const TRADE_ITEM_LIMIT = 3;
 
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
 
 export const ITEM_PROBABILITY = {
-  common: 1,
+  common: 0.6,
   uncommon: 0.3,
   rare: 0.08,
   unique: 0.015,
   secret: 0.005,
 };
+
+// deprecated
+export const DAILY_DRAW_LIMIT = 5;
+export const RANKING_LIMIT = 10;
