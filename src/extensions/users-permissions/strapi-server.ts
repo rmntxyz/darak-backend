@@ -104,6 +104,10 @@ module.exports = (plugin) => {
       .service("api::achievement-progress.achievement-progress")
       .getAchievementList(user.id);
 
+    const streak = await strapi
+      .service("api::streak.streak")
+      .refresh(user.streak);
+
     // const dailyTradeCount = await strapi
     //   .service("api::trade-process.trade-process")
     //   .getDailyTradeCount(user.id);
@@ -121,6 +125,7 @@ module.exports = (plugin) => {
       freebie,
       trading_credit,
       relays,
+      streak,
       achievement_progresses: achievementProgresses,
       daily_quest_progresses: dailyQuestProgresses,
       daily_trade_count: 0,

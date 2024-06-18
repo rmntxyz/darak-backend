@@ -4,36 +4,52 @@
 
 import { factories } from "@strapi/strapi";
 import { getRefTimestamp } from "../../../utils";
+import { CHECK_IN_RESET_DAYS, ONE_DAY } from "../../../constant";
 
 export default factories.createCoreService(
-  "api::streak.streak"
-  // ({ strapi }) => ({
-  //   async refresh(streak: Streak) {
-  //     let { id, current_streak, longest_streak, last_login_date } = streak;
+  "api::streak.streak",
+  ({ strapi }) => ({
+    async getCurrentStreak(userId: number) {
+      return (
+        await strapi.entityService.findMany("api::streak.streak", {
+          filters: {
+            users_permissions_user: { id: userId },
+          },
+        })
+      )[0];
+    },
 
-  //     const now = new Date();
-  //     const lastRefTimestamp = getRefTimestamp(last_login_date);
-  //     const refTimestamp = getRefTimestamp(now);
+    async refresh(streak: Streak) {
+      let { id, current_login, longest_login, last_login_date, streak_count } =
+        streak;
 
-  //     if (lastRefTimestamp === refTimestamp) {
-  //       return streak;
-  //     }
+      const now = new Date();
+      const lastRefTimestamp = getRefTimestamp(last_login_date);
+      const refTimestamp = getRefTimestamp(now);
 
-  //     if (lastRefTimestamp === refTimestamp - 86400000) {
-  //       current_streak += 1;
-  //     } else {
-  //       current_streak = 1;
-  //     }
+      if (lastRefTimestamp === refTimestamp) {
+        return streak;
+      }
 
-  //     longest_streak = Math.max(current_streak, longest_streak);
+      if (refTimestamp - lastRefTimestamp === ONE_DAY) {
+        current_login = current_login + 1;
+      } else {
+        current_login = 1;
+      }
 
-  //     return await strapi.service("api::streak.streak").update(id, {
-  //       data: {
-  //         current_streak,
-  //         longest_streak,
-  //         last_login_date: now,
-  //       },
-  //     });
-  //   },
-  // })
+      longest_login = Math.max(current_login, longest_login);
+
+      streak_count = (streak_count % CHECK_IN_RESET_DAYS) + 1;
+
+      return await strapi.service("api::streak.streak").update(id, {
+        data: {
+          current_login,
+          longest_login,
+          streak_count,
+          last_login_date: now,
+          reward_claimed: false,
+        },
+      });
+    },
+  })
 );

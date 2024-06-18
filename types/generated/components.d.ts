@@ -228,9 +228,11 @@ export interface RewardStreakRewards extends Schema.Component {
   info: {
     displayName: 'streak rewards';
     icon: 'bulletList';
+    description: '';
   };
   attributes: {
     reward: Attribute.Component<'reward.with-amount', true>;
+    day: Attribute.Integer;
   };
 }
 
@@ -254,7 +256,8 @@ export interface RewardWithAmount extends Schema.Component {
         'item_secret',
         'trading_credit',
         'wheel_spin',
-        'exp'
+        'exp',
+        'event_token'
       ]
     >;
     amount: Attribute.Integer;

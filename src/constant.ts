@@ -163,9 +163,23 @@ export const ErrorCode = {
   },
 };
 
+export const ONE_DAY = 86400000;
+
+export const CHECK_IN_RESET_DAYS = 7;
+
 export const TRADE_ITEM_LIMIT = 3;
 
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
+
+export const EXP_TABLE = {
+  common: 100,
+  uncommon: 200,
+  rare: 300,
+  unique: 400,
+  secret: 500,
+};
+
+export const EXP_MULT_FOR_DUPLICATE = 0.1;
 
 export const ITEM_PROBABILITY = {
   common: 0.6,

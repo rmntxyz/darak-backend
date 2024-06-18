@@ -103,13 +103,15 @@ export default ({ strapi }) => {
       "api::streak.streak",
       {
         data: {
+          streak_count: 0,
           current_login: 0,
           longest_login: 0,
           last_login_date: new Date(0),
+          publishedAt: date,
+
           current_draw: 0,
           longest_draw: 0,
           last_draw_date: new Date(0),
-          publishedAt: date,
         },
       }
     );

@@ -36,6 +36,12 @@
     },
     "last_draw_date": {
       "type": "datetime"
+    },
+    "reward_claimed": {
+      "type": "boolean"
+    },
+    "streak_count": {
+      "type": "integer"
     }
   }
 }

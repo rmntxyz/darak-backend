@@ -26,12 +26,14 @@
       "enum": [
         "item_sale",
         "item_draw",
+        "gacha",
         "gacha_result",
-        "spin",
+        "spin_result",
         "relay_reward",
         "relay_ranking_reward",
         "achievement_reward",
         "quest_reward",
+        "check_in_reward",
         "room_unlock"
       ]
     },

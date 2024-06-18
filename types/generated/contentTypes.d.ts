@@ -1663,6 +1663,71 @@ export interface ApiItemItem extends Schema.CollectionType {
   };
 }
 
+export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
+  extends Schema.CollectionType {
+  collectionName: 'item_acquisition_histories';
+  info: {
+    singularName: 'item-acquisition-history';
+    pluralName: 'item-acquisition-histories';
+    displayName: 'ItemAcquisitionHistory';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    type: Attribute.Enumeration<
+      [
+        'gacha',
+        'spin',
+        'streak',
+        'quest',
+        'quest_milestone',
+        'relay',
+        'relay_ranking',
+        'trade'
+      ]
+    >;
+    items: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToMany',
+      'api::item.item'
+    >;
+    inventories: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToMany',
+      'api::inventory.inventory'
+    >;
+    user: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    draw: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToOne',
+      'api::draw.draw'
+    >;
+    multiply: Attribute.Integer;
+    exp: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::item-acquisition-history.item-acquisition-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLeaderboardLeaderboard extends Schema.CollectionType {
   collectionName: 'leaderboards';
   info: {
@@ -2103,12 +2168,14 @@ export interface ApiStarPointHistoryStarPointHistory
       [
         'item_sale',
         'item_draw',
+        'gacha',
         'gacha_result',
-        'spin',
+        'spin_result',
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
         'quest_reward',
+        'check_in_reward',
         'room_unlock'
       ]
     >;
@@ -2160,6 +2227,8 @@ export interface ApiStreakStreak extends Schema.CollectionType {
     current_draw: Attribute.Integer;
     longest_draw: Attribute.Integer;
     last_draw_date: Attribute.DateTime;
+    reward_claimed: Attribute.Boolean;
+    streak_count: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2184,14 +2253,14 @@ export interface ApiStreakRewardStreakReward extends Schema.CollectionType {
     singularName: 'streak-reward';
     pluralName: 'streak-rewards';
     displayName: 'StreakReward';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    start_date: Attribute.DateTime;
-    end_date: Attribute.DateTime;
     rewards: Attribute.Component<'reward.streak-rewards', true>;
+    type: Attribute.UID;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2806,6 +2875,7 @@ declare module '@strapi/strapi' {
       'api::gacha-info.gacha-info': ApiGachaInfoGachaInfo;
       'api::inventory.inventory': ApiInventoryInventory;
       'api::item.item': ApiItemItem;
+      'api::item-acquisition-history.item-acquisition-history': ApiItemAcquisitionHistoryItemAcquisitionHistory;
       'api::leaderboard.leaderboard': ApiLeaderboardLeaderboard;
       'api::quest.quest': ApiQuestQuest;
       'api::quest-progress.quest-progress': ApiQuestProgressQuestProgress;

@@ -20,7 +20,8 @@
         "item_secret",
         "trading_credit",
         "wheel_spin",
-        "exp"
+        "exp",
+        "event_token"
       ]
     },
     "amount": {

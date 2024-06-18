@@ -72,6 +72,64 @@ export default ({ strapi }) => ({
       return results;
     });
   },
+
+  async addItemsToUserInventory(userId: number, itemIds: number[]) {
+    return await strapi.db.transaction(async ({ trx }) => {
+      let userItems = [];
+
+      for (const itemId of itemIds) {
+        const [{ current_serial_number }] = await strapi.db
+          .connection("items")
+          .transacting(trx)
+          .forUpdate()
+          .where("id", itemId)
+          .select("current_serial_number");
+
+        const updatedItem = await strapi.entityService.update(
+          "api::item.item",
+          itemId,
+          {
+            data: { current_serial_number: current_serial_number + 1 },
+          }
+        );
+
+        const userItem = await strapi.entityService.create(
+          "api::inventory.inventory",
+          {
+            data: {
+              users_permissions_user: userId,
+              serial_number: current_serial_number + 1,
+              item: itemId,
+              publishedAt: new Date(),
+            },
+            fields: ["serial_number"],
+            populate: {
+              item: {
+                fields: ["name", "desc", "rarity", "attribute"],
+                populate: {
+                  image: {
+                    fields: ["url"],
+                  },
+                  thumbnail: {
+                    fields: ["url"],
+                  },
+                  room: {
+                    fields: ["name", "rid"],
+                  },
+                },
+              },
+              users_permissions_user: { fields: ["id"] },
+            },
+          }
+        );
+
+        userItems.push(userItem);
+      }
+
+      return userItems;
+    });
+  },
+
   async drawRandom(userId: number, drawId: number) {
     let items = [];
 

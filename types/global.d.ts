@@ -14,9 +14,20 @@ type Streak = {
   current_login: number;
   longest_login: number;
   last_login_date: Date;
+  streak_count: number;
+  reward_claimed: boolean;
+
   current_draw: number;
   longest_draw: number;
   last_draw_date: Date;
+};
+
+type StreakReward = {
+  rewards: {
+    reward: Reward;
+    day: number;
+  }[];
+  type: "default" | string;
 };
 
 type User = {
@@ -66,12 +77,29 @@ type StarPointHistory = {
 };
 
 type StarPointChangeDetail =
-  | "item_sale"
   | "item_draw"
+  | "item_sale"
+  | "gacha"
+  | "gacha_result"
+  | "spin_result"
+  | "relay_reward"
+  | "relay_ranking_reward"
   | "achievement_reward"
-  | "quest_reward";
+  | "quest_reward"
+  | "check_in_reward"
+  | "room_unlock";
 
-type WheelSpinChangeDetail = "gacha_result" | "spin";
+type WheelSpinChangeDetail = "gacha_result" | "spin" | "check_in_reward";
+
+type ItemAcquisitionType =
+  | "gacha"
+  | "spin"
+  | "streak"
+  | "quest"
+  | "quest_milestone"
+  | "relay"
+  | "relay_ranking"
+  | "trade";
 
 type TradingCreditChangeDetail = "trade";
 
@@ -88,6 +116,11 @@ type RewardType =
   | "freebie"
   | "star_point"
   | "item"
+  | "item_common"
+  | "item_uncommon"
+  | "item_rare"
+  | "item_unique"
+  | "item_secret"
   | "exp"
   | "trading_credit"
   | "wheel_spin"
@@ -97,6 +130,7 @@ type RewardDetail = {
   type: RewardType;
   amount?: number;
   detail?: Partial<Item>;
+  exp?: number;
 };
 
 type CapsuleResult = {
@@ -140,6 +174,7 @@ type Reward = {
   type: RewardType;
   amount: number;
   item?: Item;
+  exp?: number;
 };
 
 type Item = {

@@ -2,7 +2,11 @@
  * random-capsule service
  */
 
-import { ErrorCode } from "../../../constant";
+import {
+  EXP_MULT_FOR_DUPLICATE,
+  EXP_TABLE,
+  ErrorCode,
+} from "../../../constant";
 
 export default ({ strapi }) => ({
   async drawWithCoin(
@@ -28,7 +32,12 @@ export default ({ strapi }) => ({
         result = { rewards, multiply };
       } else {
         const itemId = await drawItem(draw.draw_info, multiply);
-        const item = await addItemToUser(userId, draw.id, itemId, multiply);
+        const { item, exp } = await addItemToUser(
+          userId,
+          draw.id,
+          itemId,
+          multiply
+        );
 
         result = { rewards: [{ type: "item", detail: item }], multiply };
       }
@@ -45,7 +54,7 @@ export default ({ strapi }) => ({
     // await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
-    const item: Partial<Item> = await addItemToUser(
+    const { item, exp } = await addItemToUser(
       userId,
       draw.id,
       itemId,
@@ -70,7 +79,7 @@ async function deductCurrency(userId: number, draw: Draw, multiply: number) {
   if (currency_type === "star_point") {
     await strapi
       .service("api::star-point.star-point")
-      .updateStarPoint(userId, -cost * multiply, "item_draw");
+      .updateStarPoint(userId, -cost * multiply, "gacha");
   } else if (currency_type === "freebie") {
     await strapi
       .service("api::freebie.freebie")
@@ -216,7 +225,7 @@ async function updateRewards(userId: number, reward: Reward, multiply: number) {
     case "star_point":
       await strapi
         .service("api::star-point.star-point")
-        .updateStarPoint(userId, reward.amount * multiply, "item_draw");
+        .updateStarPoint(userId, reward.amount * multiply, "gacha_result");
       break;
     case "wheel_spin":
       await strapi
@@ -231,10 +240,10 @@ async function addItemToUser(
   drawId: number,
   itemId: number,
   multiply: number
-) {
+): Promise<{ item: Partial<Item>; exp: number }> {
   const userItems = [];
 
-  return await strapi.db.transaction(async ({ trx }) => {
+  return (await strapi.db.transaction(async ({ trx }) => {
     const [{ current_serial_number }] = await strapi.db
       .connection("items")
       .transacting(trx)
@@ -292,23 +301,47 @@ async function addItemToUser(
       .service("api::user-room.user-room")
       .getUserRoom(userId, updatedItem.room.id);
 
+    const isNew = !userRoom.owned_items[itemId];
+
+    let exp = EXP_TABLE[updatedItem.rarity];
+
+    if (!isNew) {
+      exp *= EXP_MULT_FOR_DUPLICATE;
+    }
+
     await strapi
       .service("api::user-room.user-room")
       .updateItems(userRoom, [updatedItem.id], []);
 
-    await strapi.entityService.create("api::draw-history.draw-history", {
-      data: {
-        draw: drawId,
-        users_permissions_user: userId,
-        draw_result: { item: updatedItem.id },
-        user_items: { connect: userItems },
-        multiply,
-        publishedAt: new Date(),
-      },
-    });
+    await strapi.entityService.create(
+      "api::item-acquisition-history.item-acquisition-history",
+      {
+        data: {
+          type: "gacha",
+          draw: drawId,
+          user: userId,
+          items: { connect: [updatedItem.id] },
+          inventories: { connect: [userItem.id] },
+          multiply,
+          exp,
+          publishedAt: new Date(),
+        },
+      }
+    );
 
-    return updatedItem;
-  });
+    // await strapi.entityService.create("api::draw-history.draw-history", {
+    //   data: {
+    //     draw: drawId,
+    //     users_permissions_user: userId,
+    //     draw_result: { item: updatedItem.id },
+    //     user_items: { connect: userItems },
+    //     multiply,
+    //     publishedAt: new Date(),
+    //   },
+    // });
+
+    return { item: updatedItem, exp };
+  })) as { item: Partial<Item>; exp: number };
 }
 
 async function checkRelayEvent(userId: number, result: CapsuleResult) {

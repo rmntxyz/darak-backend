@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { EXP_MULT_FOR_DUPLICATE, EXP_TABLE } from "../../../constant";
 
 const WheelInfo = {
   DEFAULT: 1,
@@ -111,16 +112,20 @@ export default factories.createCoreService(
           }
         }
 
+        const rewards = [];
+
         switch (reward.type) {
           case "freebie":
             await strapi
               .service("api::freebie.freebie")
               .updateFreebie(userId, reward.amount);
+            rewards.push(reward);
             break;
           case "star_point":
             await strapi
               .service("api::star-point.star-point")
-              .updateStarPoint(userId, reward.amount, "spin");
+              .updateStarPoint(userId, reward.amount, "spin_result");
+            rewards.push(reward);
             break;
           case "item":
             const items = await strapi
@@ -129,62 +134,58 @@ export default factories.createCoreService(
 
             const itemIds = items.map((item) => item.id);
 
-            // add items to user inventory
+            const userItems: Inventory[] = await strapi
+              .service("api::random-item.random-item")
+              .addItemsToUserInventory(userId, itemIds);
 
-            let userItems = [];
+            const userItemIds = userItems.map((userItem) => userItem.id);
+            let totalExp = 0;
 
-            for (const itemId of itemIds) {
-              const [{ current_serial_number }] = await strapi.db
-                .connection("items")
-                .transacting(trx)
-                .forUpdate()
-                .where("id", itemId)
-                .select("current_serial_number");
+            for (const userItem of userItems) {
+              const itemId = userItem.item.id;
+              const roomId = userItem.item.room.id;
+              const rarity = userItem.item.rarity;
+              const userRoom = await strapi
+                .service("api::user-room.user-room")
+                .getUserRoom(userId, roomId);
 
-              const updatedItem = await strapi.entityService.update(
-                "api::item.item",
-                itemId,
-                {
-                  data: { current_serial_number: current_serial_number + 1 },
-                }
-              );
+              const isNew = !userRoom.owned_items[itemId];
 
-              const userItem = await strapi.entityService.create(
-                "api::inventory.inventory",
-                {
-                  data: {
-                    users_permissions_user: userId,
-                    serial_number: current_serial_number + 1,
-                    item: itemId,
-                    publishedAt: new Date(),
-                  },
-                  fields: ["serial_number"],
-                  populate: {
-                    item: {
-                      fields: ["name", "desc", "rarity", "attribute"],
-                      populate: {
-                        thumbnail: {
-                          fields: ["url"],
-                        },
-                        room: {
-                          fields: ["name", "rid"],
-                        },
-                      },
-                    },
-                    users_permissions_user: { fields: ["id"] },
-                  },
-                }
-              );
+              let exp = EXP_TABLE[rarity];
 
-              userItems.push(userItem);
+              if (!isNew) {
+                exp *= EXP_MULT_FOR_DUPLICATE;
+              }
+
+              totalExp += exp;
+
+              await strapi
+                .service("api::user-room.user-room")
+                .updateItems(userRoom, [itemId], []);
+
+              rewards.push({ ...reward, detail: userItem.item, exp });
             }
-            reward = { ...reward, items: userItems };
+
+            await strapi.entityService.create(
+              "api::item-acquisition-history.item-acquisition-history",
+              {
+                data: {
+                  type: "spin",
+                  user: userId,
+                  items: { connect: itemIds },
+                  inventories: { connect: userItemIds },
+                  exp: totalExp,
+                  publishedAt: new Date(),
+                },
+              }
+            );
+
             break;
 
           // add more reward types here
         }
 
-        return { reward_index: idx, reward };
+        return { reward_index: idx, rewards };
       });
     },
   })
