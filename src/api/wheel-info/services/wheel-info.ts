@@ -3,7 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { EXP_MULT_FOR_DUPLICATE, EXP_TABLE } from "../../../constant";
+import { EXP_MULT_FOR_DUPLICATE, EXP_BY_RARITY } from "../../../constant";
 
 const WheelInfo = {
   DEFAULT: 1,
@@ -151,7 +151,7 @@ export default factories.createCoreService(
 
               const isNew = !userRoom.owned_items[itemId];
 
-              let exp = EXP_TABLE[rarity];
+              let exp = EXP_BY_RARITY[rarity];
 
               if (!isNew) {
                 exp *= EXP_MULT_FOR_DUPLICATE;

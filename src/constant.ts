@@ -171,7 +171,7 @@ export const TRADE_ITEM_LIMIT = 3;
 
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
 
-export const EXP_TABLE = {
+export const EXP_BY_RARITY = {
   common: 100,
   uncommon: 200,
   rare: 300,

@@ -3,7 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { EXP_MULT_FOR_DUPLICATE, EXP_TABLE } from "../../../constant";
+import { EXP_MULT_FOR_DUPLICATE, EXP_BY_RARITY } from "../../../constant";
 
 export default factories.createCoreController(
   "api::streak.streak",
@@ -145,7 +145,7 @@ export default factories.createCoreController(
 
               const isNew = !userRoom.owned_items[itemId];
 
-              let exp = EXP_TABLE[rarity];
+              let exp = EXP_BY_RARITY[rarity];
 
               if (!isNew) {
                 exp *= EXP_MULT_FOR_DUPLICATE;

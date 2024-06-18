@@ -4,7 +4,7 @@
 
 import {
   EXP_MULT_FOR_DUPLICATE,
-  EXP_TABLE,
+  EXP_BY_RARITY,
   ErrorCode,
 } from "../../../constant";
 
@@ -303,7 +303,7 @@ async function addItemToUser(
 
     const isNew = !userRoom.owned_items[itemId];
 
-    let exp = EXP_TABLE[updatedItem.rarity];
+    let exp = EXP_BY_RARITY[updatedItem.rarity];
 
     if (!isNew) {
       exp *= EXP_MULT_FOR_DUPLICATE;
