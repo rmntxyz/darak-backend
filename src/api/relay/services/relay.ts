@@ -23,6 +23,7 @@ export default factories.createCoreService(
           },
           fields: [
             "id",
+            "title",
             "type",
             "condition",
             "start_date",
