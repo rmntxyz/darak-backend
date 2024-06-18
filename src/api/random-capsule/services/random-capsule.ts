@@ -39,7 +39,7 @@ export default ({ strapi }) => ({
           multiply
         );
 
-        result = { rewards: [{ type: "item", detail: item }], multiply };
+        result = { rewards: [{ type: "item", detail: item, exp }], multiply };
       }
 
       result.events = [];
@@ -62,7 +62,7 @@ export default ({ strapi }) => ({
     );
 
     const result: CapsuleResult = {
-      rewards: [{ type: "item", detail: item }],
+      rewards: [{ type: "item", detail: item, exp }],
       multiply,
     };
 
