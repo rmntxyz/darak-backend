@@ -313,6 +313,8 @@ async function addItemToUser(
       .service("api::user-room.user-room")
       .updateItems(userRoom, [updatedItem.id], []);
 
+    await strapi.service("api::status.status").updateExp(userId, exp);
+
     await strapi.entityService.create(
       "api::item-acquisition-history.item-acquisition-history",
       {

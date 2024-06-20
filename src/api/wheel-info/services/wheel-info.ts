@@ -166,6 +166,10 @@ export default factories.createCoreService(
               rewards.push({ ...reward, detail: userItem.item, exp });
             }
 
+            await strapi
+              .service("api::status.status")
+              .updateExp(userId, totalExp);
+
             await strapi.entityService.create(
               "api::item-acquisition-history.item-acquisition-history",
               {
