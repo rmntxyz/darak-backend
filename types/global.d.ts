@@ -88,6 +88,7 @@ type StarPointChangeDetail =
   | "relay_ranking_reward"
   | "achievement_reward"
   | "quest_reward"
+  | "level_up"
   | "check_in"
   | "room_unlock";
 
@@ -96,6 +97,7 @@ type WheelSpinChangeDetail =
   | "spin"
   // +
   | "gacha_result"
+  | "level_up"
   | "check_in"
   | "relay_reward"
   | "relay_ranking_reward"
@@ -106,6 +108,7 @@ type ItemAcquisitionType =
   // +
   | "gacha_result"
   | "spin_result"
+  | "level_up"
   | "check_in"
   | "quest_reward"
   // | "quest_milestone"

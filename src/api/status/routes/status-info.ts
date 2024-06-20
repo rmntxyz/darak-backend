@@ -11,6 +11,15 @@ export default {
     },
     {
       method: "POST",
+      path: "/status/level-up-test",
+      handler: "status.level-up-test",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "POST",
       path: "/status/claim-level-up-reward",
       handler: "status.claim-level-up-reward",
       config: {

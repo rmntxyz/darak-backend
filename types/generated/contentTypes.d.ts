@@ -1716,6 +1716,7 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
       [
         'gacha_result',
         'spin_result',
+        'level_up',
         'check_in',
         'quest_reward',
         'relay_reward',
@@ -2210,6 +2211,7 @@ export interface ApiStarPointHistoryStarPointHistory
         'relay_ranking_reward',
         'achievement_reward',
         'quest_reward',
+        'level_up',
         'check_in',
         'room_unlock'
       ]
@@ -2243,7 +2245,7 @@ export interface ApiStatusStatus extends Schema.CollectionType {
   info: {
     singularName: 'status';
     pluralName: 'statuses';
-    displayName: 'status';
+    displayName: 'Status';
     description: '';
   };
   options: {
@@ -2889,6 +2891,7 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'relay_ranking_reward',
         'achievement_reward',
         'quest_reward',
+        'level_up',
         'check_in'
       ]
     >;

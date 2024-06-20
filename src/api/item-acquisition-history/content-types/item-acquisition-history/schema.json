@@ -17,6 +17,7 @@
       "enum": [
         "gacha_result",
         "spin_result",
+        "level_up",
         "check_in",
         "quest_reward",
         "relay_reward",

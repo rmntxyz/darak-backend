@@ -21,6 +21,18 @@ export default factories.createCoreController(
       return status;
     },
 
+    "level-up-test": async (ctx) => {
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("user is not authenticated");
+      }
+
+      const exp = +ctx.request.body.exp;
+
+      return await strapi.service("api::status.status").updateExp(userId, exp);
+    },
+
     "claim-level-up-reward": async (ctx) => {
       const userId = ctx.state.user?.id;
 
