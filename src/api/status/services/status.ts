@@ -7,7 +7,7 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreService(
   "api::status.status",
   ({ strapi }) => ({
-    async getStatus(userId: number, withExpTable = false) {
+    async getStatus(userId: number, withDetails = false) {
       let status = (
         await strapi.entityService.findMany("api::status.status", {
           filters: { user: userId },
@@ -48,8 +48,10 @@ export default factories.createCoreService(
       const currentLevel = exp_table[level - 1];
       const nextLevel = exp_table[level];
 
-      if (withExpTable) {
+      if (withDetails) {
         status.exp_table = exp_table;
+      } else {
+        delete status.level_up_reward_claim_history;
       }
 
       return {
@@ -129,7 +131,7 @@ export default factories.createCoreService(
       const allRewardsClaimed = level_up_reward_claim_history[level - 1];
 
       if (allRewardsClaimed) {
-        return null;
+        return [];
       }
 
       return await strapi.db.transaction(async (trx) => {
