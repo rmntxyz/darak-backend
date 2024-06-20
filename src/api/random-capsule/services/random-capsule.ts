@@ -317,7 +317,7 @@ async function addItemToUser(
       "api::item-acquisition-history.item-acquisition-history",
       {
         data: {
-          type: "gacha",
+          type: "gacha_result",
           draw: drawId,
           user: userId,
           items: { connect: [updatedItem.id] },

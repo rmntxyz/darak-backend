@@ -164,7 +164,7 @@ export default factories.createCoreController(
               "api::item-acquisition-history.item-acquisition-history",
               {
                 data: {
-                  type: "spin",
+                  type: "check_in",
                   user: userId,
                   items: { connect: itemIds },
                   inventories: { connect: userItemIds },

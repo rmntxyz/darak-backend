@@ -160,6 +160,32 @@ export interface LeaderboardLeaderboardRecord extends Schema.Component {
   };
 }
 
+export interface LevelClaimLog extends Schema.Component {
+  collectionName: 'components_level_claim_logs';
+  info: {
+    displayName: 'claim log';
+    icon: 'cube';
+    description: '';
+  };
+  attributes: {
+    date: Attribute.DateTime;
+    level: Attribute.Integer;
+  };
+}
+
+export interface LevelTable extends Schema.Component {
+  collectionName: 'components_level_tables';
+  info: {
+    displayName: 'table';
+    icon: 'arrowUp';
+  };
+  attributes: {
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    level: Attribute.Integer;
+    exp: Attribute.Integer;
+  };
+}
+
 export interface RelayToken extends Schema.Component {
   collectionName: 'components_relay_tokens';
   info: {
@@ -278,6 +304,8 @@ declare module '@strapi/strapi' {
       'history.trading': HistoryTrading;
       'history.wheel-spin': HistoryWheelSpin;
       'leaderboard.leaderboard-record': LeaderboardLeaderboardRecord;
+      'level.claim-log': LevelClaimLog;
+      'level.table': LevelTable;
       'relay.token': RelayToken;
       'reward.gacha-reward': RewardGachaReward;
       'reward.relay-ranking': RewardRelayRanking;

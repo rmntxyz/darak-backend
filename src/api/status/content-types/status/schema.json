@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "statuses",
+  "info": {
+    "singularName": "status",
+    "pluralName": "statuses",
+    "displayName": "status",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "status"
+    },
+    "level": {
+      "type": "integer"
+    },
+    "exp": {
+      "type": "integer"
+    },
+    "level_up_reward_claim_history": {
+      "displayName": "claim log",
+      "type": "component",
+      "repeatable": true,
+      "component": "level.claim-log"
+    },
+    "level_up_reward_claimed": {
+      "type": "boolean"
+    }
+  }
+}

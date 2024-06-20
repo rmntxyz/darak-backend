@@ -704,8 +704,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::freebie.freebie'
     >;
-    level: Attribute.Integer & Attribute.DefaultTo<1>;
-    experience: Attribute.Integer;
     quest_progresses: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToMany',
@@ -780,6 +778,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::trading-credit.trading-credit'
     >;
     language: Attribute.Enumeration<['ko', 'en', 'ja']>;
+    status: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::status.status'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1434,6 +1437,39 @@ export interface ApiEpisodeEpisode extends Schema.CollectionType {
   };
 }
 
+export interface ApiExperienceTableExperienceTable
+  extends Schema.CollectionType {
+  collectionName: 'experience_tables';
+  info: {
+    singularName: 'experience-table';
+    pluralName: 'experience-tables';
+    displayName: 'ExperienceTable';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    exp_table: Attribute.Component<'level.table', true>;
+    for: Attribute.UID;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::experience-table.experience-table',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::experience-table.experience-table',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiFreebieFreebie extends Schema.CollectionType {
   collectionName: 'freebies';
   info: {
@@ -1678,13 +1714,12 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
   attributes: {
     type: Attribute.Enumeration<
       [
-        'gacha',
-        'spin',
-        'streak',
-        'quest',
-        'quest_milestone',
-        'relay',
-        'relay_ranking',
+        'gacha_result',
+        'spin_result',
+        'check_in',
+        'quest_reward',
+        'relay_reward',
+        'relay_ranking_reward',
         'trade'
       ]
     >;
@@ -2166,8 +2201,8 @@ export interface ApiStarPointHistoryStarPointHistory
     >;
     detail: Attribute.Enumeration<
       [
-        'item_sale',
         'item_draw',
+        'item_sale',
         'gacha',
         'gacha_result',
         'spin_result',
@@ -2175,7 +2210,7 @@ export interface ApiStarPointHistoryStarPointHistory
         'relay_ranking_reward',
         'achievement_reward',
         'quest_reward',
-        'check_in_reward',
+        'check_in',
         'room_unlock'
       ]
     >;
@@ -2196,6 +2231,45 @@ export interface ApiStarPointHistoryStarPointHistory
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::star-point-history.star-point-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiStatusStatus extends Schema.CollectionType {
+  collectionName: 'statuses';
+  info: {
+    singularName: 'status';
+    pluralName: 'statuses';
+    displayName: 'status';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::status.status',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    level: Attribute.Integer;
+    exp: Attribute.Integer;
+    level_up_reward_claim_history: Attribute.Component<'level.claim-log', true>;
+    level_up_reward_claimed: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::status.status',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::status.status',
       'oneToOne',
       'admin::user'
     > &
@@ -2814,7 +2888,8 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
-        'quest_reward'
+        'quest_reward',
+        'check_in'
       ]
     >;
     date: Attribute.DateTime;
@@ -2871,6 +2946,7 @@ declare module '@strapi/strapi' {
       'api::draw.draw': ApiDrawDraw;
       'api::draw-history.draw-history': ApiDrawHistoryDrawHistory;
       'api::episode.episode': ApiEpisodeEpisode;
+      'api::experience-table.experience-table': ApiExperienceTableExperienceTable;
       'api::freebie.freebie': ApiFreebieFreebie;
       'api::gacha-info.gacha-info': ApiGachaInfoGachaInfo;
       'api::inventory.inventory': ApiInventoryInventory;
@@ -2885,6 +2961,7 @@ declare module '@strapi/strapi' {
       'api::room.room': ApiRoomRoom;
       'api::star-point.star-point': ApiStarPointStarPoint;
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
+      'api::status.status': ApiStatusStatus;
       'api::streak.streak': ApiStreakStreak;
       'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
       'api::trade.trade': ApiTradeTrade;

@@ -71,13 +71,6 @@
       "target": "api::freebie.freebie",
       "mappedBy": "users_permissions_user"
     },
-    "level": {
-      "type": "integer",
-      "default": 1
-    },
-    "experience": {
-      "type": "integer"
-    },
     "quest_progresses": {
       "type": "relation",
       "relation": "oneToMany",
@@ -178,6 +171,12 @@
         "en",
         "ja"
       ]
+    },
+    "status": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::status.status",
+      "mappedBy": "user"
     }
   }
 }

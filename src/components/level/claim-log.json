@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_level_claim_logs",
+  "info": {
+    "displayName": "claim log",
+    "icon": "cube",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "level": {
+      "type": "integer"
+    }
+  }
+}

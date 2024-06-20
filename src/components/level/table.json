@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_level_tables",
+  "info": {
+    "displayName": "table",
+    "icon": "arrowUp"
+  },
+  "options": {},
+  "attributes": {
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    },
+    "level": {
+      "type": "integer"
+    },
+    "exp": {
+      "type": "integer"
+    }
+  }
+}

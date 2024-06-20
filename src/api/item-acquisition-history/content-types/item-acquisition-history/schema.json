@@ -15,13 +15,12 @@
     "type": {
       "type": "enumeration",
       "enum": [
-        "gacha",
-        "spin",
-        "streak",
-        "quest",
-        "quest_milestone",
-        "relay",
-        "relay_ranking",
+        "gacha_result",
+        "spin_result",
+        "check_in",
+        "quest_reward",
+        "relay_reward",
+        "relay_ranking_reward",
         "trade"
       ]
     },

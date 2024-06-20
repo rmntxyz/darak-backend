@@ -77,28 +77,40 @@ type StarPointHistory = {
 };
 
 type StarPointChangeDetail =
+  // -
   | "item_draw"
-  | "item_sale"
   | "gacha"
+  // +
+  | "item_sale"
   | "gacha_result"
   | "spin_result"
   | "relay_reward"
   | "relay_ranking_reward"
   | "achievement_reward"
   | "quest_reward"
-  | "check_in_reward"
+  | "check_in"
   | "room_unlock";
 
-type WheelSpinChangeDetail = "gacha_result" | "spin" | "check_in_reward";
+type WheelSpinChangeDetail =
+  // -
+  | "spin"
+  // +
+  | "gacha_result"
+  | "check_in"
+  | "relay_reward"
+  | "relay_ranking_reward"
+  | "achievement_reward"
+  | "quest_reward";
 
 type ItemAcquisitionType =
-  | "gacha"
-  | "spin"
-  | "streak"
-  | "quest"
-  | "quest_milestone"
-  | "relay"
-  | "relay_ranking"
+  // +
+  | "gacha_result"
+  | "spin_result"
+  | "check_in"
+  | "quest_reward"
+  // | "quest_milestone"
+  | "relay_reward"
+  | "relay_ranking_reward"
   | "trade";
 
 type TradingCreditChangeDetail = "trade";

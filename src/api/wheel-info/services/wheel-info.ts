@@ -170,7 +170,7 @@ export default factories.createCoreService(
               "api::item-acquisition-history.item-acquisition-history",
               {
                 data: {
-                  type: "spin",
+                  type: "spin_result",
                   user: userId,
                   items: { connect: itemIds },
                   inventories: { connect: userItemIds },

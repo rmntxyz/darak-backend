@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "experience_tables",
+  "info": {
+    "singularName": "experience-table",
+    "pluralName": "experience-tables",
+    "displayName": "ExperienceTable",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "exp_table": {
+      "displayName": "table",
+      "type": "component",
+      "repeatable": true,
+      "component": "level.table"
+    },
+    "for": {
+      "type": "uid"
+    }
+  }
+}
