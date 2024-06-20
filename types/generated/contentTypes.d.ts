@@ -2482,7 +2482,7 @@ export interface ApiTradingCreditHistoryTradingCreditHistory
       [
         'gacha_result',
         'trade',
-        'spin',
+        'spin_result',
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',

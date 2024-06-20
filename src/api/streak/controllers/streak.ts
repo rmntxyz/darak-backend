@@ -106,14 +106,14 @@ export default factories.createCoreController(
           case "star_point":
             await strapi
               .service("api::star-point.star-point")
-              .updateStarPoint(userId, reward.amount, "check-in");
+              .updateStarPoint(userId, reward.amount, "check_in");
             rewards.push(reward);
             break;
 
           case "wheel_spin":
             await strapi
               .service("api::wheel-spin.wheel-spin")
-              .updateWheelSpin(userId, reward.amount, "check-in");
+              .updateWheelSpin(userId, reward.amount, "check_in");
             rewards.push(reward);
             break;
 
