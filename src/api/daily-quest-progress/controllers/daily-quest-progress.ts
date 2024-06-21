@@ -20,6 +20,7 @@ export default factories.createCoreController(
 
       return result;
     },
+
     verify: async (ctx) => {
       const { progressId } = ctx.params;
 
@@ -43,6 +44,7 @@ export default factories.createCoreController(
         return ctx.badRequest(error.message);
       }
     },
+
     "claim-rewards": async (ctx) => {
       const { progressId } = ctx.params;
 

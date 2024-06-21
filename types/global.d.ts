@@ -174,21 +174,15 @@ type DailyQuest = {
   name: string;
   daily_quest_progresses: DailyQuestProgress[];
   total_progress: number;
-  desc: string;
-  level_requirement: number;
   qid: string;
-  streak_rewards: [
-    {
-      id: number;
-      rewards: Reward[];
-    }
-  ];
+  rewards: Reward[];
+  days: string;
 };
 
 type Reward = {
   type: RewardType;
   amount: number;
-  item?: Item;
+  detail?: Item;
   exp?: number;
 };
 

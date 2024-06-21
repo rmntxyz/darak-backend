@@ -3,18 +3,17 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { getRefTimestamp } from "../../../utils";
+import { getDayFromRefDate, getRefTimestamp } from "../../../utils";
 import progressHandler from "./handler";
+import { DAYS } from "../../../constant";
 
 export const progressDefaultOptions = {
   fields: ["progress", "is_completed", "is_reward_claimed", "completed_date"],
   populate: {
     daily_quest: {
-      fields: ["level_requirement", "qid", "total_progress", "name", "desc"],
+      fields: ["qid", "total_progress", "name"],
       populate: {
-        streak_rewards: {
-          populate: ["rewards"],
-        },
+        rewards: true,
       },
     },
   },
@@ -46,9 +45,22 @@ export default factories.createCoreService(
         return inProgresses;
       }
 
-      const dailyQuests = await strapi.db
-        .query("api::daily-quest.daily-quest")
-        .findMany({});
+      const dayIndex = getDayFromRefDate(new Date());
+      const day = DAYS[dayIndex];
+
+      const dailyQuests = await strapi.entityService.findMany(
+        "api::daily-quest.daily-quest",
+        {
+          filters: {
+            days: {
+              $contains: day,
+            },
+          },
+          populate: {
+            rewards: true,
+          },
+        }
+      );
 
       const quests: any[] = [];
 
@@ -98,9 +110,6 @@ export default factories.createCoreService(
             userId,
             {
               fields: ["id"],
-              populate: {
-                streak: true,
-              },
             }
           );
 

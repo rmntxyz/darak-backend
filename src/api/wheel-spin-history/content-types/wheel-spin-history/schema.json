@@ -20,7 +20,7 @@
         "relay_reward",
         "relay_ranking_reward",
         "achievement_reward",
-        "quest_reward",
+        "daily_quest_reward",
         "level_up",
         "check_in"
       ]

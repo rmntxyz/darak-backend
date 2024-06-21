@@ -11,6 +11,15 @@ export interface ActivityTest extends Schema.Component {
   };
 }
 
+export interface DailyQuestDays extends Schema.Component {
+  collectionName: 'components_daily_quest_days';
+  info: {
+    displayName: 'days';
+    icon: 'clock';
+  };
+  attributes: {};
+}
+
 export interface DecorationDecoItem extends Schema.Component {
   collectionName: 'components_decoration_deco_items';
   info: {
@@ -294,6 +303,7 @@ declare module '@strapi/strapi' {
   export module Shared {
     export interface Components {
       'activity.test': ActivityTest;
+      'daily-quest.days': DailyQuestDays;
       'decoration.deco-item': DecorationDecoItem;
       'decoration.item': DecorationItem;
       'decoration.line': DecorationLine;

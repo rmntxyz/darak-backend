@@ -1180,18 +1180,43 @@ export interface ApiDailyQuestDailyQuest extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
     daily_quest_progresses: Attribute.Relation<
       'api::daily-quest.daily-quest',
       'oneToMany',
       'api::daily-quest-progress.daily-quest-progress'
     >;
-    name: Attribute.String;
-    desc: Attribute.RichText;
-    level_requirement: Attribute.Integer;
-    streak_rewards: Attribute.Component<'reward.reward', true>;
-    total_progress: Attribute.Integer & Attribute.DefaultTo<1>;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    total_progress: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<1>;
     qid: Attribute.UID;
+    rewards: Attribute.Component<'reward.with-amount', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    days: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1207,6 +1232,12 @@ export interface ApiDailyQuestDailyQuest extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::daily-quest.daily-quest',
+      'oneToMany',
+      'api::daily-quest.daily-quest'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -1718,7 +1749,7 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
         'spin_result',
         'level_up',
         'check_in',
-        'quest_reward',
+        'daily_quest_reward',
         'relay_reward',
         'relay_ranking_reward',
         'trade'
@@ -2210,7 +2241,7 @@ export interface ApiStarPointHistoryStarPointHistory
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
-        'quest_reward',
+        'daily_quest_reward',
         'level_up',
         'check_in',
         'room_unlock'
@@ -2486,7 +2517,7 @@ export interface ApiTradingCreditHistoryTradingCreditHistory
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
-        'quest_reward'
+        'daily_quest_reward'
       ]
     >;
     date: Attribute.DateTime;
@@ -2890,7 +2921,7 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'relay_reward',
         'relay_ranking_reward',
         'achievement_reward',
-        'quest_reward',
+        'daily_quest_reward',
         'level_up',
         'check_in'
       ]

@@ -10,7 +10,11 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "daily_quest_progresses": {
       "type": "relation",
@@ -19,25 +23,43 @@
       "mappedBy": "daily_quest"
     },
     "name": {
-      "type": "string"
-    },
-    "desc": {
-      "type": "richtext"
-    },
-    "level_requirement": {
-      "type": "integer"
-    },
-    "streak_rewards": {
-      "type": "component",
-      "repeatable": true,
-      "component": "reward.reward"
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "total_progress": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "qid": {
       "type": "uid"
+    },
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "days": {
+      "type": "string",
+      "regex": "^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)(,(Sun|Mon|Tue|Wed|Thu|Fri|Sat))*$",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

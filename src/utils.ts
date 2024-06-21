@@ -1,22 +1,19 @@
-// 05:00:00 am
-const REF_TIME = 5; // 0 ~ 23
-const REF_DAY = 1; // 1 ~ 31
+import { ONE_DAY, REF_DATE, RESET_HOUR } from "./constant";
 
 function getRefTimestamp(date) {
   const refDate = new Date(date);
-  if (refDate.getHours() < REF_TIME) {
+  if (refDate.getHours() < RESET_HOUR) {
     refDate.setDate(refDate.getDate() - 1);
   }
-  refDate.setHours(REF_TIME, 0, 0, 0);
+  refDate.setHours(RESET_HOUR, 0, 0, 0);
   return refDate.getTime();
 }
 
 // first day of the month
-function getRefDay(date) {
-  const refDate = new Date(date);
-  refDate.setDate(REF_DAY);
-  refDate.setHours(0, 0, 0, 0);
-  return refDate.getTime();
+function getDayFromRefDate(date) {
+  const diff = getRefTimestamp(date) - REF_DATE;
+
+  return (diff / ONE_DAY) % 7;
 }
 
 function applyLocalizations(entity, locale) {
@@ -50,4 +47,4 @@ function applyLocalizations(entity, locale) {
   return entity;
 }
 
-export { getRefTimestamp, getRefDay, applyLocalizations };
+export { getRefTimestamp, getDayFromRefDate, applyLocalizations };

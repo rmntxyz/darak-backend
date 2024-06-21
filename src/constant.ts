@@ -165,6 +165,16 @@ export const ErrorCode = {
 
 export const ONE_DAY = 86400000;
 
+export const RESET_HOUR = 9; // 0 ~ 23
+
+export const RESET_DAY = 1; // 1 ~ 31
+
+export const REF_DATE = new Date(
+  `June 16, 2024, ${RESET_HOUR}:00:00`
+).getTime();
+
+export const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 export const CHECK_IN_RESET_DAYS = 7;
 
 export const TRADE_ITEM_LIMIT = 3;

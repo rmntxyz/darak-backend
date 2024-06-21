@@ -3,75 +3,104 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { EXP_BY_RARITY, EXP_MULT_FOR_DUPLICATE } from "../../../constant";
 
 export default factories.createCoreService(
   "api::reward.reward",
   ({ strapi }) => ({
-    claim: async (user: User, rewards: Reward[]) => {
+    claim: async (userId: number, rewards: Reward[], reason: string) => {
       for (const reward of rewards) {
-        const { amount } = reward;
+        switch (reward.type) {
+          case "freebie":
+            await strapi
+              .service("api::freebie.freebie")
+              .updateFreebie(userId, reward.amount);
+            break;
 
-        if (reward.type === "freebie") {
-          await strapi.entityService.update(
-            "api::freebie.freebie",
-            user.freebie.id,
-            {
-              data: {
-                current: user.freebie.current + amount,
-              },
+          case "star_point":
+            await strapi
+              .service("api::star-point.star-point")
+              .updateStarPoint(userId, reward.amount, reason);
+            break;
+
+          case "wheel_spin":
+            await strapi
+              .service("api::wheel-spin.wheel-spin")
+              .updateWheelSpin(userId, reward.amount, reason);
+            break;
+
+          case "item":
+          case "item_common":
+          case "item_uncommon":
+          case "item_rare":
+          case "item_unique":
+            const targetRarity = reward.type.split("_")[1];
+
+            const items = await strapi
+              .service("api::random-item.random-item")
+              .getRandomItemsFromUnlockedRooms(userId, reward.amount, [
+                targetRarity,
+              ]);
+            const itemIds = items.map((item) => item.id);
+
+            const userItems: Inventory[] = await strapi
+              .service("api::random-item.random-item")
+              .addItemsToUserInventory(userId, itemIds);
+
+            const userItemIds = userItems.map((userItem) => userItem.id);
+            let totalExp = 0;
+
+            for (const userItem of userItems) {
+              const itemId = userItem.item.id;
+              const roomId = userItem.item.room.id;
+              const rarity = userItem.item.rarity;
+              const userRoom = await strapi
+                .service("api::user-room.user-room")
+                .getUserRoom(userId, roomId);
+
+              const isNew = !userRoom.owned_items[itemId];
+
+              let exp = EXP_BY_RARITY[rarity];
+
+              if (!isNew) {
+                exp *= EXP_MULT_FOR_DUPLICATE;
+              }
+
+              totalExp += exp;
+
+              await strapi
+                .service("api::user-room.user-room")
+                .updateItems(userRoom, [itemId], []);
+
+              reward.detail = userItem.item;
+              reward.exp = exp;
             }
-          );
-        } else if (reward.type === "star_point") {
-          await strapi
-            .service("api::star-point.star-point")
-            .updateStarPoint(user.id, amount, "achievement_reward");
-        } else if (reward.type === "item") {
-          const { item, amount } = reward;
 
-          const { current_serial_number } = item;
+            await strapi
+              .service("api::status.status")
+              .updateExp(userId, totalExp);
 
-          await strapi.entityService.update("api::item.item", item.id, {
-            fields: ["id", "name", "desc", "rarity", "current_serial_number"],
-            populate: {
-              thumbnail: {
-                fields: ["url"],
-              },
-            },
-            data: { current_serial_number: current_serial_number + 1 },
-          });
-
-          const userItem = await strapi.entityService.create(
-            "api::inventory.inventory",
-            {
-              data: {
-                users_permissions_user: user.id,
-                serial_number: current_serial_number + 1,
-                item: item.id,
-                publishedAt: new Date(),
-              },
-              fields: ["serial_number"],
-              populate: {
-                item: {
-                  fields: ["rarity"],
+            await strapi.entityService.create(
+              "api::item-acquisition-history.item-acquisition-history",
+              {
+                data: {
+                  type: reason,
+                  user: userId,
+                  items: { connect: itemIds },
+                  inventories: { connect: userItemIds },
+                  exp: totalExp,
+                  publishedAt: new Date(),
                 },
-                users_permissions_user: { fields: ["id"] },
-              },
-            }
-          );
+              }
+            );
+            break;
 
-          await strapi
-            .service("api::update-manager.update-manager")
-            .updateItemAquisition(userItem);
-
-          const userRoom = await strapi
-            .service("api::user-room.user-room")
-            .getUserRoom(user.id, item.room.id);
-
-          await strapi
-            .service("api::user-room.user-room")
-            .updateItems(userRoom, [item.id], []);
+          default:
+            break;
         }
       }
+
+      return rewards;
     },
   })
 );

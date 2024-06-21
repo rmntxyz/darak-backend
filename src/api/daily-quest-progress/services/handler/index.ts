@@ -1,8 +1,6 @@
-import login from "./login";
 import draw from "./draw";
 
 const Handler = {
-  login,
   draw,
 };
 

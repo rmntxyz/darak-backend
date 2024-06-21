@@ -1,16 +1,16 @@
 import { getRefTimestamp } from "../../../../utils";
 import { progressDefaultOptions } from "../daily-quest-progress";
 
-async function verify(user: User, quest: DailyQuestProgress) {
+async function verify(user: User, userQuest: DailyQuestProgress) {
   const now = new Date();
   const refTimestamp = getRefTimestamp(now);
 
   // check today's draw history
-  const history = await strapi.entityService.findMany(
+  const drawHistory = await strapi.entityService.findMany(
     "api::draw-history.draw-history",
     {
       start: 0,
-      limit: 1,
+      limit: 5,
       filters: {
         users_permissions_user: { id: user.id },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
@@ -18,73 +18,65 @@ async function verify(user: User, quest: DailyQuestProgress) {
     }
   );
 
-  if (history.length === 0) {
-    return quest;
+  const itemHistory = await strapi.entityService.findMany(
+    "api::item-acquisition-history.item-acquisition-history",
+    {
+      start: 0,
+      limit: 5,
+      filters: {
+        user: { id: user.id },
+        type: "gacha_result",
+        createdAt: { $gte: new Date(refTimestamp).toISOString() },
+      },
+    }
+  );
+
+  const max = userQuest.daily_quest.total_progress;
+  const prev = userQuest.progress;
+  const current = drawHistory.length + itemHistory.length;
+
+  if (current === prev) {
+    return userQuest;
   }
 
-  let { id, current_draw, longest_draw, last_draw_date } = user.streak;
+  let data;
 
-  const lastRefTimestamp = getRefTimestamp(last_draw_date);
-
-  if (lastRefTimestamp === refTimestamp) {
-    // 만약 퀘스트 완료는 했는데 보상을 받지 못한 경우에 생겼다고 가정한다.
-    // claim_rewards가 실패한 경우가 해당된다.
-    // is_completed 만 false로 변경하고 진입하면 여기로 들어오게 된다.
-    // is_completed만 true로 변경시켜준다.
-    // 그러면 이후에 claim_rewards가 실행될 것이다.
-    return await strapi
-      .service("api::daily-quest-progress.daily-quest-progress")
-      .update(quest.id, {
-        ...progressDefaultOptions,
-        data: {
-          is_completed: true,
-        },
-      });
-  }
-
-  if (lastRefTimestamp === refTimestamp - 86400000) {
-    current_draw += 1;
+  if (current < max) {
+    data = {
+      progress: current,
+    };
   } else {
-    current_draw = 1;
+    data = {
+      progress: max,
+      is_completed: true,
+      completed_date: now,
+    };
   }
-
-  longest_draw = Math.max(current_draw, longest_draw);
-
-  await strapi.service("api::streak.streak").update(id, {
-    data: {
-      current_draw,
-      longest_draw,
-      last_draw_date: now,
-    },
-  });
 
   return await strapi
     .service("api::daily-quest-progress.daily-quest-progress")
-    .update(quest.id, {
+    .update(userQuest.id, {
       ...progressDefaultOptions,
-      data: {
-        progress: quest.progress + 1,
-        is_completed: true,
-        completed_date: now,
-      },
+      data,
     });
 }
 
-async function claimRewards(user: User, quest: DailyQuestProgress) {
-  const { current_draw, longest_draw } = user.streak;
-  const { streak_rewards } = quest.daily_quest;
+async function claimRewards(user: User, userQuest: DailyQuestProgress) {
+  if (!userQuest.is_completed) {
+    throw new Error("Quest is not completed yet");
+  }
 
-  const { rewards } =
-    streak_rewards[Math.min(current_draw, streak_rewards.length) - 1];
+  if (userQuest.is_reward_claimed) {
+    throw new Error("Rewards already claimed");
+  }
 
-  return {
-    streak: {
-      type: "draw",
-      current: current_draw,
-      longest: longest_draw,
-    },
-    rewards,
-  };
+  const { rewards } = userQuest.daily_quest;
+
+  await strapi
+    .service("api::reward.reward")
+    .claim(user.id, rewards, "daily_quest_reward");
+
+  return rewards;
 }
 
 export default {

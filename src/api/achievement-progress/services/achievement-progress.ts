@@ -221,7 +221,7 @@ export default factories.createCoreService(
         const collected = await progressHandler.collectRewards(user, progress);
         const rewards = collected.flatMap((col) => col.rewards);
 
-        await strapi.service("api::reward.reward").claim(user, rewards);
+        await strapi.service("api::reward.reward").claim(user.id, rewards);
 
         return rewards;
       });
@@ -268,7 +268,7 @@ export default factories.createCoreService(
 
         const rewords = rewardList.flatMap((col) => col.rewards);
 
-        await strapi.service("api::reward.reward").claim(user, rewords);
+        await strapi.service("api::reward.reward").claim(user.id, rewords);
 
         return rewardList;
       });
