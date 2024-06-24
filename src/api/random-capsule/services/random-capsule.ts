@@ -67,7 +67,6 @@ export default ({ strapi }) => ({
     };
 
     result.events = [];
-
     await checkRelayEvent(userId, result);
 
     return result;
@@ -331,16 +330,16 @@ async function addItemToUser(
       }
     );
 
-    // await strapi.entityService.create("api::draw-history.draw-history", {
-    //   data: {
-    //     draw: drawId,
-    //     users_permissions_user: userId,
-    //     draw_result: { item: updatedItem.id },
-    //     user_items: { connect: userItems },
-    //     multiply,
-    //     publishedAt: new Date(),
-    //   },
-    // });
+    await strapi.entityService.create("api::draw-history.draw-history", {
+      data: {
+        draw: drawId,
+        users_permissions_user: userId,
+        draw_result: { item: updatedItem.id },
+        user_items: { connect: userItems },
+        multiply,
+        publishedAt: new Date(),
+      },
+    });
 
     return { item: updatedItem, exp };
   })) as { item: Partial<Item>; exp: number };

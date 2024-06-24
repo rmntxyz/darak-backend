@@ -4,6 +4,7 @@
 
 import { factories } from "@strapi/strapi";
 import { EXP_MULT_FOR_DUPLICATE, EXP_BY_RARITY } from "../../../constant";
+import { Populate } from "@strapi/strapi/lib/services/entity-service/types/params";
 
 const WheelInfo = {
   DEFAULT: 1,
@@ -17,7 +18,9 @@ export default factories.createCoreService(
         "plugin::users-permissions.user",
         userId,
         {
-          fields: ["level"],
+          Populate: {
+            status: { fields: ["level"] },
+          },
         }
       );
 

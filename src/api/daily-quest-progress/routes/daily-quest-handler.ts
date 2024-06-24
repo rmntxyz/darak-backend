@@ -10,8 +10,8 @@ export default {
       },
     },
     {
-      method: "GET",
-      path: "/daily-quest-progress/verify/:progressId",
+      method: "PUT",
+      path: "/daily-quest-progress/verify",
       handler: "daily-quest-progress.verify",
       config: {
         policies: [],
@@ -19,8 +19,8 @@ export default {
       },
     },
     {
-      method: "GET",
-      path: "/daily-quest-progress/claim-rewards/:progressId",
+      method: "POST",
+      path: "/daily-quest-progress/claim-rewards",
       handler: "daily-quest-progress.claim-rewards",
       config: {
         policies: [],

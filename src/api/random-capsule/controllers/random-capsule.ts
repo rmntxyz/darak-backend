@@ -3,6 +3,7 @@
  */
 
 import { ErrorCode, AVAILABLE_MULTIPLY } from "../../../constant";
+import { applyLocalizations } from "../../../utils";
 
 export default {
   gacha: async (ctx, next) => {
@@ -74,11 +75,31 @@ export default {
         .service("api::random-capsule.random-capsule")
         .drawWithCoin(userId, gachaInfo, draw, multiply);
 
+      if (result) {
+        const { locale } = ctx.query;
+
+        result.rewards.forEach((reward) => {
+          if (reward.type === "item") {
+            applyLocalizations(reward.detail, locale);
+          }
+        });
+      }
+
       return result;
     } else if (currency_type === "star_point") {
       const result = await strapi
         .service("api::random-capsule.random-capsule")
         .drawWithStarPoint(userId, draw, multiply);
+
+      if (result) {
+        const { locale } = ctx.query;
+
+        result.rewards.forEach((reward) => {
+          if (reward.type === "item") {
+            applyLocalizations(reward.detail, locale);
+          }
+        });
+      }
 
       return result;
     }

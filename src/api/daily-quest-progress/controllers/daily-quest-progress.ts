@@ -22,7 +22,7 @@ export default factories.createCoreController(
     },
 
     verify: async (ctx) => {
-      const { progressId } = ctx.params;
+      const { progressId } = ctx.request.body;
 
       if (!progressId) {
         return ctx.badRequest("Daily Quest Progress ID is required");
@@ -46,7 +46,7 @@ export default factories.createCoreController(
     },
 
     "claim-rewards": async (ctx) => {
-      const { progressId } = ctx.params;
+      const { progressId } = ctx.ctx.request.body;
 
       if (!progressId) {
         return ctx.badRequest("Daily Quest Progress ID is required");

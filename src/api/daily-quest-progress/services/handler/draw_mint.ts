@@ -18,22 +18,9 @@ async function verify(user: User, userQuest: DailyQuestProgress) {
     }
   );
 
-  const itemHistory = await strapi.entityService.findMany(
-    "api::item-acquisition-history.item-acquisition-history",
-    {
-      start: 0,
-      limit: 5,
-      filters: {
-        user: { id: user.id },
-        type: "gacha_result",
-        createdAt: { $gte: new Date(refTimestamp).toISOString() },
-      },
-    }
-  );
-
   const max = userQuest.daily_quest.total_progress;
   const prev = userQuest.progress;
-  const current = drawHistory.length + itemHistory.length;
+  const current = drawHistory.length;
 
   if (current === prev) {
     return userQuest;
@@ -42,10 +29,12 @@ async function verify(user: User, userQuest: DailyQuestProgress) {
   let data;
 
   if (current < max) {
+    // 만약 progress가 max보다 작으면 progress를 업데이트
     data = {
       progress: current,
     };
   } else {
+    // 만약 progress가 max랑 같으면 quest를 완료로 변경
     data = {
       progress: max,
       is_completed: true,
@@ -61,25 +50,6 @@ async function verify(user: User, userQuest: DailyQuestProgress) {
     });
 }
 
-async function claimRewards(user: User, userQuest: DailyQuestProgress) {
-  if (!userQuest.is_completed) {
-    throw new Error("Quest is not completed yet");
-  }
-
-  if (userQuest.is_reward_claimed) {
-    throw new Error("Rewards already claimed");
-  }
-
-  const { rewards } = userQuest.daily_quest;
-
-  await strapi
-    .service("api::reward.reward")
-    .claim(user.id, rewards, "daily_quest_reward");
-
-  return rewards;
-}
-
 export default {
   verify,
-  claimRewards,
 };

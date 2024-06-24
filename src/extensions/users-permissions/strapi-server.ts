@@ -34,6 +34,7 @@ module.exports = (plugin) => {
               item: { fields: ["id"] },
             },
           },
+          status: true,
           freebie: true,
           streak: true,
           star_point: {
@@ -86,6 +87,12 @@ module.exports = (plugin) => {
       user.trading_credit = await strapi
         .service("api::trading-credit.trading-credit")
         .getTradingCredit(user.id);
+    }
+
+    if (user.status === null) {
+      user.status = await strapi
+        .service("api::status.status")
+        .getStatus(user.id);
     }
 
     const freebie = await strapi

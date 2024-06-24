@@ -51,11 +51,11 @@ export default factories.createCoreService(
       const dailyQuests = await strapi.entityService.findMany(
         "api::daily-quest.daily-quest",
         {
-          filters: {
-            days: {
-              $contains: day,
-            },
-          },
+          // filters: {
+          //   days: {
+          //     $contains: day,
+          //   },
+          // },
           populate: {
             rewards: true,
           },
@@ -192,24 +192,7 @@ export default factories.createCoreService(
           }
         );
 
-        const { streak, rewards } = await progressHandler.claimRewards(
-          user,
-          progress
-        );
-
-        for (const reward of rewards) {
-          if (reward.type === "freebie") {
-            await strapi.entityService.update(
-              "api::freebie.freebie",
-              user.freebie.id,
-              {
-                data: {
-                  current: user.freebie.current + reward.amount,
-                },
-              }
-            );
-          }
-        }
+        const rewards = await progressHandler.claimRewards(user, progress);
 
         await strapi.entityService.update(
           "api::daily-quest-progress.daily-quest-progress",
@@ -221,7 +204,7 @@ export default factories.createCoreService(
           }
         );
 
-        results = { streak, rewards };
+        results = { rewards };
       });
 
       return results;

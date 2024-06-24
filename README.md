@@ -135,7 +135,7 @@ j
 
 ## /daily-quest-progress/today
 
-### GET
+### PUT
 
 <br />
 
@@ -143,7 +143,7 @@ j
 
 <br />
 
-### GET
+### POST
 
 <br />
 
