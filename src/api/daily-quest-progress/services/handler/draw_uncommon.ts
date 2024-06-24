@@ -1,31 +1,32 @@
 import { getRefTimestamp } from "../../../../utils";
 import { progressDefaultOptions } from "../daily-quest-progress";
 
-async function verify(user: User, userQuest: DailyQuestProgress) {
+async function verify(userId: number, userQuest: DailyQuestProgress) {
   const now = new Date();
   const refTimestamp = getRefTimestamp(now);
+  const max = userQuest.daily_quest.total_progress;
 
   const itemHistory = await strapi.entityService.findMany(
     "api::item-acquisition-history.item-acquisition-history",
     {
       start: 0,
-      limit: 5,
+      limit: max,
       filters: {
-        user: { id: user.id },
+        user: { id: userId },
         type: "gacha_result",
-        items: { filters: { rarity: "uncommon" } },
+        items: { rarity: "uncommon" },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
+      },
+      populate: {
+        items: true,
       },
     }
   );
 
-  console.log(itemHistory);
-
-  const max = userQuest.daily_quest.total_progress;
   const prev = userQuest.progress;
   const current = itemHistory.length;
 
-  if (current === prev) {
+  if (current !== max && current === prev) {
     return userQuest;
   }
 

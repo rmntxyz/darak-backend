@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::daily-quest-progress.daily-quest-progress",
@@ -14,11 +15,16 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const result = await strapi
+      const results = await strapi
         .service("api::daily-quest-progress.daily-quest-progress")
-        .getTodayQuest(userId);
+        .getTodayQuests(userId);
 
-      return result;
+      const { locale } = ctx.query;
+      for (const result of results) {
+        applyLocalizations(result.daily_quest, locale);
+      }
+
+      return results;
     },
 
     verify: async (ctx) => {
@@ -39,6 +45,8 @@ export default factories.createCoreController(
           .service("api::daily-quest-progress.daily-quest-progress")
           .verify(userId, progressId);
 
+        applyLocalizations(result.daily_quest, ctx.query.locale);
+
         return result;
       } catch (error) {
         return ctx.badRequest(error.message);
@@ -46,7 +54,7 @@ export default factories.createCoreController(
     },
 
     "claim-rewards": async (ctx) => {
-      const { progressId } = ctx.ctx.request.body;
+      const { progressId } = ctx.request.body;
 
       if (!progressId) {
         return ctx.badRequest("Daily Quest Progress ID is required");

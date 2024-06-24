@@ -105,7 +105,7 @@ module.exports = (plugin) => {
 
     const dailyQuestProgresses = await strapi
       .service("api::daily-quest-progress.daily-quest-progress")
-      .getTodayQuest(user.id);
+      .getTodayQuests(user.id);
 
     const achievementProgresses = await strapi
       .service("api::achievement-progress.achievement-progress")

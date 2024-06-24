@@ -1,34 +1,35 @@
 import { getRefTimestamp } from "../../../../utils";
+import draw from "../../../draw/controllers/draw";
 import { progressDefaultOptions } from "../daily-quest-progress";
 
-async function verify(user: User, userQuest: DailyQuestProgress) {
+async function verify(userId: number, userQuest: DailyQuestProgress) {
   const now = new Date();
   const refTimestamp = getRefTimestamp(now);
+  const max = userQuest.daily_quest.total_progress;
 
-  // check today's draw history
   const drawHistory = await strapi.entityService.findMany(
     "api::draw-history.draw-history",
     {
       start: 0,
-      limit: 5,
+      limit: max,
       filters: {
-        users_permissions_user: { id: user.id },
+        user_items: null,
+        users_permissions_user: { id: userId },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
       },
     }
   );
 
-  const max = userQuest.daily_quest.total_progress;
   const prev = userQuest.progress;
   const current = drawHistory.length;
 
-  if (current === prev) {
+  if (current !== max && current === prev) {
     return userQuest;
   }
 
   let data;
 
-  if (current < max) {
+  if (current !== max && current < max) {
     // 만약 progress가 max보다 작으면 progress를 업데이트
     data = {
       progress: current,

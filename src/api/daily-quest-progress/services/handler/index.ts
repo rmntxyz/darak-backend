@@ -1,15 +1,23 @@
+import draw_common from "./draw_common";
 import draw_mint from "./draw_mint";
+import draw_spin from "./draw_spin";
 import draw_uncommon from "./draw_uncommon";
 import draw_yellow from "./draw_yellow";
+import x3_draw from "./x3_draw";
+import x5_draw from "./x5_draw";
 
 const Handler = {
+  x3_draw,
+  x5_draw,
   draw_mint,
   draw_yellow,
+  draw_common,
   draw_uncommon,
+  draw_spin,
 };
 
 export default {
-  verify: async (user: User, progress: DailyQuestProgress) => {
+  verify: async (userId: number, progress: DailyQuestProgress) => {
     const { qid } = progress.daily_quest;
     const handler = Handler[qid];
 
@@ -17,18 +25,10 @@ export default {
       return null;
     }
 
-    return await handler.verify(user, progress);
+    return await handler.verify(userId, progress);
   },
 
   claimRewards: async (user: User, userQuest: DailyQuestProgress) => {
-    if (!userQuest.is_completed) {
-      throw new Error("Quest is not completed yet");
-    }
-
-    if (userQuest.is_reward_claimed) {
-      throw new Error("Rewards already claimed");
-    }
-
     const { rewards } = userQuest.daily_quest;
 
     await strapi

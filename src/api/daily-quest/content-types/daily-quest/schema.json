@@ -32,7 +32,6 @@
     },
     "total_progress": {
       "type": "integer",
-      "default": 1,
       "pluginOptions": {
         "i18n": {
           "localized": true

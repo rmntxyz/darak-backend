@@ -12,9 +12,6 @@ export default {
 
     let rarities = JSON.parse(ctx.request.body.rarities);
 
-    console.log("count", count);
-    console.log("rarities", Array.isArray(rarities));
-
     const userId = ctx.state.user?.id;
 
     try {

@@ -1202,8 +1202,7 @@ export interface ApiDailyQuestDailyQuest extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
-      }> &
-      Attribute.DefaultTo<1>;
+      }>;
     qid: Attribute.UID;
     rewards: Attribute.Component<'reward.with-amount', true> &
       Attribute.SetPluginOptions<{

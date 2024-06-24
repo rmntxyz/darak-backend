@@ -6,21 +6,21 @@ async function verify(userId: number, userQuest: DailyQuestProgress) {
   const refTimestamp = getRefTimestamp(now);
   const max = userQuest.daily_quest.total_progress;
 
-  const itemHistory = await strapi.entityService.findMany(
-    "api::item-acquisition-history.item-acquisition-history",
+  const drawHistory = await strapi.entityService.findMany(
+    "api::draw-history.draw-history",
     {
       start: 0,
       limit: max,
       filters: {
-        user: { id: userId },
-        type: "gacha_result",
+        multiple: 3,
+        users_permissions_user: { id: userId },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
       },
     }
   );
 
   const prev = userQuest.progress;
-  const current = itemHistory.length;
+  const current = drawHistory.length;
 
   if (current !== max && current === prev) {
     return userQuest;
