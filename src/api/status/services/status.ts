@@ -56,8 +56,8 @@ export default factories.createCoreService(
 
       return {
         ...status,
-        next_level_rewards: nextLevel.rewards,
-        exp_range: [currentLevel.exp, nextLevel.exp],
+        next_level_rewards: nextLevel ? nextLevel.rewards : [],
+        exp_range: [currentLevel.exp, nextLevel ? nextLevel.exp : null],
         max_level: exp_table.length,
       };
     },
