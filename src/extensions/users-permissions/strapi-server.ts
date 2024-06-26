@@ -1,6 +1,7 @@
 import bootstrap from "./server/bootstrap";
 import providersRegistry from "./server/services/providers-registry";
 import providers from "./server/services/providers";
+import { applyLocalizations } from "../../utils";
 
 module.exports = (plugin) => {
   // for kakao login
@@ -106,6 +107,10 @@ module.exports = (plugin) => {
     const dailyQuestProgresses = await strapi
       .service("api::daily-quest-progress.daily-quest-progress")
       .getTodayQuests(user.id);
+
+    dailyQuestProgresses.forEach((progress) => {
+      applyLocalizations(progress.daily_quest, ctx.query.locale);
+    });
 
     const achievementProgresses = await strapi
       .service("api::achievement-progress.achievement-progress")
