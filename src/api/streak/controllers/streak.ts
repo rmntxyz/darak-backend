@@ -117,8 +117,11 @@ export default factories.createCoreController(
             rewards.push(reward);
             break;
 
+          case "item":
+          case "item_common":
           case "item_uncommon":
           case "item_rare":
+          case "item_unique":
             const targetRarity = reward.type.split("_")[1];
 
             const items = await strapi

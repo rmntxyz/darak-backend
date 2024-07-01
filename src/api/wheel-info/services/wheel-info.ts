@@ -131,6 +131,10 @@ export default factories.createCoreService(
             rewards.push(reward);
             break;
           case "item":
+          case "item_common":
+          case "item_uncommon":
+          case "item_rare":
+          case "item_unique":
             const items = await strapi
               .service("api::random-item.random-item")
               .getRandomItemsFromUnlockedRooms(userId, reward.amount);

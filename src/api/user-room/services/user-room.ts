@@ -60,7 +60,7 @@ export default factories.createCoreService(
         .getUserRoom(userId, roomId);
 
       if (userRoom.unlocked) {
-        throw "Room already unlocked";
+        return userRoom;
       }
 
       const room = await strapi.entityService.findOne(
@@ -109,6 +109,41 @@ export default factories.createCoreService(
         );
       });
     },
+
+    async createUserRoomsWithoutUnlockCondition(userId: number) {
+      const conditionNullRooms = await strapi.entityService.findMany(
+        "api::room.room",
+        {
+          filters: {
+            unlock_conditions: null,
+          },
+          fields: ["id"],
+        }
+      );
+
+      const promises = conditionNullRooms.map((room) =>
+        strapi
+          .service("api::user-room.user-room")
+          .getUserRoom(userId, room.id)
+          .then((userRoom) =>
+            userRoom.unlocked
+              ? userRoom
+              : strapi.entityService.update(
+                  "api::user-room.user-room",
+                  userRoom.id,
+                  {
+                    data: {
+                      start_time: new Date(),
+                      unlocked: true,
+                    },
+                  }
+                )
+          )
+      );
+
+      return await Promise.all(promises);
+    },
+
     async updateItems(
       userRoom: UserRoom,
       itemsToAdd: number[],
@@ -186,14 +221,21 @@ export default factories.createCoreService(
         {
           filters: {
             user: { id: userId },
-            unlocked: true,
+            $or: [
+              {
+                unlocked: true,
+              },
+              {
+                room: { unlock_conditions: null },
+              },
+            ],
           },
           populate: {
             user: {
               fields: ["id"],
             },
             room: {
-              fields: ["name", "rid"],
+              fields: ["name", "rid", "unlock_conditions"],
               populate: {
                 image_complete: {
                   fields: ["url"],
