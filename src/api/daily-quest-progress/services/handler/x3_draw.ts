@@ -12,7 +12,7 @@ async function verify(userId: number, userQuest: DailyQuestProgress) {
       start: 0,
       limit: max,
       filters: {
-        multiple: 3,
+        multiply: 3,
         users_permissions_user: { id: userId },
         createdAt: { $gte: new Date(refTimestamp).toISOString() },
       },

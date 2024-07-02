@@ -171,7 +171,7 @@ export default ({ strapi }) => {
       experience: 0,
     };
 
-    // 가입 초기에 컨디션이 없는 유저룸 생성
+    // 가입시 컨디션이 없는 유저룸 생성
     await strapi
       .service("api::user-room.user-room")
       .createUserRoomsWithoutUnlockCondition(user.id);
