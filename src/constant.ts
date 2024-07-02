@@ -211,3 +211,66 @@ export const ITEM_PROBABILITY = {
 // deprecated
 export const DAILY_DRAW_LIMIT = 5;
 export const RANKING_LIMIT = 10;
+
+export const TRADE_NOTIFICATIONS = {
+  trade_proposed: {
+    title: {
+      en: "Trade proposed",
+      ko: "거래 제안됨",
+      ja: "取引提案",
+    },
+    body: {
+      en: "${username} has proposed a trade.",
+      ko: "${username}님이 거래를 제안했습니다.",
+      ja: "${username}さんが取引を提案しました。",
+    },
+  },
+  trade_accepted: {
+    title: {
+      en: "Trade accepted",
+      ko: "거래 수락됨",
+      ja: "取引承諾",
+    },
+    body: {
+      en: "${username} has accepted the trade.",
+      ko: "${username}님이 거래를 수락했습니다.",
+      ja: "${username}さんが取引を承諾しました。",
+    },
+  },
+  trade_rejected: {
+    title: {
+      en: "Trade rejected",
+      ko: "거래 거부됨",
+      ja: "取引拒否",
+    },
+    body: {
+      en: "${username} has rejected the trade.",
+      ko: "${username}님이 거래를 거부했습니다.",
+      ja: "${username}さんが取引を拒否しました。",
+    },
+  },
+  trade_canceled: {
+    title: {
+      en: "Trade canceled",
+      ko: "거래 취소됨",
+      ja: "取引キャンセル",
+    },
+    body: {
+      en: "${username} has canceled the trade.",
+      ko: "${username}님이 거래를 취소했습니다.",
+      ja: "${username}さんが取引をキャンセルしました。",
+    },
+  },
+  // trade_expired: {
+  //   title: {
+  //     en: "Trade expired",
+  //     ko: "거래 만료됨",
+  //     ja: "取引期限切れ",
+  //   },
+  //   body: {
+  //     en: "The trade with ${username} has expired.",
+  //     ko: "${username}님과의 거래가 만료되었습니다.",
+  //     ja: "${username}さんとの取引が期限切れになりました。",
+  //   },
+  // },
+};

@@ -1,4 +1,8 @@
-import { EXP_BY_RARITY, ErrorCode } from "../../../constant";
+import {
+  EXP_BY_RARITY,
+  ErrorCode,
+  TRADE_NOTIFICATIONS,
+} from "../../../constant";
 import { getRefTimestamp } from "../../../utils";
 
 /**
@@ -563,6 +567,43 @@ offset ${pageNum - 1} * ${pageSize};
         partner_read: by === trade.partner.id,
       },
     });
+  },
+
+  sendTradeNotification: async (
+    tradeId: number,
+    from: number,
+    to: number,
+    reason: keyof typeof TRADE_NOTIFICATIONS
+  ) => {
+    const { device_token, language } = await strapi.entityService.findOne(
+      "plugin::users-permissions.user",
+      to,
+      {
+        fields: ["device_token", "language"],
+      }
+    );
+
+    if (device_token) {
+      // get proposer username
+      const { username } = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        from,
+        {
+          fields: ["username"],
+        }
+      );
+
+      const { notification } = strapi as unknown as ExtendedStrapi;
+      const { title, body } = TRADE_NOTIFICATIONS[reason];
+      notification.sendNotification(device_token, {
+        title: title[language],
+        body: body[language].replace("${username}", username),
+        data: {
+          type: "trade",
+          tradeId: tradeId,
+        },
+      });
+    }
   },
 
   // DEPRECATED

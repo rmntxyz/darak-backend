@@ -9,8 +9,6 @@ import {
   tradeDetailOptions,
 } from "../services/trade-process";
 
-const DAY_LIMIT = 3;
-
 export default {
   "get-item-owners": async (ctx) => {
     const userId = ctx.state.user?.id;
@@ -147,12 +145,20 @@ export default {
         );
       }
 
-      return await strapi
+      const trade = await strapi
         .service("api::trade-process.trade-process")
         .proposeTrade(userId, partnerId, proposerItems, partnerItems);
+
+      // send notification to partner
+      strapi
+        .service("api::trade-process.trade-process")
+        .sendTradeNotification(trade.id, userId, partnerId, "trade_proposed");
+
+      return trade;
     });
   },
 
+  // NOT USED
   "counter-propose-trade": async (ctx) => {
     const userId = ctx.state.user?.id;
 
@@ -268,11 +274,11 @@ export default {
     }
 
     return await strapi.db.transaction(async () => {
-      const trade = await strapi.entityService.findOne(
+      const trade = (await strapi.entityService.findOne(
         "api::trade.trade",
         tradeId,
         tradeDetailOptions
-      );
+      )) as Trade;
 
       if (!trade) {
         return ctx.badRequest("trade not found");
@@ -359,6 +365,16 @@ export default {
         return ctx.badRequest("trading failed", errorCode);
       }
 
+      // send notification to proposer
+      strapi
+        .service("api::trade-process.trade-process")
+        .sendTradeNotification(
+          trade.id,
+          userId,
+          trade.proposer.id,
+          "trade_accepted"
+        );
+
       return await strapi
         .service("api::trade-process.trade-process")
         .changeStatus(trade, "success", userId);
@@ -379,11 +395,11 @@ export default {
     }
 
     return await strapi.db.transaction(async () => {
-      const trade = await strapi.entityService.findOne(
+      const trade = (await strapi.entityService.findOne(
         "api::trade.trade",
         tradeId,
         tradeDefaultOptions
-      );
+      )) as Trade;
 
       if (!trade) {
         return ctx.badRequest("trade not found");
@@ -411,23 +427,36 @@ export default {
         return ctx.badRequest("trade is expired", ErrorCode.TRADE_EXPIRED);
       }
 
+      const isUserProposer = trade.proposer.id === userId;
+
       if (trade.status === "proposed") {
-        return await strapi
+        // send notification to proposer or partner
+        strapi
           .service("api::trade-process.trade-process")
-          .changeStatus(
-            trade,
-            trade.proposer.id === userId ? "canceled" : "rejected",
-            userId
+          .sendTradeNotification(
+            trade.id,
+            userId,
+            isUserProposer ? trade.partner.id : trade.proposer.id,
+            isUserProposer ? "trade_canceled" : "trade_rejected"
           );
-      } else if (trade.status === "counter_proposed") {
+
         return await strapi
           .service("api::trade-process.trade-process")
           .changeStatus(
             trade,
-            trade.proposer.id === userId ? "rejected" : "cancelec",
+            isUserProposer ? "canceled" : "rejected",
             userId
           );
       }
+      // else if (trade.status === "counter_proposed") {
+      //   return await strapi
+      //     .service("api::trade-process.trade-process")
+      //     .changeStatus(
+      //       trade,
+      //       trade.proposer.id === userId ? "rejected" : "cancelec",
+      //       userId
+      //     );
+      // }
     });
   },
 
