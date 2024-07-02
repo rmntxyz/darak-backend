@@ -1,4 +1,4 @@
-import { ErrorCode } from "../../../constant";
+import { EXP_BY_RARITY, ErrorCode } from "../../../constant";
 import { getRefTimestamp } from "../../../utils";
 
 /**
@@ -406,10 +406,17 @@ offset ${pageNum - 1} * ${pageSize};
     ]);
 
     const tradeInfo: {
-      [roomId: number]: { proposerItems?: number[]; partnerItems?: number[] };
+      [roomId: number]: {
+        proposerItems?: { id: number; rarity: string }[];
+        partnerItems?: { id: number; rarity: string }[];
+      };
     } = {};
-    trade.proposer_items
-      .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
+    proposer_items
+      .map((each) => ({
+        itemId: each.item.id,
+        roomId: each.item.room.id,
+        rarity: each.item.rarity,
+      }))
       .reduce((acc, each) => {
         if (!acc[each.roomId]) {
           acc[each.roomId] = {
@@ -417,11 +424,18 @@ offset ${pageNum - 1} * ${pageSize};
             partnerItems: [],
           };
         }
-        acc[each.roomId].proposerItems!.push(each.itemId);
+        acc[each.roomId].proposerItems!.push({
+          id: each.itemId,
+          rarity: each.rarity,
+        });
         return acc;
       }, tradeInfo);
-    trade.partner_items
-      .map((each) => ({ itemId: each.item.id, roomId: each.item.room.id }))
+    partner_items
+      .map((each) => ({
+        itemId: each.item.id,
+        roomId: each.item.room.id,
+        rarity: each.item.rarity,
+      }))
       .reduce((acc, each) => {
         if (!acc[each.roomId]) {
           acc[each.roomId] = {
@@ -429,7 +443,10 @@ offset ${pageNum - 1} * ${pageSize};
             partnerItems: [],
           };
         }
-        acc[each.roomId].partnerItems!.push(each.itemId);
+        acc[each.roomId].partnerItems!.push({
+          id: each.itemId,
+          rarity: each.rarity,
+        });
         return acc;
       }, tradeInfo);
 
@@ -438,32 +455,55 @@ offset ${pageNum - 1} * ${pageSize};
     )) {
       const proposerRoom = await strapi
         .service("api::user-room.user-room")
-        .getUserRoom(trade.proposer.id, roomId);
+        .getUserRoom(proposer.id, roomId);
 
       const partnerRoom = await strapi
         .service("api::user-room.user-room")
-        .getUserRoom(trade.partner.id, roomId);
+        .getUserRoom(partner.id, roomId);
 
       // if item to trade is only item in room, throw error
-      for (const id of proposerItems!) {
+      let partnerExp = 0;
+      for (const { id, rarity } of proposerItems!) {
         if (proposerRoom.owned_items[id] === 1) {
           throw ErrorCode.NOT_ENOUGH_PROPOSER_ITEMS;
         }
+
+        if (this.checkFirstItem(proposerRoom, id)) {
+          partnerExp += EXP_BY_RARITY[rarity];
+        }
+      }
+      if (partnerExp !== 0) {
+        await strapi
+          .service("api::status.status")
+          .updateExp(partner.id, partnerExp);
       }
 
-      for (const id of partnerItems!) {
+      let proposerExp = 0;
+      for (const { id, rarity } of partnerItems!) {
         if (partnerRoom.owned_items[id] === 1) {
           throw ErrorCode.NOT_ENOUGH_PARTNER_ITEMS;
         }
+
+        if (this.checkFirstItem(partnerRoom, id)) {
+          proposerExp += EXP_BY_RARITY[rarity];
+        }
+      }
+      if (proposerExp !== 0) {
+        await strapi
+          .service("api::status.status")
+          .updateExp(proposer.id, proposerExp);
       }
 
-      await strapi
-        .service("api::user-room.user-room")
-        .updateItems(proposerRoom, partnerItems, proposerItems);
+      const partnerItemIds = partnerItems!.map((x) => x.id);
+      const proposerItemIds = proposerItems!.map((x) => x.id);
 
       await strapi
         .service("api::user-room.user-room")
-        .updateItems(partnerRoom, proposerItems, partnerItems);
+        .updateItems(proposerRoom, partnerItemIds, proposerItemIds);
+
+      await strapi
+        .service("api::user-room.user-room")
+        .updateItems(partnerRoom, proposerItemIds, partnerItemIds);
     }
   },
 
@@ -477,6 +517,10 @@ offset ${pageNum - 1} * ${pageSize};
         });
       })
     );
+  },
+
+  checkFirstItem(userRoom: UserRoom, itemId: number) {
+    return userRoom.owned_items[itemId] === undefined;
   },
 
   /**
