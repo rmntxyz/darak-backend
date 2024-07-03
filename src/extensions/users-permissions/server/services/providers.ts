@@ -171,11 +171,6 @@ export default ({ strapi }) => {
       experience: 0,
     };
 
-    // 가입시 컨디션이 없는 유저룸 생성
-    await strapi
-      .service("api::user-room.user-room")
-      .createUserRoomsWithoutUnlockCondition(user.id);
-
     const createdUser = await strapi
       .query("plugin::users-permissions.user")
       .create({ data: newUser });
@@ -183,6 +178,11 @@ export default ({ strapi }) => {
     const achievement_progresses = await strapi
       .services("api::achievement-progress.achievement-progress")
       .createAchievementProgress([createdUser.id]);
+
+    // 가입시 컨디션이 없는 유저룸 생성
+    await strapi
+      .service("api::user-room.user-room")
+      .createUserRoomsWithoutUnlockCondition(createdUser.id);
 
     return { ...createdUser, achievement_progresses };
   };
