@@ -116,6 +116,7 @@ export default factories.createCoreService(
         {
           filters: {
             unlock_conditions: null,
+            publishedAt: { $ne: null },
           },
           fields: ["id"],
         }
@@ -140,8 +141,19 @@ export default factories.createCoreService(
                 )
           )
       );
+      await Promise.all(promises);
 
-      return await Promise.all(promises);
+      await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        userId,
+        {
+          data: {
+            rooms: {
+              connect: conditionNullRooms.map((room) => room.id),
+            },
+          },
+        }
+      );
     },
 
     async updateItems(

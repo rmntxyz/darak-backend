@@ -176,7 +176,7 @@ export default ({ strapi }) => {
       .create({ data: newUser });
 
     const achievement_progresses = await strapi
-      .services("api::achievement-progress.achievement-progress")
+      .service("api::achievement-progress.achievement-progress")
       .createAchievementProgress([createdUser.id]);
 
     // 가입시 컨디션이 없는 유저룸 생성
