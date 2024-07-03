@@ -598,10 +598,12 @@ offset ${pageNum - 1} * ${pageSize};
       notification.sendNotification(device_token, {
         title: title[language],
         body: body[language].replace("${username}", username),
-        data: JSON.stringify({
-          type: "trade",
-          tradeId: tradeId,
-        }),
+        data: {
+          data: JSON.stringify({
+            type: "trade",
+            tradeId: tradeId,
+          }),
+        },
       });
     }
   },
