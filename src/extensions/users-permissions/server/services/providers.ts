@@ -150,6 +150,25 @@ export default ({ strapi }) => {
       }
     );
 
+    const createdStatus = await strapi.entityService.create(
+      "api::status.status",
+      {
+        data: {
+          level: 1,
+          exp: 0,
+          level_up_reward_claimed: true,
+          level_up_reward_claim_history: [{ date: new Date(), level: 1 }],
+          publishedAt: new Date(),
+        },
+        fields: ["id", "level", "exp", "level_up_reward_claimed"],
+        populate: {
+          level_up_reward_claim_history: {
+            sort: "level:asc",
+          },
+        },
+      }
+    );
+
     // Retrieve default role.
     const defaultRole = await strapi
       .query("plugin::users-permissions.role")
@@ -162,6 +181,7 @@ export default ({ strapi }) => {
       provider,
       role: defaultRole.id,
       confirmed: true,
+      status: createdStatus.id,
       freebie: createdFreebie.id,
       streak: createdStreak.id,
       star_point: createdStarPoint.id,
