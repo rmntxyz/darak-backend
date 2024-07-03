@@ -595,13 +595,6 @@ offset ${pageNum - 1} * ${pageSize};
       const { notification } = strapi as unknown as ExtendedStrapi;
       const { title, body } = TRADE_NOTIFICATIONS[reason];
 
-      console.log(
-        "send trade notification",
-        title[language],
-        body[language],
-        username,
-        device_token
-      );
       notification.sendNotification(device_token, {
         notification: {
           title: title[language],
