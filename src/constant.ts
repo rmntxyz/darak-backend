@@ -165,7 +165,7 @@ export const ErrorCode = {
 
 export const ONE_DAY = 86400000;
 
-export const RESET_HOUR = 9; // 0 ~ 23
+export const RESET_HOUR = 21; // 0 ~ 23
 
 export const RESET_DAY = 1; // 1 ~ 31
 
