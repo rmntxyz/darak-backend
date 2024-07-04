@@ -140,5 +140,30 @@ export default factories.createCoreController(
 
       return rooms;
     },
+
+    "get-locked-rooms": async (ctx) => {
+      const userId = ctx.state.user.id;
+
+      const rooms = await strapi
+        .service("api::room.room")
+        .findLockedRooms(userId);
+
+      if (rooms.length > 0) {
+        // localizations
+        const { locale } = ctx.query;
+
+        rooms.forEach((room) => {
+          applyLocalizations(room, locale);
+
+          if (room.unlock_conditions?.room_completion?.length > 0) {
+            for (const target of room.unlock_conditions.room_completion) {
+              applyLocalizations(target, locale);
+            }
+          }
+        });
+      }
+
+      return rooms;
+    },
   })
 );

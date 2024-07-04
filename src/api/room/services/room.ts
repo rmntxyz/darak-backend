@@ -105,6 +105,63 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
     });
   },
 
+  async findLockedRooms(userId: number) {
+    const unlockedUserRoom = await strapi.entityService.findMany(
+      "api::user-room.user-room",
+      {
+        filters: {
+          user: { id: userId },
+          unlocked: true,
+        },
+        populate: {
+          room: {
+            fields: ["id"],
+          },
+        },
+      }
+    );
+
+    const unlockedRoomIds = unlockedUserRoom.map(
+      (userRoom) => userRoom.room.id
+    );
+
+    const allRooms = await strapi.entityService.findMany("api::room.room", {
+      filters: {
+        publishedAt: { $ne: null },
+      },
+      fields: ["id", "name", "rid", "unlock_conditions"],
+      populate: {
+        image_empty: {
+          fields: ["url"],
+        },
+      },
+      localizations: {
+        fields: ["name", "desc", "locale"],
+      },
+    });
+
+    const roomMap = allRooms.reduce((acc, room) => {
+      acc[room.id] = room;
+      return acc;
+    }, {});
+
+    const lockedRooms = allRooms.filter(
+      (room) => room.unlock_conditions && !unlockedRoomIds.includes(room.id)
+    );
+
+    for (const room of lockedRooms) {
+      const cond = room.unlock_conditions;
+
+      if (cond.room_completion) {
+        cond.room_completion = cond.room_completion.map(
+          (roomId) => roomMap[roomId]
+        );
+      }
+    }
+
+    return lockedRooms;
+  },
+
   async findUserRooms(userId: number) {
     return await strapi.entityService.findMany("api::room.room", {
       ...roomsDefaultOptions,

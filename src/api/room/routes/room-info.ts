@@ -36,5 +36,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/rooms/locked",
+      handler: "room.get-locked-rooms",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
