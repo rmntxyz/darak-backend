@@ -10,11 +10,15 @@ const conditionValidator = {
       "plugin::users-permissions.user",
       userId,
       {
-        fields: ["star_point"],
+        populate: {
+          star_point: {
+            fields: ["amount"],
+          },
+        },
       }
     );
 
-    if (user.star_point < amount) {
+    if (user.star_point.amount < amount) {
       return false;
     }
 
