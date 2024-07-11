@@ -24,7 +24,7 @@ export default factories.createCoreController(
       const { characterId } = ctx.params;
 
       if (!characterId) {
-        return ctx.badRequest("Creator id is required");
+        return ctx.badRequest("characterId is required");
       }
 
       const character = await strapi
