@@ -29,16 +29,27 @@ export default factories.createCoreService(
       return characters;
     },
 
-    async getCharacterDetail(creatorId: number) {
+    async getCharacterDetail(characterId: number) {
       const character = await strapi.entityService.findOne(
         "api::character.character",
-        creatorId,
+        characterId,
         {
           filters: {
             publishedAt: { $ne: null },
           },
           fields: ["name", "desc"],
           populate: {
+            creator: {
+              fields: ["name", "desc", "cid"],
+              populate: {
+                profile_image: {
+                  fields: ["url"],
+                },
+                localizations: {
+                  fields: ["name", "desc", "locale"],
+                },
+              },
+            },
             image: {
               fields: ["url"],
             },

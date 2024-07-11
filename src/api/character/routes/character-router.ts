@@ -11,7 +11,7 @@ export default {
     },
     {
       method: "GET",
-      path: "/character/:creatorId",
+      path: "/character/:characterId",
       handler: "character.get-character-detail",
       config: {
         policies: [],

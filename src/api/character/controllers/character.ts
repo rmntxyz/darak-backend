@@ -21,15 +21,15 @@ export default factories.createCoreController(
       return characters;
     },
     "get-character-detail": async (ctx) => {
-      const { creatorId } = ctx.params;
+      const { characterId } = ctx.params;
 
-      if (!creatorId) {
+      if (!characterId) {
         return ctx.badRequest("Creator id is required");
       }
 
       const character = await strapi
         .service("api::character.character")
-        .getCharacterDetail(creatorId);
+        .getCharacterDetail(characterId);
 
       if (!character) {
         return ctx.notFound("Character not found");
@@ -38,10 +38,9 @@ export default factories.createCoreController(
       const { locale } = ctx.query;
 
       applyLocalizations(character, locale);
-
+      applyLocalizations(character.creator, locale);
       character.items.forEach((item) => {
         applyLocalizations(item, locale);
-
         applyLocalizations(item.room, locale);
       });
 
