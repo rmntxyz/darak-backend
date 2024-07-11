@@ -39,11 +39,15 @@ const conditionValidator = {
       "plugin::users-permissions.user",
       userId,
       {
-        fields: ["level"],
+        populate: {
+          status: {
+            fields: ["level"],
+          },
+        },
       }
     );
 
-    if (user.level < level) {
+    if (user.status.level < level) {
       return false;
     }
 
