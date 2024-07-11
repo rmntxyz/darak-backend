@@ -157,6 +157,12 @@
           "localized": true
         }
       }
+    },
+    "character": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::character.character",
+      "inversedBy": "items"
     }
   }
 }

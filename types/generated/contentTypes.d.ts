@@ -1070,6 +1070,75 @@ export interface ApiBadgeBadge extends Schema.CollectionType {
   };
 }
 
+export interface ApiCharacterCharacter extends Schema.CollectionType {
+  collectionName: 'characters';
+  info: {
+    singularName: 'character';
+    pluralName: 'characters';
+    displayName: 'Character';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    items: Attribute.Relation<
+      'api::character.character',
+      'oneToMany',
+      'api::item.item'
+    >;
+    creator: Attribute.Relation<
+      'api::character.character',
+      'manyToOne',
+      'api::creator.creator'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::character.character',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::character.character',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::character.character',
+      'oneToMany',
+      'api::character.character'
+    >;
+    locale: Attribute.String;
+  };
+}
+
 export interface ApiCreatorCreator extends Schema.CollectionType {
   collectionName: 'creators';
   info: {
@@ -1144,6 +1213,11 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
       'api::creator.creator',
       'oneToMany',
       'api::webtoon.webtoon'
+    >;
+    characters: Attribute.Relation<
+      'api::creator.creator',
+      'oneToMany',
+      'api::character.character'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1713,6 +1787,11 @@ export interface ApiItemItem extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    character: Attribute.Relation<
+      'api::item.item',
+      'manyToOne',
+      'api::character.character'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2972,6 +3051,7 @@ declare module '@strapi/strapi' {
       'api::achievement-progress.achievement-progress': ApiAchievementProgressAchievementProgress;
       'api::activity.activity': ApiActivityActivity;
       'api::badge.badge': ApiBadgeBadge;
+      'api::character.character': ApiCharacterCharacter;
       'api::creator.creator': ApiCreatorCreator;
       'api::daily-quest.daily-quest': ApiDailyQuestDailyQuest;
       'api::daily-quest-progress.daily-quest-progress': ApiDailyQuestProgressDailyQuestProgress;

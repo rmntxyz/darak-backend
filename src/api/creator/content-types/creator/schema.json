@@ -108,6 +108,12 @@
       "relation": "oneToMany",
       "target": "api::webtoon.webtoon",
       "mappedBy": "creator"
+    },
+    "characters": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::character.character",
+      "mappedBy": "creator"
     }
   }
 }
