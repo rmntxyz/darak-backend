@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_history_free_gift_histories",
+  "info": {
+    "displayName": "free_gift_history",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    },
+    "claim_date": {
+      "type": "datetime"
+    }
+  }
+}

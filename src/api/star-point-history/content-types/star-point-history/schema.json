@@ -35,6 +35,7 @@
         "daily_quest_reward",
         "level_up",
         "check_in",
+        "free_gift",
         "room_unlock"
       ]
     },

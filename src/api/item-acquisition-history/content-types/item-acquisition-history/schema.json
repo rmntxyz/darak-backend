@@ -22,7 +22,8 @@
         "daily_quest_reward",
         "relay_reward",
         "relay_ranking_reward",
-        "trade"
+        "trade",
+        "free_gift"
       ]
     },
     "items": {

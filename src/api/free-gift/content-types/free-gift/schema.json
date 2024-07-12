@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "free_gifts",
+  "info": {
+    "singularName": "free-gift",
+    "pluralName": "free-gifts",
+    "displayName": "FreeGift",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "claim_count": {
+      "type": "integer"
+    },
+    "last_claimed_at": {
+      "type": "integer"
+    },
+    "interval": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "free_gift"
+    }
+  }
+}

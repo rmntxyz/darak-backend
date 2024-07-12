@@ -22,6 +22,7 @@
         "achievement_reward",
         "daily_quest_reward",
         "level_up",
+        "free_gift",
         "check_in"
       ]
     },

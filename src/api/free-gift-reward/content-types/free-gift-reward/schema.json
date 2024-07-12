@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "free_gift_rewards",
+  "info": {
+    "singularName": "free-gift-reward",
+    "pluralName": "free-gift-rewards",
+    "displayName": "FreeGiftReward"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    }
+  }
+}

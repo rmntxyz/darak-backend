@@ -11,6 +11,17 @@ export interface ActivityTest extends Schema.Component {
   };
 }
 
+export interface CharacterTag extends Schema.Component {
+  collectionName: 'components_character_tags';
+  info: {
+    displayName: 'tag';
+    icon: 'priceTag';
+  };
+  attributes: {
+    tag: Attribute.Enumeration<['S1']>;
+  };
+}
+
 export interface DailyQuestDays extends Schema.Component {
   collectionName: 'components_daily_quest_days';
   info: {
@@ -74,6 +85,18 @@ export interface DecorationText extends Schema.Component {
   attributes: {
     text: Attribute.String;
     attribute: Attribute.JSON;
+  };
+}
+
+export interface HistoryFreeGiftHistory extends Schema.Component {
+  collectionName: 'components_history_free_gift_histories';
+  info: {
+    displayName: 'free_gift_history';
+    icon: 'bulletList';
+  };
+  attributes: {
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    claim_date: Attribute.DateTime;
   };
 }
 
@@ -303,11 +326,13 @@ declare module '@strapi/strapi' {
   export module Shared {
     export interface Components {
       'activity.test': ActivityTest;
+      'character.tag': CharacterTag;
       'daily-quest.days': DailyQuestDays;
       'decoration.deco-item': DecorationDecoItem;
       'decoration.item': DecorationItem;
       'decoration.line': DecorationLine;
       'decoration.text': DecorationText;
+      'history.free-gift-history': HistoryFreeGiftHistory;
       'history.relay-rewards': HistoryRelayRewards;
       'history.relay': HistoryRelay;
       'history.trade-history': HistoryTradeHistory;

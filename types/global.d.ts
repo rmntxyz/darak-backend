@@ -87,9 +87,10 @@ type StarPointChangeDetail =
   | "relay_reward"
   | "relay_ranking_reward"
   | "achievement_reward"
-  | "quest_reward"
+  | "daily_quest_reward"
   | "level_up"
   | "check_in"
+  | "free_gift"
   | "room_unlock";
 
 type WheelSpinChangeDetail =
@@ -102,7 +103,8 @@ type WheelSpinChangeDetail =
   | "relay_reward"
   | "relay_ranking_reward"
   | "achievement_reward"
-  | "quest_reward";
+  | "daily_quest_reward"
+  | "free_gift";
 
 type ItemAcquisitionType =
   // +
@@ -110,11 +112,11 @@ type ItemAcquisitionType =
   | "spin_result"
   | "level_up"
   | "check_in"
-  | "quest_reward"
-  // | "quest_milestone"
+  | "daily_quest_reward"
   | "relay_reward"
   | "relay_ranking_reward"
-  | "trade";
+  | "trade"
+  | "free_gift";
 
 type TradingCreditChangeDetail = "trade";
 

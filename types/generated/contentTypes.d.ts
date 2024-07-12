@@ -783,6 +783,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::status.status'
     >;
+    free_gift: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::free-gift.free-gift'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1574,6 +1579,74 @@ export interface ApiExperienceTableExperienceTable
   };
 }
 
+export interface ApiFreeGiftFreeGift extends Schema.CollectionType {
+  collectionName: 'free_gifts';
+  info: {
+    singularName: 'free-gift';
+    pluralName: 'free-gifts';
+    displayName: 'FreeGift';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    claim_count: Attribute.Integer;
+    last_claimed_at: Attribute.Integer;
+    interval: Attribute.Integer;
+    user: Attribute.Relation<
+      'api::free-gift.free-gift',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::free-gift.free-gift',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::free-gift.free-gift',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiFreeGiftRewardFreeGiftReward extends Schema.CollectionType {
+  collectionName: 'free_gift_rewards';
+  info: {
+    singularName: 'free-gift-reward';
+    pluralName: 'free-gift-rewards';
+    displayName: 'FreeGiftReward';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::free-gift-reward.free-gift-reward',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::free-gift-reward.free-gift-reward',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiFreebieFreebie extends Schema.CollectionType {
   collectionName: 'freebies';
   info: {
@@ -1830,7 +1903,8 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
         'daily_quest_reward',
         'relay_reward',
         'relay_ranking_reward',
-        'trade'
+        'trade',
+        'free_gift'
       ]
     >;
     items: Attribute.Relation<
@@ -2322,6 +2396,7 @@ export interface ApiStarPointHistoryStarPointHistory
         'daily_quest_reward',
         'level_up',
         'check_in',
+        'free_gift',
         'room_unlock'
       ]
     >;
@@ -3001,6 +3076,7 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'achievement_reward',
         'daily_quest_reward',
         'level_up',
+        'free_gift',
         'check_in'
       ]
     >;
@@ -3060,6 +3136,8 @@ declare module '@strapi/strapi' {
       'api::draw-history.draw-history': ApiDrawHistoryDrawHistory;
       'api::episode.episode': ApiEpisodeEpisode;
       'api::experience-table.experience-table': ApiExperienceTableExperienceTable;
+      'api::free-gift.free-gift': ApiFreeGiftFreeGift;
+      'api::free-gift-reward.free-gift-reward': ApiFreeGiftRewardFreeGiftReward;
       'api::freebie.freebie': ApiFreebieFreebie;
       'api::gacha-info.gacha-info': ApiGachaInfoGachaInfo;
       'api::inventory.inventory': ApiInventoryInventory;

@@ -38,6 +38,7 @@ module.exports = (plugin) => {
           status: true,
           freebie: true,
           streak: true,
+          free_gift: true,
           star_point: {
             fields: ["amount"],
           },
@@ -94,6 +95,12 @@ module.exports = (plugin) => {
       user.status = await strapi
         .service("api::status.status")
         .getStatus(user.id);
+    }
+
+    if (user.free_gift === null) {
+      user.free_gift = await strapi
+        .service("api::free-gift.free-gift")
+        .getFreeGiftInfo(user.id);
     }
 
     const freebie = await strapi
