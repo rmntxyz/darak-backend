@@ -29,6 +29,18 @@ export default factories.createCoreService(
               .updateWheelSpin(userId, reward.amount, reason);
             break;
 
+          case "relay_token":
+            const relays = await strapi
+              .service("api::relay.relay")
+              .getCurrentRelays();
+            const relay = relays.find((relay) => relay.type === "relay_only");
+            if (relay) {
+              await strapi
+                .service("api::user-relay-token.user-relay-token")
+                .updateRelayToken(userId, relay.id, reward.amount);
+            }
+            break;
+
           case "item":
           case "item_common":
           case "item_uncommon":

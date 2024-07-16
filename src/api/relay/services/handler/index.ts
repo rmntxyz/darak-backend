@@ -28,7 +28,7 @@ export default {
   },
 
   claimRewards: async (userId: number, relay: Relay) => {
-    return await strapi.db.transaction(async ({ trx }) => {
+    return (await strapi.db.transaction(async ({ trx }) => {
       const userRelayToken: RelayToken = (
         await strapi.entityService.findMany(
           "api::user-relay-token.user-relay-token",
@@ -90,6 +90,6 @@ export default {
       }
 
       return { rewards, total: userRelayToken.amount };
-    });
+    })) as { rewards: Reward[]; total: number };
   },
 };

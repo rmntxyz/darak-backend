@@ -16,8 +16,7 @@ export default ({ strapi }) => ({
     multiply
   ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
-      // FIXME: delete this
-      // await deductCurrency(userId, draw, multiply);
+      await deductCurrency(userId, draw, multiply);
 
       let result: CapsuleResult;
 
@@ -50,8 +49,7 @@ export default ({ strapi }) => ({
   },
 
   async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
-    // FIXME: delete this
-    // await deductCurrency(userId, draw, multiply);
+    await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
     const { item, exp } = await addItemToUser(
@@ -350,30 +348,24 @@ async function checkRelayEvent(userId: number, result: CapsuleResult) {
     .service("api::relay.relay")
     .getCurrentRelays(userId);
 
-  for (const relay of relays) {
-    if (relay) {
-      const tokens = await strapi
+  const relay = relays.find((relay) => relay.type === "relay_only");
+  if (relay) {
+    const tokens = await strapi
+      .service("api::relay.relay")
+      .verify(userId, relay, result);
+
+    if (tokens > 0) {
+      const { rewards, total } = await strapi
         .service("api::relay.relay")
-        .verify(userId, relay, result);
+        .claimRewards(userId, relay);
 
-      if (tokens > 0) {
-        const { rewards, total } = await strapi
-          .service("api::relay.relay")
-          .claimRewards(userId, relay);
-
-        // item은 relay reward로 일단 없다고 가정한다.
-        for (const reward of rewards) {
-          await updateRewards(userId, reward, 1);
-        }
-
-        result.events.push({
-          type: "relay",
-          amount: tokens,
-          total,
-          rewards,
-          relay,
-        });
-      }
+      result.events.push({
+        type: "relay",
+        amount: tokens,
+        total,
+        rewards,
+        relay,
+      });
     }
   }
 }

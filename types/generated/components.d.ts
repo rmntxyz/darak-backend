@@ -315,6 +315,8 @@ export interface RewardWithAmount extends Schema.Component {
         'trading_credit',
         'wheel_spin',
         'exp',
+        'relay_token',
+        'ranking_relay_token',
         'event_token'
       ]
     >;

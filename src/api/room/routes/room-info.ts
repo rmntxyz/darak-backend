@@ -38,6 +38,15 @@ export default {
     },
     {
       method: "GET",
+      path: "/user-rooms/recommended",
+      handler: "room.get-recommended-rooms",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/rooms/locked",
       handler: "room.get-locked-rooms",
       config: {

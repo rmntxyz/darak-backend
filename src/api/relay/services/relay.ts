@@ -319,7 +319,13 @@ export default factories.createCoreService(
     },
 
     async claimRewards(userId: number, relay: Relay) {
-      return relayHandler.claimRewards(userId, relay);
+      const { rewards, total } = await relayHandler.claimRewards(userId, relay);
+
+      await strapi
+        .service("api::reward.reward")
+        .claim(userId, rewards, "relay_reward");
+
+      return { rewards, total };
     },
   })
 );

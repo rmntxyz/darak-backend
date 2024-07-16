@@ -165,7 +165,10 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
   async findUserRooms(userId: number) {
     return await strapi.entityService.findMany("api::room.room", {
       ...roomsDefaultOptions,
-      filters: { users: { id: userId } },
+      filters: {
+        users: { id: userId },
+        publishedAt: { $ne: null },
+      },
     });
   },
 

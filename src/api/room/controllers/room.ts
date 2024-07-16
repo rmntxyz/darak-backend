@@ -141,6 +141,8 @@ export default factories.createCoreController(
       return rooms;
     },
 
+    "get-recommended-rooms": async (ctx) => {},
+
     "get-locked-rooms": async (ctx) => {
       const userId = ctx.state.user.id;
 

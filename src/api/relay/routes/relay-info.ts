@@ -18,6 +18,15 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "POST",
+      path: "/relay/claim-rewards",
+      handler: "relay.claim-rewards",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
     // {
     //   method: "GET",
     //   path: "/user-rooms/count",

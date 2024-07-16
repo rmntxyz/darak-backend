@@ -141,6 +141,8 @@ type RewardType =
   | "exp"
   | "trading_credit"
   | "wheel_spin"
+  | "relay_token"
+  | "ranking_relay_token"
   | "event_token";
 
 type RewardDetail = {
