@@ -129,6 +129,12 @@ type TradingCredit = {
   charge_amount: number;
 };
 
+type ExpRank = {
+  rank: number;
+  user: Partial<User>;
+  exp: number;
+};
+
 type RewardType =
   | "freebie"
   | "star_point"

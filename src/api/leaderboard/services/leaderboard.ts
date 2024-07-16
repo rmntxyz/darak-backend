@@ -240,6 +240,75 @@ export default factories.createCoreService(
         rankings: newRanking.slice(0, limit),
       };
     },
+
+    async getOverallExpRankings(size: number = 30) {
+      const rankings = await strapi.entityService.findMany(
+        "api::status.status",
+        {
+          fields: ["exp"],
+          populate: {
+            user: {
+              fields: ["username"],
+            },
+          },
+          sort: { exp: "desc" },
+          limit: size,
+        }
+      );
+
+      let prevRank = 0;
+      let prevExp = null;
+      for (let i = 0; i < rankings.length; i++) {
+        const rank = rankings[i];
+
+        if (rank.exp === prevExp) {
+          rank.rank = prevRank;
+        } else {
+          rank.rank = i + 1;
+          prevRank = rank.rank;
+          prevExp = rank.exp;
+        }
+      }
+
+      return rankings;
+    },
+
+    async getRankForOverallExp(userId: number): Promise<ExpRank> {
+      const user = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        userId,
+        {
+          fields: ["username"],
+          populate: {
+            status: {
+              fields: ["exp"],
+            },
+          },
+        }
+      );
+
+      const rank =
+        (await strapi.db.query("api::status.status").count({
+          where: {
+            exp: {
+              $gt: user.status.exp,
+            },
+          },
+        })) + 1;
+
+      return {
+        user: {
+          id: userId,
+          username: user.username,
+        },
+        exp: user.status.exp,
+        rank,
+      };
+    },
+
+    // async getMonthlyExpRankings(page: number = 1, limit: number = 50) {
+
+    // }
   })
 );
 

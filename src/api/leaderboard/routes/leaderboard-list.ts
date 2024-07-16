@@ -18,5 +18,23 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/leaderboard/exp-rankings/:size?",
+      handler: "leaderboard.get-exp-rankings",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    // {
+    //   method: "GET",
+    //   path: "/leaderboard/exp-rankings/monthly",
+    //   handler: "leaderboard.get-monthly-exp-rankings",
+    //   config: {
+    //     policies: [],
+    //     middlewares: [],
+    //   },
+    // },
   ],
 };
