@@ -59,6 +59,12 @@
       "relation": "manyToOne",
       "target": "api::creator.creator",
       "inversedBy": "characters"
+    },
+    "rooms": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::room.room",
+      "inversedBy": "characters"
     }
   }
 }

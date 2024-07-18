@@ -1120,6 +1120,11 @@ export interface ApiCharacterCharacter extends Schema.CollectionType {
       'manyToOne',
       'api::creator.creator'
     >;
+    rooms: Attribute.Relation<
+      'api::character.character',
+      'manyToMany',
+      'api::room.room'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2307,6 +2312,11 @@ export interface ApiRoomRoom extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    characters: Attribute.Relation<
+      'api::room.room',
+      'manyToMany',
+      'api::character.character'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

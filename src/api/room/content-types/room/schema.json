@@ -175,6 +175,12 @@
         }
       },
       "type": "json"
+    },
+    "characters": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::character.character",
+      "mappedBy": "rooms"
     }
   }
 }
