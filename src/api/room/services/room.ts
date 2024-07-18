@@ -16,6 +16,17 @@ const roomsDefaultOptions = {
     draws: {
       fields: ["currency_type", "cost", "draws_per_cost", "draw_info"],
     },
+    characters: {
+      fields: ["name", "desc"],
+      populate: {
+        image: {
+          fields: ["url"],
+        },
+        localizations: {
+          fields: ["name", "desc", "locale"],
+        },
+      },
+    },
     items: {
       fields: [
         "name",

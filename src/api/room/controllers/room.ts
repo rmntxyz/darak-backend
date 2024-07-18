@@ -44,6 +44,10 @@ export default factories.createCoreController(
         room.items.forEach((item) => {
           applyLocalizations(item, locale);
         });
+
+        room.characters.forEach((character) => {
+          applyLocalizations(character, locale);
+        });
       }
 
       return room;
@@ -71,6 +75,10 @@ export default factories.createCoreController(
 
           room.items.forEach((item) => {
             applyLocalizations(item, locale);
+          });
+
+          room.characters.forEach((character) => {
+            applyLocalizations(character, locale);
           });
         });
       }
@@ -108,6 +116,10 @@ export default factories.createCoreController(
 
           room.items.forEach((item) => {
             applyLocalizations(item, locale);
+          });
+
+          room.characters.forEach((character) => {
+            applyLocalizations(character, locale);
           });
         });
       }
