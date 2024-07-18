@@ -245,7 +245,7 @@ export default factories.createCoreService(
       const rankings = await strapi.entityService.findMany(
         "api::status.status",
         {
-          fields: ["exp"],
+          fields: ["exp", "level"],
           populate: {
             user: {
               fields: ["username"],
@@ -281,7 +281,7 @@ export default factories.createCoreService(
           fields: ["username"],
           populate: {
             status: {
-              fields: ["exp"],
+              fields: ["exp", "level"],
             },
           },
         }
@@ -297,11 +297,12 @@ export default factories.createCoreService(
         })) + 1;
 
       return {
+        exp: user.status.exp,
+        level: user.status.level,
         user: {
           id: userId,
           username: user.username,
         },
-        exp: user.status.exp,
         rank,
       };
     },

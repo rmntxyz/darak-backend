@@ -133,6 +133,7 @@ type ExpRank = {
   rank: number;
   user: Partial<User>;
   exp: number;
+  level: number;
 };
 
 type RewardType =
