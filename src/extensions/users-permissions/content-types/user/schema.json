@@ -183,6 +183,12 @@
       "relation": "oneToOne",
       "target": "api::free-gift.free-gift",
       "mappedBy": "user"
+    },
+    "deactivated": {
+      "type": "boolean"
+    },
+    "deactivated_at": {
+      "type": "datetime"
     }
   }
 }

@@ -16,11 +16,32 @@ export default {
       .service("api::user-info.user-info")
       .updateUserInfo(userId, username, avatar);
   },
-  // exampleAction: async (ctx, next) => {
-  //   try {
-  //     ctx.body = 'ok';
-  //   } catch (err) {
-  //     ctx.body = err;
-  //   }
-  // }
+
+  "deactivate-user": async (ctx) => {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      return ctx.unauthorized("user is not authenticated");
+    }
+
+    return await strapi
+      .service("api::user-info.user-info")
+      .deactivateUser(userId);
+  },
+
+  "reactivate-user": async (ctx) => {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      return ctx.unauthorized("user is not authenticated");
+    }
+
+    try {
+      return await strapi
+        .service("api::user-info.user-info")
+        .activateUser(userId);
+    } catch (error) {
+      return ctx.badRequest(error.message);
+    }
+  },
 };

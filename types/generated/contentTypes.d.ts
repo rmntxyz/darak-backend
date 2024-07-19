@@ -788,6 +788,8 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::free-gift.free-gift'
     >;
+    deactivated: Attribute.Boolean;
+    deactivated_at: Attribute.DateTime;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
