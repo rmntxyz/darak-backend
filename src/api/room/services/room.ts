@@ -116,6 +116,13 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
     });
   },
 
+  async getAllRoomsWithUnpublished() {
+    return await strapi.entityService.findMany(
+      "api::room.room",
+      roomsDefaultOptions
+    );
+  },
+
   async findLockedRooms(userId: number) {
     const unlockedUserRoom = await strapi.entityService.findMany(
       "api::user-room.user-room",

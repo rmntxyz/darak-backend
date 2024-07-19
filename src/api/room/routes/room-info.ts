@@ -11,6 +11,15 @@ export default {
     },
     {
       method: "GET",
+      path: "/rooms/all",
+      handler: "room.get-all-rooms-with-unpublished",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/room/:roomName",
       handler: "room.get-room-by-name",
       config: {

@@ -86,6 +86,12 @@ export default factories.createCoreController(
       return rooms;
     },
 
+    "get-all-rooms-with-unpublished": async (ctx) => {
+      return await strapi
+        .service("api::room.room")
+        .getAllRoomsWithUnpublished();
+    },
+
     "get-user-rooms": async (ctx) => {
       const { userId } = ctx.params;
 
