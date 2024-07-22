@@ -39,7 +39,7 @@ export default {
     try {
       return await strapi
         .service("api::user-info.user-info")
-        .activateUser(userId);
+        .reactivateUser(userId);
     } catch (error) {
       return ctx.badRequest(error.message);
     }
