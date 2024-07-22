@@ -31,6 +31,7 @@ export default ({ strapi }) => ({
       "plugin::users-permissions.user",
       userId,
       {
+        fields: ["deactivated", "deactivated_at"],
         data: {
           deactivated: true,
           deactivated_at: new Date(),
@@ -62,17 +63,16 @@ export default ({ strapi }) => ({
       throw new Error("Deactivated user can be reactivated within 15 days");
     }
 
-    await strapi.entityService.update(
+    return await strapi.entityService.update(
       "plugin::users-permissions.user",
       userId,
       {
+        fields: ["deactivated", "deactivated_at"],
         data: {
           deactivated: false,
           deactivated_at: null,
         },
       }
     );
-
-    return user;
   },
 });
