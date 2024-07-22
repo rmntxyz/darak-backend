@@ -163,6 +163,8 @@ export const ErrorCode = {
   },
 };
 
+export const REACTIVATION_PERIOD = 15 * 24 * 60 * 60 * 1000; // 15 days
+
 export const ONE_DAY = 86400000;
 
 export const RESET_HOUR = 21; // 0 ~ 23
