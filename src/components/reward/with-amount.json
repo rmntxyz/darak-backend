@@ -28,6 +28,11 @@
     },
     "amount": {
       "type": "integer"
+    },
+    "tier": {
+      "type": "integer",
+      "max": 4,
+      "min": 1
     }
   }
 }

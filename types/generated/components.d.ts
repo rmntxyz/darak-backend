@@ -321,6 +321,11 @@ export interface RewardWithAmount extends Schema.Component {
       ]
     >;
     amount: Attribute.Integer;
+    tier: Attribute.Integer &
+      Attribute.SetMinMax<{
+        min: 1;
+        max: 4;
+      }>;
   };
 }
 
