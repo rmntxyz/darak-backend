@@ -60,6 +60,7 @@ const defaultCreatorOptions = {
     localizations: {
       fields: ["name", "desc", "locale"],
     },
+    tags: true,
   },
 };
 

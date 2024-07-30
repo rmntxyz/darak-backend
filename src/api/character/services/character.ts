@@ -22,6 +22,7 @@ export default factories.createCoreService(
             localizations: {
               fields: ["name", "desc", "locale"],
             },
+            tags: true,
           },
         }
       );
@@ -81,6 +82,7 @@ export default factories.createCoreService(
             localizations: {
               fields: ["name", "desc", "locale"],
             },
+            tags: true,
           },
         }
       );

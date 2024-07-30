@@ -93,6 +93,7 @@ const roomsDefaultOptions = {
     localizations: {
       fields: ["name", "desc", "locale"],
     },
+    tags: true,
   },
 };
 
@@ -152,9 +153,10 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
         image_empty: {
           fields: ["url"],
         },
-      },
-      localizations: {
-        fields: ["name", "desc", "locale"],
+        localizations: {
+          fields: ["name", "desc", "locale"],
+        },
+        tags: true,
       },
     });
 
@@ -236,6 +238,7 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
         localizations: {
           fields: ["name", "desc", "locale"],
         },
+        tags: true,
       },
     });
 
