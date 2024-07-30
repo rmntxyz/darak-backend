@@ -1127,6 +1127,12 @@ export interface ApiCharacterCharacter extends Schema.CollectionType {
       'manyToMany',
       'api::room.room'
     >;
+    tags: Attribute.Component<'character.tag', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1231,6 +1237,12 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
       'oneToMany',
       'api::character.character'
     >;
+    tags: Attribute.Component<'creator.tag', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2319,6 +2331,12 @@ export interface ApiRoomRoom extends Schema.CollectionType {
       'manyToMany',
       'api::character.character'
     >;
+    tags: Attribute.Component<'room.tag', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

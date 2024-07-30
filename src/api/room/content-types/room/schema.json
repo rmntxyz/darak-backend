@@ -181,6 +181,16 @@
       "relation": "manyToMany",
       "target": "api::character.character",
       "mappedBy": "rooms"
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "room.tag"
     }
   }
 }

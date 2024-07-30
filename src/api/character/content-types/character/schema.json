@@ -65,6 +65,16 @@
       "relation": "manyToMany",
       "target": "api::room.room",
       "inversedBy": "characters"
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "character.tag"
     }
   }
 }

@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_creator_tags",
+  "info": {
+    "displayName": "tag",
+    "icon": "priceTag"
+  },
+  "options": {},
+  "attributes": {
+    "tag": {
+      "type": "enumeration",
+      "enum": [
+        "S1"
+      ]
+    }
+  }
+}

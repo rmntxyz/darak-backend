@@ -22,6 +22,17 @@ export interface CharacterTag extends Schema.Component {
   };
 }
 
+export interface CreatorTag extends Schema.Component {
+  collectionName: 'components_creator_tags';
+  info: {
+    displayName: 'tag';
+    icon: 'priceTag';
+  };
+  attributes: {
+    tag: Attribute.Enumeration<['S1']>;
+  };
+}
+
 export interface DailyQuestDays extends Schema.Component {
   collectionName: 'components_daily_quest_days';
   info: {
@@ -329,11 +340,55 @@ export interface RewardWithAmount extends Schema.Component {
   };
 }
 
+export interface RoomTag extends Schema.Component {
+  collectionName: 'components_room_tags';
+  info: {
+    displayName: 'tag';
+    icon: 'priceTag';
+    description: '';
+  };
+  attributes: {
+    tag: Attribute.Enumeration<
+      [
+        'S1',
+        'L1',
+        'Romance',
+        'Action',
+        'Comedy',
+        'Drama',
+        'Fantasy',
+        'Sci-Fi',
+        'Mystery',
+        'Thriller',
+        'Suspense',
+        'Horror',
+        'Slice of Life',
+        'Adventure',
+        'Supernatural',
+        'Historical',
+        'Sports',
+        'Martial Arts',
+        'Crime',
+        'Psychological',
+        'School Life',
+        'Mecha',
+        'BL',
+        'GL',
+        'Tragedy',
+        'Isekai',
+        'Cooking',
+        'Survival'
+      ]
+    >;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Shared {
     export interface Components {
       'activity.test': ActivityTest;
       'character.tag': CharacterTag;
+      'creator.tag': CreatorTag;
       'daily-quest.days': DailyQuestDays;
       'decoration.deco-item': DecorationDecoItem;
       'decoration.item': DecorationItem;
@@ -355,6 +410,7 @@ declare module '@strapi/strapi' {
       'reward.reward': RewardReward;
       'reward.streak-rewards': RewardStreakRewards;
       'reward.with-amount': RewardWithAmount;
+      'room.tag': RoomTag;
     }
   }
 }
