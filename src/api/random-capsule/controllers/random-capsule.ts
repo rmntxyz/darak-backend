@@ -63,7 +63,7 @@ export default {
             reward_table: {
               populate: {
                 rewards: {
-                  fields: ["type", "amount"],
+                  fields: ["type", "amount", "tier"],
                 },
               },
             },

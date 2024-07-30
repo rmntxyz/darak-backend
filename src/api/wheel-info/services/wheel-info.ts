@@ -41,7 +41,7 @@ export default factories.createCoreService(
             reward_table: {
               populate: {
                 rewards: {
-                  fields: ["type", "amount"],
+                  fields: ["type", "amount", "tier"],
                 },
               },
             },
@@ -77,7 +77,7 @@ export default factories.createCoreService(
             reward_table: {
               populate: {
                 rewards: {
-                  fields: ["type", "amount"],
+                  fields: ["type", "amount", "tier"],
                 },
               },
             },
