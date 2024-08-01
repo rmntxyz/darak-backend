@@ -45,7 +45,6 @@ export default factories.createCoreController(
       }
 
       const relayId = ctx.request.body.relayId;
-      console.log(relayId);
       const relay = await strapi.entityService.findOne(
         "api::relay.relay",
         relayId,

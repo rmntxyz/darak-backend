@@ -123,12 +123,11 @@ export default factories.createCoreController(
           case "item_rare":
           case "item_unique":
             const targetRarity = reward.type.split("_")[1];
+            const rarities = targetRarity ? [targetRarity] : undefined;
 
             const items = await strapi
               .service("api::random-item.random-item")
-              .getRandomItemsFromUnlockedRooms(userId, reward.amount, [
-                targetRarity,
-              ]);
+              .getRandomItemsFromUnlockedRooms(userId, reward.amount, rarities);
             const itemIds = items.map((item) => item.id);
 
             const userItems: Inventory[] = await strapi
