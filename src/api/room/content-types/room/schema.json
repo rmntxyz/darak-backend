@@ -191,6 +191,16 @@
         }
       },
       "component": "room.tag"
+    },
+    "complete_rewards": {
+      "type": "component",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "reward.with-amount"
     }
   }
 }

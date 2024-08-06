@@ -44,7 +44,10 @@
     },
     "category": {
       "type": "enumeration",
-      "enum": ["decoration", "built-in"],
+      "enum": [
+        "decoration",
+        "built-in"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -53,7 +56,14 @@
     },
     "rarity": {
       "type": "enumeration",
-      "enum": ["none", "common", "uncommon", "rare", "unique", "secret"],
+      "enum": [
+        "none",
+        "common",
+        "uncommon",
+        "rare",
+        "unique",
+        "secret"
+      ],
       "default": "none",
       "required": false,
       "pluginOptions": {
@@ -81,7 +91,12 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"],
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -101,7 +116,12 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"],
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -126,7 +146,12 @@
       "type": "media",
       "multiple": true,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"],
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true

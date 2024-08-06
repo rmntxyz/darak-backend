@@ -6,9 +6,10 @@ async function verify(userId: number, userQuest: DailyQuestProgress) {
   const refTimestamp = getRefTimestamp(now);
   const max = userQuest.daily_quest.total_progress;
 
-  const spinHistory = await strapi.entityService.findMany(
+  const spinHistories = await strapi.entityService.findMany(
     "api::wheel-spin-history.wheel-spin-history",
     {
+      fields: ["change"],
       start: 0,
       limit: max,
       filters: {
@@ -20,7 +21,9 @@ async function verify(userId: number, userQuest: DailyQuestProgress) {
   );
 
   const prev = userQuest.progress;
-  const current = spinHistory.length;
+  const current = spinHistories.length
+    ? spinHistories.reduce((acc, cur) => acc + cur.change, 0)
+    : 0;
 
   if (current !== max && current === prev) {
     return userQuest;

@@ -2337,6 +2337,12 @@ export interface ApiRoomRoom extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    complete_rewards: Attribute.Component<'reward.with-amount', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
