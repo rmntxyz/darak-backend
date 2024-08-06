@@ -204,7 +204,7 @@ type Item = {
   image: { url: string };
   thumbnail: { url: string };
   additional_image: { url: string };
-  rarity: "common" | "uncommon" | "rare" | "super_rare" | "unique";
+  rarity: "common" | "uncommon" | "rare" | "unique" | "secret";
   category: "built-in" | "decoration";
   price: number;
   current_serial_number: number;
@@ -232,8 +232,8 @@ type DrawInfo = {
   common: RarityData;
   uncommon: RarityData;
   rare: RarityData;
-  super_rare: RarityData;
   unique: RarityData;
+  secret: RarityData;
 };
 
 type Inventory = {

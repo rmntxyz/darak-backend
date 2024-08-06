@@ -1827,7 +1827,7 @@ export interface ApiItemItem extends Schema.CollectionType {
         };
       }>;
     rarity: Attribute.Enumeration<
-      ['none', 'common', 'uncommon', 'rare', 'super_rare', 'unique']
+      ['none', 'common', 'uncommon', 'rare', 'unique', 'secret']
     > &
       Attribute.SetPluginOptions<{
         i18n: {
