@@ -31,9 +31,9 @@ export default factories.createCoreController(
               type: "default",
             },
             populate: {
-              rewards: {
+              reward_table: {
                 populate: {
-                  reward: true,
+                  rewards: true,
                 },
               },
             },
@@ -41,7 +41,7 @@ export default factories.createCoreController(
         )
       )[0];
 
-      return { streak, rewards: streakReward.rewards };
+      return { streak, reward_table: streakReward.reward_table };
     },
 
     "check-in": async (ctx) => {
@@ -68,9 +68,9 @@ export default factories.createCoreController(
                 type: "default",
               },
               populate: {
-                rewards: {
+                reward_table: {
                   populate: {
-                    reward: true,
+                    rewards: true,
                   },
                 },
               },
@@ -82,108 +82,20 @@ export default factories.createCoreController(
           return ctx.notFound("no streak reward");
         }
 
-        const rewardTable = defaultStreakReward.rewards;
+        const rewardTable = defaultStreakReward.reward_table;
 
         // streak.streak_count 와 rewardTable의 reward중에 day가 같은 reward를 찾는다.
-        let { reward } = rewardTable.find(
+        let { rewards } = rewardTable.find(
           (reward) => reward.day === streak.streak_count
         );
 
-        if (!reward) {
+        if (!rewards || rewards.length === 0) {
           return ctx.notFound("no reward for streak count");
         }
 
-        const rewards = [];
-
-        switch (reward.type) {
-          case "freebie":
-            await strapi
-              .service("api::freebie.freebie")
-              .updateFreebie(userId, reward.amount);
-            rewards.push(reward);
-            break;
-
-          case "star_point":
-            await strapi
-              .service("api::star-point.star-point")
-              .updateStarPoint(userId, reward.amount, "check_in");
-            rewards.push(reward);
-            break;
-
-          case "wheel_spin":
-            await strapi
-              .service("api::wheel-spin.wheel-spin")
-              .updateWheelSpin(userId, reward.amount, "check_in");
-            rewards.push(reward);
-            break;
-
-          case "item":
-          case "item_common":
-          case "item_uncommon":
-          case "item_rare":
-          case "item_unique":
-            const targetRarity = reward.type.split("_")[1];
-            const rarities = targetRarity ? [targetRarity] : undefined;
-
-            const items = await strapi
-              .service("api::random-item.random-item")
-              .getRandomItemsFromUnlockedRooms(userId, reward.amount, rarities);
-            const itemIds = items.map((item) => item.id);
-
-            const userItems: Inventory[] = await strapi
-              .service("api::random-item.random-item")
-              .addItemsToUserInventory(userId, itemIds);
-
-            const userItemIds = userItems.map((userItem) => userItem.id);
-            let totalExp = 0;
-
-            for (const userItem of userItems) {
-              const itemId = userItem.item.id;
-              const roomId = userItem.item.room.id;
-              const rarity = userItem.item.rarity;
-              const userRoom = await strapi
-                .service("api::user-room.user-room")
-                .getUserRoom(userId, roomId);
-
-              const isNew = !userRoom.owned_items[itemId];
-
-              let exp = EXP_BY_RARITY[rarity];
-
-              if (!isNew) {
-                exp *= EXP_MULT_FOR_DUPLICATE;
-              }
-
-              totalExp += exp;
-
-              await strapi
-                .service("api::user-room.user-room")
-                .updateItems(userRoom, [itemId], []);
-
-              rewards.push({ ...reward, detail: userItem.item, exp });
-            }
-
-            await strapi
-              .service("api::status.status")
-              .updateExp(userId, totalExp);
-
-            await strapi.entityService.create(
-              "api::item-acquisition-history.item-acquisition-history",
-              {
-                data: {
-                  type: "check_in",
-                  user: userId,
-                  items: { connect: itemIds },
-                  inventories: { connect: userItemIds },
-                  exp: totalExp,
-                  publishedAt: new Date(),
-                },
-              }
-            );
-            break;
-
-          default:
-            break;
-        }
+        await strapi
+          .service("api::reward.reward")
+          .claim(userId, rewards, "check_in");
 
         // streak의 reward_claimed를 true로 변경한다.
         await strapi.entityService.update("api::streak.streak", streak.id, {

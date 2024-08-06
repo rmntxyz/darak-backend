@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "rewards": {
+    "reward_table": {
       "displayName": "streak rewards",
       "type": "component",
       "repeatable": true,

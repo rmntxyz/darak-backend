@@ -7,9 +7,9 @@
   },
   "options": {},
   "attributes": {
-    "reward": {
+    "rewards": {
       "type": "component",
-      "repeatable": false,
+      "repeatable": true,
       "component": "reward.with-amount"
     },
     "day": {

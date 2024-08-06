@@ -2549,7 +2549,7 @@ export interface ApiStreakRewardStreakReward extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    rewards: Attribute.Component<'reward.streak-rewards', true>;
+    reward_table: Attribute.Component<'reward.streak-rewards', true>;
     type: Attribute.UID;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

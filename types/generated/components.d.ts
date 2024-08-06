@@ -300,7 +300,7 @@ export interface RewardStreakRewards extends Schema.Component {
     description: '';
   };
   attributes: {
-    reward: Attribute.Component<'reward.with-amount'>;
+    rewards: Attribute.Component<'reward.with-amount', true>;
     day: Attribute.Integer;
   };
 }

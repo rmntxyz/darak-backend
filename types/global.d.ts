@@ -23,8 +23,8 @@ type Streak = {
 };
 
 type StreakReward = {
-  rewards: {
-    reward: Reward;
+  reward_table: {
+    rewards: Reward[];
     day: number;
   }[];
   type: "default" | string;
