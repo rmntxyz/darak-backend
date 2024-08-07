@@ -1923,7 +1923,8 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
         'relay_reward',
         'relay_ranking_reward',
         'trade',
-        'free_gift'
+        'free_gift',
+        'room_complete'
       ]
     >;
     items: Attribute.Relation<
@@ -2433,7 +2434,8 @@ export interface ApiStarPointHistoryStarPointHistory
         'level_up',
         'check_in',
         'free_gift',
-        'room_unlock'
+        'room_unlock',
+        'room_complete'
       ]
     >;
     inventories: Attribute.Relation<
@@ -3113,7 +3115,8 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'daily_quest_reward',
         'level_up',
         'free_gift',
-        'check_in'
+        'check_in',
+        'room_complete'
       ]
     >;
     date: Attribute.DateTime;

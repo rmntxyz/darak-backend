@@ -23,7 +23,8 @@
         "relay_reward",
         "relay_ranking_reward",
         "trade",
-        "free_gift"
+        "free_gift",
+        "room_complete"
       ]
     },
     "items": {

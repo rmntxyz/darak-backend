@@ -65,11 +65,20 @@ export default factories.createCoreController(
           },
         });
 
+        await Promise.all(
+          filtered.map((userRoom) =>
+            strapi
+              .service("api::reward.reward")
+              .claim(userId, userRoom.room.complete_rewards, "room_complete")
+          )
+        );
+
         const result = filtered.map((userRoom) => ({
           id: userRoom.room.id,
           name: userRoom.room.name,
           rid: userRoom.room.rid,
           image_complete: userRoom.room.image_complete.url,
+          rewards: userRoom.room.complete_rewards,
         }));
 
         return result;
@@ -96,9 +105,12 @@ export default factories.createCoreController(
           },
         });
 
+        await strapi
+          .service("api::reward.reward")
+          .claim(userId, userRoom.room.complete_rewards, "room_complete");
+
         //localizations
         const { locale } = ctx.query;
-
         applyLocalizations(userRoom.room, locale);
 
         return [
@@ -107,6 +119,7 @@ export default factories.createCoreController(
             name: userRoom.room.name,
             rid: userRoom.room.rid,
             image_complete: userRoom.room.image_complete.url,
+            rewards: userRoom.room.complete_rewards,
           },
         ];
       }

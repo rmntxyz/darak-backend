@@ -23,7 +23,8 @@
         "daily_quest_reward",
         "level_up",
         "free_gift",
-        "check_in"
+        "check_in",
+        "room_complete"
       ]
     },
     "date": {

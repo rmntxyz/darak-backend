@@ -36,7 +36,8 @@
         "level_up",
         "check_in",
         "free_gift",
-        "room_unlock"
+        "room_unlock",
+        "room_complete"
       ]
     },
     "inventories": {

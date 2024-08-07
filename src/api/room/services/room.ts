@@ -90,6 +90,7 @@ const roomsDefaultOptions = {
         },
       },
     },
+    complete_rewards: true,
     localizations: {
       fields: ["name", "desc", "locale"],
     },
@@ -235,6 +236,7 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
         user_rooms: {
           fields: ["id"],
         },
+        complete_rewards: true,
         localizations: {
           fields: ["name", "desc", "locale"],
         },

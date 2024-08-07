@@ -80,6 +80,7 @@ type StarPointChangeDetail =
   // -
   | "item_draw"
   | "gacha"
+  | "room_unlock"
   // +
   | "item_sale"
   | "gacha_result"
@@ -91,7 +92,7 @@ type StarPointChangeDetail =
   | "level_up"
   | "check_in"
   | "free_gift"
-  | "room_unlock";
+  | "room_complete";
 
 type WheelSpinChangeDetail =
   // -
@@ -104,7 +105,8 @@ type WheelSpinChangeDetail =
   | "relay_ranking_reward"
   | "achievement_reward"
   | "daily_quest_reward"
-  | "free_gift";
+  | "free_gift"
+  | "room_complete";
 
 type ItemAcquisitionType =
   // +
@@ -116,7 +118,8 @@ type ItemAcquisitionType =
   | "relay_reward"
   | "relay_ranking_reward"
   | "trade"
-  | "free_gift";
+  | "free_gift"
+  | "room_complete";
 
 type TradingCreditChangeDetail = "trade";
 

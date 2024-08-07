@@ -268,6 +268,7 @@ export default factories.createCoreService(
                     },
                   },
                 },
+                complete_rewards: true,
                 localizations: {
                   fields: ["name", "locale"],
                 },
@@ -305,6 +306,7 @@ export default factories.createCoreService(
                     },
                   },
                 },
+                complete_rewards: true,
                 localizations: {
                   fields: ["name", "locale"],
                 },
