@@ -21,9 +21,13 @@ export default factories.createCoreController(
         return ctx.badRequest("roomId is required");
       }
 
-      return await strapi
-        .service("api::user-room.user-room")
-        .unlockRoom(userId, roomId);
+      try {
+        return await strapi
+          .service("api::user-room.user-room")
+          .unlockRoom(userId, roomId);
+      } catch (error) {
+        return ctx.badRequest(error.message);
+      }
     },
 
     "is-initial-completion": async (ctx) => {

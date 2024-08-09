@@ -30,7 +30,7 @@ const conditionValidator = {
       {
         filters: {
           user: { id: userId },
-          room: { $in: roomIds },
+          room: roomIds,
           completed: true,
         },
       }
@@ -86,10 +86,10 @@ export default factories.createCoreService(
       if (room.unlock_conditions) {
         for (const condition in room.unlock_conditions) {
           const value = room.unlock_conditions[condition];
-          const isOk = conditionValidator[condition](userId, value);
+          const isOk = await conditionValidator[condition](userId, value);
 
           if (!isOk) {
-            throw "Unlock condition not met";
+            throw new Error("Unlock condition not met");
           }
         }
       }
