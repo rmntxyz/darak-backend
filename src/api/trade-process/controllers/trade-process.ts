@@ -375,9 +375,11 @@ export default {
           "trade_accepted"
         );
 
-      return await strapi
+      const status = await strapi
         .service("api::trade-process.trade-process")
         .changeStatus(trade, "success", userId);
+
+      return status;
     });
   },
 

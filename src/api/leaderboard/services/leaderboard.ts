@@ -99,6 +99,7 @@ export default factories.createCoreService(
         filters: {
           completed: true,
           room: { id: roomId },
+          user: { $not: null },
         },
         fields: ["id", "completion_time"],
         populate: {
@@ -128,6 +129,7 @@ export default factories.createCoreService(
         filters: {
           completed: true,
           room: { id: roomId },
+          user: { $not: null },
         },
         fields: ["id", "completion_time"],
         populate: {
@@ -318,6 +320,9 @@ async function getCollectStatus(): Promise<CollectionStatusByUser> {
   const userRooms = await strapi.entityService.findMany(
     "api::user-room.user-room",
     {
+      filters: {
+        user: { $not: null },
+      },
       fields: ["id", "owned_items", "completed", "completion_time"],
       populate: {
         user: {

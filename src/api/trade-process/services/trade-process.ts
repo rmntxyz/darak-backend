@@ -480,11 +480,6 @@ offset ${pageNum - 1} * ${pageSize};
           partnerExp += EXP_BY_RARITY[rarity];
         }
       }
-      if (partnerExp !== 0) {
-        await strapi
-          .service("api::status.status")
-          .updateExp(partner.id, partnerExp);
-      }
 
       let proposerExp = 0;
       for (const { id, rarity } of partnerItems!) {
@@ -495,6 +490,12 @@ offset ${pageNum - 1} * ${pageSize};
         if (this.checkFirstItem(partnerRoom, id)) {
           proposerExp += EXP_BY_RARITY[rarity];
         }
+      }
+
+      if (partnerExp !== 0) {
+        await strapi
+          .service("api::status.status")
+          .updateExp(partner.id, partnerExp);
       }
       if (proposerExp !== 0) {
         await strapi
