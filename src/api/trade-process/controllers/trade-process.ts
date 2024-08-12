@@ -65,9 +65,31 @@ export default {
       return ctx.badRequest("roomId and partnerId parameters are required");
     }
 
-    return await strapi
+    const detail = await strapi
       .service("api::trade-process.trade-process")
       .findTradeDetail(roomId, userId, partnerId);
+
+    const { locale } = ctx.query;
+
+    if (detail) {
+      const { proposer_items, partner_items } = detail;
+
+      proposer_items.forEach((userItem) => {
+        applyLocalizations(userItem.item, locale);
+        if (userItem.item.room) {
+          applyLocalizations(userItem.item.room, locale);
+        }
+      });
+
+      partner_items.forEach((userItem) => {
+        applyLocalizations(userItem.item, locale);
+        if (userItem.item.room) {
+          applyLocalizations(userItem.item.room, locale);
+        }
+      });
+    }
+
+    return detail;
   },
 
   "propose-trade": async (ctx) => {
