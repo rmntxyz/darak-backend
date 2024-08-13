@@ -103,6 +103,12 @@ module.exports = (plugin) => {
         .getFreeGiftInfo(user.id);
     }
 
+    if (user.streak === null) {
+      user.streak = await strapi
+        .service("api::streak.streak")
+        .getStreak(user.id);
+    }
+
     const freebie = await strapi
       .service("api::freebie.freebie")
       .refresh(user.freebie);

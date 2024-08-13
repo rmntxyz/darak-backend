@@ -15,13 +15,13 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const streak = await strapi
-        .service("api::streak.streak")
-        .getCurrentStreak(userId);
+      let streak = await strapi.service("api::streak.streak").getStreak(userId);
 
       if (!streak) {
         return ctx.notFound("no current streak");
       }
+
+      streak = await strapi.service("api::streak.streak").refresh(streak);
 
       const streakReward = (
         await strapi.entityService.findMany(
@@ -51,13 +51,15 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const streak: Streak = await strapi
+      let streak: Streak = await strapi
         .service("api::streak.streak")
-        .getCurrentStreak(userId);
+        .getStreak(userId);
 
       if (!streak) {
         return ctx.notFound("no current streak");
       }
+
+      streak = await strapi.service("api::streak.streak").refresh(streak);
 
       if (!streak.reward_claimed) {
         const defaultStreakReward: StreakReward = (

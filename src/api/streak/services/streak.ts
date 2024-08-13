@@ -9,14 +9,34 @@ import { CHECK_IN_RESET_DAYS, ONE_DAY } from "../../../constant";
 export default factories.createCoreService(
   "api::streak.streak",
   ({ strapi }) => ({
-    async getCurrentStreak(userId: number) {
-      return (
+    async getStreak(userId: number) {
+      let streak = (
         await strapi.entityService.findMany("api::streak.streak", {
           filters: {
             users_permissions_user: { id: userId },
           },
         })
       )[0];
+
+      if (!streak) {
+        streak = await strapi.entityService.create("api::streak.streak", {
+          data: {
+            users_permissions_user: userId,
+            streak_count: 0,
+            current_login: 0,
+            longest_login: 0,
+            last_login_date: new Date(0),
+            publishedAt: new Date(),
+            reward_claimed: false,
+
+            current_draw: 0,
+            longest_draw: 0,
+            last_draw_date: new Date(0),
+          },
+        });
+      }
+
+      return streak;
     },
 
     async refresh(streak: Streak) {

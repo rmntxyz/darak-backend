@@ -48,6 +48,8 @@ export default factories.createCoreService(
             },
           });
 
+          await this.updateMonthlyRoomCompletionCriteria();
+
           return true;
         }
       }
@@ -366,6 +368,9 @@ function rankByStatus(
   criteria: CollectionStatusByUser,
   current: CollectionStatusByUser
 ): CollectionStatus[] {
+  if (!criteria) {
+    return Object.values(current);
+  }
   const users = Object.entries(current)
     .map(([id, status]) => ({
       ...status,

@@ -1,3 +1,5 @@
+import { RESET_HOUR } from "../src/constant";
+
 export default {
   resetMonthlyCriteria: {
     task: async ({ strapi }) => {
@@ -6,7 +8,7 @@ export default {
         .updateMonthlyRoomCompletionCriteria();
     },
     options: {
-      rule: "0 0 0 1 * *",
+      rule: `0 0 ${RESET_HOUR} 1 * *`,
       tz: "Asia/Seoul",
     },
   },
