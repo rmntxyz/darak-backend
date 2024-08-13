@@ -32,7 +32,7 @@ export default factories.createCoreService(
           case "relay_token":
             const relays = await strapi
               .service("api::relay.relay")
-              .getCurrentRelays();
+              .getCurrentRelays(userId);
             const relay = relays.find((relay) => relay.type === "relay_only");
             if (relay) {
               await strapi
