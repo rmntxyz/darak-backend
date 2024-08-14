@@ -22,8 +22,7 @@
         "wheel_spin",
         "exp",
         "relay_token",
-        "ranking_relay_token",
-        "event_token"
+        "ranking_relay_token"
       ]
     },
     "amount": {

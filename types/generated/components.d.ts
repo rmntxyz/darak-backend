@@ -327,8 +327,7 @@ export interface RewardWithAmount extends Schema.Component {
         'wheel_spin',
         'exp',
         'relay_token',
-        'ranking_relay_token',
-        'event_token'
+        'ranking_relay_token'
       ]
     >;
     amount: Attribute.Integer;
@@ -351,7 +350,11 @@ export interface RoomTag extends Schema.Component {
     tag: Attribute.Enumeration<
       [
         'S1',
+        'S2',
         'L1',
+        'L2',
+        'L3',
+        'L4',
         'Romance',
         'Action',
         'Comedy',

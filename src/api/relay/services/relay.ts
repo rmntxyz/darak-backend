@@ -332,7 +332,7 @@ export default factories.createCoreService(
 
 async function updateRewards(userId: number, reward: Reward) {
   switch (reward.type) {
-    case "event_token":
+    case "relay_token":
       // do nothing
       break;
     case "freebie":

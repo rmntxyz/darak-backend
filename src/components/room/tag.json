@@ -11,7 +11,11 @@
       "type": "enumeration",
       "enum": [
         "S1",
+        "S2",
         "L1",
+        "L2",
+        "L3",
+        "L4",
         "Romance",
         "Action",
         "Comedy",
