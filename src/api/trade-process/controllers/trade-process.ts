@@ -72,16 +72,16 @@ export default {
     const { locale } = ctx.query;
 
     if (detail) {
-      const { proposer_items, partner_items } = detail;
+      const { me, partner } = detail;
 
-      proposer_items.forEach((userItem) => {
+      me.forEach((userItem) => {
         applyLocalizations(userItem.item, locale);
         if (userItem.item.room) {
           applyLocalizations(userItem.item.room, locale);
         }
       });
 
-      partner_items.forEach((userItem) => {
+      partner.forEach((userItem) => {
         applyLocalizations(userItem.item, locale);
         if (userItem.item.room) {
           applyLocalizations(userItem.item.room, locale);
