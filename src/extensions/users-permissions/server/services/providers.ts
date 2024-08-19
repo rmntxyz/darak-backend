@@ -81,7 +81,7 @@ export default ({ strapi }) => {
     }
 
     if (users.length && advancedSettings.unique_email) {
-      throw new Error("Email is already taken.");
+      throw new Error(`Email is already taken. (${users[0].provider})`);
     }
 
     const date = new Date();
