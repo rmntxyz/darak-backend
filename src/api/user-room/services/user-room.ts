@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { COUNTING_RARITIES } from "../../../constant";
 
 const conditionValidator = {
   star_point: async (userId: number, amount: number) => {
@@ -190,13 +191,25 @@ export default factories.createCoreService(
         }
       }
 
-      const total = room.items.filter(
-        (item) => item.category === "decoration"
+      const itemList = room.items.filter(
+        (item) =>
+          item.category === "decoration" &&
+          COUNTING_RARITIES.includes(item.rarity)
+      );
+
+      const rarityMap = itemList.reduce((acc, item) => {
+        acc[item.id] = item.rarity;
+        return acc;
+      }, {});
+
+      const total = itemList.length;
+
+      const current = Object.entries(owned_items).filter(
+        ([itemId, count]) =>
+          count > 0 && COUNTING_RARITIES.includes(rarityMap[itemId])
       ).length;
 
-      const completion_rate = Math.round(
-        (Object.values(owned_items).filter(Boolean).length / total) * 100
-      );
+      const completion_rate = Math.round((current / total) * 100);
 
       const completed = completion_rate === 100;
 
