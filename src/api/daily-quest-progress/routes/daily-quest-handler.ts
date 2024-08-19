@@ -6,7 +6,7 @@ export default {
       handler: "daily-quest-progress.get-quest-progress",
       config: {
         policies: [],
-        middlewares: [],
+        middlewares: ["global::mutex-by-user"],
       },
     },
     {
