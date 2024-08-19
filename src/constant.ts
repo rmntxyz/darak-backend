@@ -183,6 +183,8 @@ export const TRADE_ITEM_LIMIT = 3;
 
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
 
+export const COUNTING_RARITIES = ["common", "uncommon", "rare", "unique"];
+
 // 100 레벨까지
 export const EXP_TABLE = [
   0, 500, 1100, 1800, 2600, 3500, 4500, 5600, 6800, 8100, 9500, 11000, 12600,
