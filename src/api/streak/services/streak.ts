@@ -55,6 +55,7 @@ export default factories.createCoreService(
         current_login = current_login + 1;
       } else {
         current_login = 1;
+        streak_count = 0;
       }
 
       longest_login = Math.max(current_login, longest_login);
