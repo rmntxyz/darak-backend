@@ -11,6 +11,10 @@ export default factories.createCoreService(
     claim: async (userId: number, rewards: Reward[], reason: string) => {
       for (const reward of rewards) {
         switch (reward.type) {
+          case "exp":
+            await strapi
+              .service("api::status.status")
+              .updateExp(userId, reward.amount);
           case "freebie":
             await strapi
               .service("api::freebie.freebie")
