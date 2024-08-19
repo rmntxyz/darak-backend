@@ -194,20 +194,20 @@ export const EXP_TABLE = [
 
 export const EXP_BY_RARITY = {
   common: 100,
-  uncommon: 200,
-  rare: 300,
-  unique: 400,
-  secret: 500,
+  uncommon: 150,
+  rare: 500,
+  unique: 1000,
+  secret: 3000,
 };
 
 export const EXP_MULT_FOR_DUPLICATE = 0.1;
 
 export const ITEM_PROBABILITY = {
-  common: 0.6,
-  uncommon: 0.3,
-  rare: 0.08,
-  unique: 0.015,
-  secret: 0.005,
+  common: 0.45,
+  uncommon: 0.35,
+  rare: 0.16,
+  unique: 0.03,
+  secret: 0.01,
 };
 
 // deprecated
