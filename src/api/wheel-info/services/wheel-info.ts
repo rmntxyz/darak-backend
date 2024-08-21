@@ -101,7 +101,7 @@ export default factories.createCoreService(
 
         const random = Math.random();
 
-        let reward = null;
+        let rewards = [];
         let idx = 0;
         let totalProbability = 0;
         for (let i = 0; i < wheelInfo.reward_table.length; i++) {
@@ -109,95 +109,19 @@ export default factories.createCoreService(
           totalProbability += rewardInfo.probability;
 
           if (random < totalProbability) {
-            reward = rewardInfo.rewards[0];
+            rewards = rewardInfo.rewards;
             idx = i;
             break;
           }
         }
 
-        const rewards = [];
-
-        switch (reward.type) {
-          case "freebie":
-            await strapi
-              .service("api::freebie.freebie")
-              .updateFreebie(userId, reward.amount);
-            rewards.push(reward);
-            break;
-          case "star_point":
-            await strapi
-              .service("api::star-point.star-point")
-              .updateStarPoint(userId, reward.amount, "spin_result");
-            rewards.push(reward);
-            break;
-          case "item":
-          case "item_common":
-          case "item_uncommon":
-          case "item_rare":
-          case "item_unique":
-            const targetRarity = reward.type.split("_")[1];
-            const rarities = targetRarity ? [targetRarity] : undefined;
-
-            const items = await strapi
-              .service("api::random-item.random-item")
-              .getRandomItemsFromUnlockedRooms(userId, reward.amount, rarities);
-
-            const itemIds = items.map((item) => item.id);
-
-            const userItems: Inventory[] = await strapi
-              .service("api::random-item.random-item")
-              .addItemsToUserInventory(userId, itemIds);
-
-            const userItemIds = userItems.map((userItem) => userItem.id);
-            let totalExp = 0;
-
-            for (const userItem of userItems) {
-              const itemId = userItem.item.id;
-              const roomId = userItem.item.room.id;
-              const rarity = userItem.item.rarity;
-              const userRoom = await strapi
-                .service("api::user-room.user-room")
-                .getUserRoom(userId, roomId);
-
-              const isNew = !userRoom.owned_items[itemId];
-
-              let exp = EXP_BY_RARITY[rarity];
-
-              if (!isNew) {
-                exp *= EXP_MULT_FOR_DUPLICATE;
-              }
-
-              totalExp += exp;
-
-              await strapi
-                .service("api::user-room.user-room")
-                .updateItems(userRoom, [itemId], []);
-
-              rewards.push({ ...reward, detail: userItem.item, exp });
-            }
-
-            await strapi
-              .service("api::status.status")
-              .updateExp(userId, totalExp);
-
-            await strapi.entityService.create(
-              "api::item-acquisition-history.item-acquisition-history",
-              {
-                data: {
-                  type: "spin_result",
-                  user: userId,
-                  items: { connect: itemIds },
-                  inventories: { connect: userItemIds },
-                  exp: totalExp,
-                  publishedAt: new Date(),
-                },
-              }
-            );
-
-            break;
-
-          // add more reward types here
+        if (rewards.length === 0) {
+          throw new Error("no rewards");
         }
+
+        await strapi
+          .service("api::reward.reward")
+          .claim(userId, rewards, "spin_result");
 
         return { reward_index: idx, rewards };
       });
