@@ -216,6 +216,8 @@ export const ITEM_PROBABILITY = {
 export const DAILY_DRAW_LIMIT = 5;
 export const RANKING_LIMIT = 10;
 
+export const ACCOUNT_DELETION_GRACE_PERIOD = 15; // 15 days
+
 export const TRADE_NOTIFICATIONS = {
   trade_proposed: {
     title: {

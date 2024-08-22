@@ -2,6 +2,15 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/admin/test",
+      handler: "admin.test",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/admin/update-monthly-criteria",
       handler: "admin.update-monthly-criteria",
       config: {

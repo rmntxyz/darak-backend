@@ -2,8 +2,51 @@
  * A set of functions called "actions" for `admin`
  */
 import { diff } from "deep-diff";
+import Hashids from "hashids";
 
 export default {
+  test: async (ctx) => {
+    // const inactiveUsers = await strapi.entityService.findMany(
+    //   "plugin::users-permissions.user",
+    //   {
+    //     filters: {
+    //       deactivated: true,
+    //       blocked: false,
+    //       deactivated_at: {
+    //         $lt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+    //       },
+    //     },
+    //     fields: ["email", "deactivated_at", "provider"],
+    //   }
+    // );
+    // if (inactiveUsers.length === 0) {
+    //   return 200;
+    // }
+    // const hashids = new Hashids("", 3, process.env.NONCE_FOR_ENCRYPTION);
+    // const promises = inactiveUsers.map((user) => {
+    //   const [identifier, domain] = user.email.split("@");
+    //   const codeFromEmail = identifier.split("").map((c) => c.charCodeAt());
+    //   const encodedEmail = hashids.encode(codeFromEmail) + "@ROOMIX.INACTIVE";
+    //   // const encoded = hashids.encode(codeFromEmail);
+    //   // const decodedCodes = hashids.decode(encoded) as number[];
+    //   // const decoded = String.fromCharCode(...decodedCodes);
+    //   // console.log("decode", decoded);
+    //   return strapi.entityService.update(
+    //     "plugin::users-permissions.user",
+    //     user.id,
+    //     {
+    //       data: {
+    //         blocked: true,
+    //         username: "ROOMIX.INACTIVE",
+    //         email: encodedEmail,
+    //         device_token: "",
+    //       },
+    //     }
+    //   );
+    // });
+    // await Promise.all(promises);
+    // return inactiveUsers;
+  },
   "update-monthly-criteria": async (ctx) => {
     return await strapi
       .service("api::leaderboard.leaderboard")
