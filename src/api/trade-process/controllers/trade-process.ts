@@ -72,7 +72,7 @@ export default {
     const { locale } = ctx.query;
 
     if (detail) {
-      const { me, partner } = detail;
+      const { me, partner, all_rooms } = detail;
 
       me.forEach((userItem) => {
         applyLocalizations(userItem.item, locale);
@@ -86,6 +86,10 @@ export default {
         if (userItem.item.room) {
           applyLocalizations(userItem.item.room, locale);
         }
+      });
+
+      all_rooms.forEach((room) => {
+        applyLocalizations(room, locale);
       });
     }
 

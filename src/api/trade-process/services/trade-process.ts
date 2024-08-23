@@ -266,6 +266,9 @@ offset ${pageNum - 1} * ${pageSize};
         image_complete: {
           fields: ["url"],
         },
+        localizations: {
+          fields: ["name", "locale"],
+        },
       },
     });
 
