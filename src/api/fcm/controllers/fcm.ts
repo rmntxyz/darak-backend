@@ -2,6 +2,47 @@
 import format from "string-template";
 
 export default {
+  send: async (ctx) => {
+    const locale = ctx.params.locale;
+    const { title, content } = ctx.request.body;
+
+    const users = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        filters: { language: locale, device_token: { $ne: null } },
+        fields: ["device_token", "username", "id", "email"],
+      }
+    );
+
+    if (users.length === 0) {
+      return [];
+    }
+
+    const messagesSplit = [];
+    const splitSize = 500;
+
+    for (let i = 0; i < users.length; i += splitSize) {
+      messagesSplit.push(
+        users.slice(i, i + splitSize).map((user) => ({
+          notification: {
+            title: format(title, user),
+            body: format(content, user),
+          },
+          token: user.device_token,
+        }))
+      );
+    }
+
+    const { notification } = strapi as unknown as ExtendedStrapi;
+    const responses = [];
+
+    for (const messages of messagesSplit) {
+      const res = await notification.sendEachNotification(messages);
+      responses.push(res);
+    }
+
+    return responses;
+  },
   "send-all": async (ctx) => {
     try {
       let { title, body } = ctx.request.body;

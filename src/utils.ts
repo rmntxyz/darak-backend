@@ -1,5 +1,5 @@
 import { ONE_DAY, REF_DATE, RESET_HOUR } from "./constant";
-
+import Hashids from "hashids";
 function getRefTimestamp(date) {
   const refDate = new Date(date);
   if (refDate.getHours() < RESET_HOUR) {
@@ -47,4 +47,22 @@ function applyLocalizations(entity, locale) {
   return entity;
 }
 
-export { getRefTimestamp, getDayFromRefDate, applyLocalizations };
+function createRoomixUID(userId) {
+  const hashids = new Hashids("", 6, process.env.NONCE_FOR_ENCRYPTION);
+
+  return "roomix-" + hashids.encode(userId);
+}
+
+function decodeRoomixUID(roomixUID) {
+  const hashids = new Hashids("", 6, process.env.NONCE_FOR_ENCRYPTION);
+
+  return hashids.decode(roomixUID.replace("roomix-", ""));
+}
+
+export {
+  getRefTimestamp,
+  getDayFromRefDate,
+  applyLocalizations,
+  createRoomixUID,
+  decodeRoomixUID,
+};

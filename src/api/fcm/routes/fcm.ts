@@ -9,5 +9,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "POST",
+      path: "/fcm/:locale/send",
+      handler: "fcm.send",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
