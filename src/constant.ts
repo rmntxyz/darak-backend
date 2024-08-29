@@ -195,11 +195,11 @@ export const EXP_TABLE = [
 ];
 
 export const EXP_BY_RARITY = {
-  common: 100,
-  uncommon: 150,
-  rare: 500,
-  unique: 1000,
-  secret: 3000,
+  common: 30,
+  uncommon: 50,
+  rare: 100,
+  unique: 300,
+  secret: 1000,
 };
 
 export const EXP_MULT_FOR_DUPLICATE = 0.1;
