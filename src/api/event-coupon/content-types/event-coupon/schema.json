@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "event_coupons",
+  "info": {
+    "singularName": "event-coupon",
+    "pluralName": "event-coupons",
+    "displayName": "EventCoupon",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "uid"
+    },
+    "start_date": {
+      "type": "datetime"
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "rewards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "reward.with-amount"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

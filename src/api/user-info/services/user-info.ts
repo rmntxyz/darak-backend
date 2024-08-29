@@ -5,18 +5,7 @@
 import { REACTIVATION_PERIOD } from "../../../constant";
 
 export default ({ strapi }) => ({
-  updateUserInfo: async (userId, username, avatar) => {
-    // create data if name or avatar is exist
-    const data: { username?: string; avatar?: string } = {};
-
-    if (username) {
-      data.username = username;
-    }
-
-    if (avatar) {
-      data.avatar = avatar;
-    }
-
+  updateUserInfo: async (userId, data: UserUpdateData) => {
     const user = await strapi.entityService.update(
       "plugin::users-permissions.user",
       userId,

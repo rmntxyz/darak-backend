@@ -10,11 +10,11 @@ export default {
       return ctx.unauthorized("user is not authenticated");
     }
 
-    const { username, avatar } = ctx.request.body;
+    const info = ctx.request.body;
 
     return await strapi
       .service("api::user-info.user-info")
-      .updateUserInfo(userId, username, avatar);
+      .updateUserInfo(userId, info);
   },
 
   "deactivate-user": async (ctx) => {

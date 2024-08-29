@@ -1565,6 +1565,45 @@ export interface ApiEpisodeEpisode extends Schema.CollectionType {
   };
 }
 
+export interface ApiEventCouponEventCoupon extends Schema.CollectionType {
+  collectionName: 'event_coupons';
+  info: {
+    singularName: 'event-coupon';
+    pluralName: 'event-coupons';
+    displayName: 'EventCoupon';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Attribute.UID;
+    start_date: Attribute.DateTime;
+    end_date: Attribute.DateTime;
+    rewards: Attribute.Component<'reward.with-amount', true>;
+    users: Attribute.Relation<
+      'api::event-coupon.event-coupon',
+      'oneToMany',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event-coupon.event-coupon',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::event-coupon.event-coupon',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiExperienceTableExperienceTable
   extends Schema.CollectionType {
   collectionName: 'experience_tables';
@@ -3174,6 +3213,7 @@ declare module '@strapi/strapi' {
       'api::draw.draw': ApiDrawDraw;
       'api::draw-history.draw-history': ApiDrawHistoryDrawHistory;
       'api::episode.episode': ApiEpisodeEpisode;
+      'api::event-coupon.event-coupon': ApiEventCouponEventCoupon;
       'api::experience-table.experience-table': ApiExperienceTableExperienceTable;
       'api::free-gift.free-gift': ApiFreeGiftFreeGift;
       'api::free-gift-reward.free-gift-reward': ApiFreeGiftRewardFreeGiftReward;
