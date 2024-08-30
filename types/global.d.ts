@@ -442,4 +442,5 @@ type UserUpdateData = {
   username?: string;
   avatar?: any;
   device_token?: string;
+  handle?: string;
 };

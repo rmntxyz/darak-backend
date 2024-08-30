@@ -9,7 +9,11 @@ export default {
     const users = await strapi.entityService.findMany(
       "plugin::users-permissions.user",
       {
-        filters: { language: locale, device_token: { $ne: null } },
+        filters: {
+          language: locale,
+          device_token: { $ne: null },
+          deactivated: false,
+        },
         fields: ["device_token", "username", "id", "email"],
       }
     );

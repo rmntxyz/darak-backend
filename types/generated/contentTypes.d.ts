@@ -790,6 +790,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     >;
     deactivated: Attribute.Boolean;
     deactivated_at: Attribute.DateTime;
+    handle: Attribute.UID;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

@@ -12,6 +12,7 @@ import urlJoin from "url-join";
 import utils from "@strapi/utils";
 const { getAbsoluteServerUrl } = utils;
 import { getService } from "@strapi/plugin-users-permissions/server/utils";
+import { createRoomixUID } from "../../../../utils";
 
 export default ({ strapi }) => {
   /**
@@ -187,13 +188,17 @@ export default ({ strapi }) => {
       star_point: createdStarPoint.id,
       wheel_spin: createdWheelSpin.id,
       trading_credit: createdTradingCredit.id,
-      level: 1,
-      experience: 0,
+      deactivated: false,
     };
 
     const createdUser = await strapi
       .query("plugin::users-permissions.user")
       .create({ data: newUser });
+
+    const handle = createRoomixUID(createdUser.id);
+    await strapi
+      .service("api::user-info.user-info")
+      .updateUserInfo(createdUser.id, { handle });
 
     const achievement_progresses = await strapi
       .service("api::achievement-progress.achievement-progress")

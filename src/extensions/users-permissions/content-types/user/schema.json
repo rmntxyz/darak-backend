@@ -189,6 +189,9 @@
     },
     "deactivated_at": {
       "type": "datetime"
+    },
+    "handle": {
+      "type": "uid"
     }
   }
 }
