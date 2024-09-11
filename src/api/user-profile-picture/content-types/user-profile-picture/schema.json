@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_profile_pictures",
+  "info": {
+    "singularName": "user-profile-picture",
+    "pluralName": "user-profile-pictures",
+    "displayName": "UserProfilePicture",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_profile_pictures"
+    },
+    "claim_date": {
+      "type": "datetime"
+    },
+    "serial_number": {
+      "type": "integer"
+    },
+    "profile_picture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::profile-picture.profile-picture",
+      "inversedBy": "user_profile_picture"
+    }
+  }
+}

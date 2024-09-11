@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_effect_details",
+  "info": {
+    "displayName": "detail",
+    "icon": "plus",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "gacha_rate",
+        "multiply"
+      ]
+    },
+    "value": {
+      "type": "json"
+    },
+    "for_stack": {
+      "type": "integer"
+    }
+  }
+}

@@ -124,6 +124,12 @@
         }
       },
       "component": "creator.tag"
+    },
+    "profile_pictures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::profile-picture.profile-picture",
+      "mappedBy": "creator"
     }
   }
 }

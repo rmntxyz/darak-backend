@@ -192,6 +192,23 @@
     },
     "handle": {
       "type": "uid"
+    },
+    "user_status_effects": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-status-effect.user-status-effect",
+      "mappedBy": "user"
+    },
+    "user_profile_pictures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-profile-picture.user-profile-picture",
+      "mappedBy": "user"
+    },
+    "profile_picture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-profile-picture.user-profile-picture"
     }
   }
 }

@@ -791,6 +791,21 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     deactivated: Attribute.Boolean;
     deactivated_at: Attribute.DateTime;
     handle: Attribute.UID;
+    user_status_effects: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::user-status-effect.user-status-effect'
+    >;
+    user_profile_pictures: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::user-profile-picture.user-profile-picture'
+    >;
+    profile_picture: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::user-profile-picture.user-profile-picture'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1007,6 +1022,45 @@ export interface ApiActivityActivity extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::activity.activity',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiAttackAttack extends Schema.CollectionType {
+  collectionName: 'attacks';
+  info: {
+    singularName: 'attack';
+    pluralName: 'attacks';
+    displayName: 'Attack';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    attacker: Attribute.Relation<
+      'api::attack.attack',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    target: Attribute.Relation<
+      'api::attack.attack',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::attack.attack',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::attack.attack',
       'oneToOne',
       'admin::user'
     > &
@@ -1244,6 +1298,11 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    profile_pictures: Attribute.Relation<
+      'api::creator.creator',
+      'oneToMany',
+      'api::profile-picture.profile-picture'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2043,6 +2102,50 @@ export interface ApiLeaderboardLeaderboard extends Schema.CollectionType {
   };
 }
 
+export interface ApiProfilePictureProfilePicture extends Schema.CollectionType {
+  collectionName: 'profile_pictures';
+  info: {
+    singularName: 'profile-picture';
+    pluralName: 'profile-pictures';
+    displayName: 'ProfilePicture';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    desc: Attribute.Text;
+    image: Attribute.Media;
+    creator: Attribute.Relation<
+      'api::profile-picture.profile-picture',
+      'manyToOne',
+      'api::creator.creator'
+    >;
+    current_serial_number: Attribute.Integer;
+    user_profile_picture: Attribute.Relation<
+      'api::profile-picture.profile-picture',
+      'oneToOne',
+      'api::user-profile-picture.user-profile-picture'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::profile-picture.profile-picture',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::profile-picture.profile-picture',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiQuestQuest extends Schema.CollectionType {
   collectionName: 'quests';
   info: {
@@ -2541,6 +2644,42 @@ export interface ApiStatusStatus extends Schema.CollectionType {
   };
 }
 
+export interface ApiStatusEffectStatusEffect extends Schema.CollectionType {
+  collectionName: 'status_effects';
+  info: {
+    singularName: 'status-effect';
+    pluralName: 'status-effects';
+    displayName: 'StatusEffect';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Unique;
+    desc: Attribute.Text;
+    duration: Attribute.Integer;
+    icon: Attribute.Media;
+    details: Attribute.Component<'effect.detail', true>;
+    max_stack: Attribute.Integer & Attribute.DefaultTo<1>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::status-effect.status-effect',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::status-effect.status-effect',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStreakStreak extends Schema.CollectionType {
   collectionName: 'streaks';
   info: {
@@ -2817,6 +2956,49 @@ export interface ApiUserDecorationUserDecoration extends Schema.CollectionType {
   };
 }
 
+export interface ApiUserProfilePictureUserProfilePicture
+  extends Schema.CollectionType {
+  collectionName: 'user_profile_pictures';
+  info: {
+    singularName: 'user-profile-picture';
+    pluralName: 'user-profile-pictures';
+    displayName: 'UserProfilePicture';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::user-profile-picture.user-profile-picture',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    claim_date: Attribute.DateTime;
+    serial_number: Attribute.Integer;
+    profile_picture: Attribute.Relation<
+      'api::user-profile-picture.user-profile-picture',
+      'oneToOne',
+      'api::profile-picture.profile-picture'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-profile-picture.user-profile-picture',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-profile-picture.user-profile-picture',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserRelayTokenUserRelayToken extends Schema.CollectionType {
   collectionName: 'user_relay_tokens';
   info: {
@@ -2906,6 +3088,51 @@ export interface ApiUserRoomUserRoom extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::user-room.user-room',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUserStatusEffectUserStatusEffect
+  extends Schema.CollectionType {
+  collectionName: 'user_status_effects';
+  info: {
+    singularName: 'user-status-effect';
+    pluralName: 'user-status-effects';
+    displayName: 'UserStatusEffect';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::user-status-effect.user-status-effect',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    status_effect: Attribute.Relation<
+      'api::user-status-effect.user-status-effect',
+      'oneToOne',
+      'api::status-effect.status-effect'
+    >;
+    active: Attribute.Boolean & Attribute.DefaultTo<false>;
+    start_time: Attribute.Integer;
+    stack: Attribute.Integer;
+    end_time: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-status-effect.user-status-effect',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-status-effect.user-status-effect',
       'oneToOne',
       'admin::user'
     > &
@@ -3205,6 +3432,7 @@ declare module '@strapi/strapi' {
       'api::achievement.achievement': ApiAchievementAchievement;
       'api::achievement-progress.achievement-progress': ApiAchievementProgressAchievementProgress;
       'api::activity.activity': ApiActivityActivity;
+      'api::attack.attack': ApiAttackAttack;
       'api::badge.badge': ApiBadgeBadge;
       'api::character.character': ApiCharacterCharacter;
       'api::creator.creator': ApiCreatorCreator;
@@ -3224,6 +3452,7 @@ declare module '@strapi/strapi' {
       'api::item.item': ApiItemItem;
       'api::item-acquisition-history.item-acquisition-history': ApiItemAcquisitionHistoryItemAcquisitionHistory;
       'api::leaderboard.leaderboard': ApiLeaderboardLeaderboard;
+      'api::profile-picture.profile-picture': ApiProfilePictureProfilePicture;
       'api::quest.quest': ApiQuestQuest;
       'api::quest-progress.quest-progress': ApiQuestProgressQuestProgress;
       'api::relay.relay': ApiRelayRelay;
@@ -3233,14 +3462,17 @@ declare module '@strapi/strapi' {
       'api::star-point.star-point': ApiStarPointStarPoint;
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::status.status': ApiStatusStatus;
+      'api::status-effect.status-effect': ApiStatusEffectStatusEffect;
       'api::streak.streak': ApiStreakStreak;
       'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;
       'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
+      'api::user-profile-picture.user-profile-picture': ApiUserProfilePictureUserProfilePicture;
       'api::user-relay-token.user-relay-token': ApiUserRelayTokenUserRelayToken;
       'api::user-room.user-room': ApiUserRoomUserRoom;
+      'api::user-status-effect.user-status-effect': ApiUserStatusEffectUserStatusEffect;
       'api::webtoon.webtoon': ApiWebtoonWebtoon;
       'api::webtoon-outlink.webtoon-outlink': ApiWebtoonOutlinkWebtoonOutlink;
       'api::wheel-info.wheel-info': ApiWheelInfoWheelInfo;

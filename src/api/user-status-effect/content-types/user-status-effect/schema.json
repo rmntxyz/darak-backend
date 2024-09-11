@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_status_effects",
+  "info": {
+    "singularName": "user-status-effect",
+    "pluralName": "user-status-effects",
+    "displayName": "UserStatusEffect",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_status_effects"
+    },
+    "status_effect": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::status-effect.status-effect"
+    },
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "start_time": {
+      "type": "integer"
+    },
+    "stack": {
+      "type": "integer"
+    },
+    "end_time": {
+      "type": "integer"
+    }
+  }
+}

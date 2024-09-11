@@ -99,6 +99,20 @@ export interface DecorationText extends Schema.Component {
   };
 }
 
+export interface EffectDetail extends Schema.Component {
+  collectionName: 'components_effect_details';
+  info: {
+    displayName: 'detail';
+    icon: 'plus';
+    description: '';
+  };
+  attributes: {
+    type: Attribute.Enumeration<['gacha_rate', 'multiply']>;
+    value: Attribute.JSON;
+    for_stack: Attribute.Integer;
+  };
+}
+
 export interface HistoryFreeGiftHistory extends Schema.Component {
   collectionName: 'components_history_free_gift_histories';
   info: {
@@ -397,6 +411,7 @@ declare module '@strapi/strapi' {
       'decoration.item': DecorationItem;
       'decoration.line': DecorationLine;
       'decoration.text': DecorationText;
+      'effect.detail': EffectDetail;
       'history.free-gift-history': HistoryFreeGiftHistory;
       'history.relay-rewards': HistoryRelayRewards;
       'history.relay': HistoryRelay;

@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "status_effects",
+  "info": {
+    "singularName": "status-effect",
+    "pluralName": "status-effects",
+    "displayName": "StatusEffect",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "unique": true
+    },
+    "desc": {
+      "type": "text"
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "details": {
+      "displayName": "detail",
+      "type": "component",
+      "repeatable": true,
+      "component": "effect.detail"
+    },
+    "max_stack": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

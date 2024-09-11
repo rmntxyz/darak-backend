@@ -23,22 +23,27 @@ export default ({ strapi }) => ({
       const random = Math.random();
       if (random < gachaInfo.probability) {
         const rewards = drawReward(gachaInfo);
+        let historyId;
 
         for (const reward of rewards) {
           await addRewardToUser(userId, draw.id, reward, multiply);
         }
 
-        result = { rewards, multiply };
+        result = { rewards, multiply, historyId };
       } else {
         const itemId = await drawItem(draw.draw_info, multiply);
-        const { item, exp } = await addItemToUser(
+        const { item, exp, historyId } = await addItemToUser(
           userId,
           draw.id,
           itemId,
           multiply
         );
 
-        result = { rewards: [{ type: "item", detail: item, exp }], multiply };
+        result = {
+          rewards: [{ type: "item", detail: item, exp }],
+          multiply,
+          historyId,
+        };
       }
 
       result.events = [];
@@ -52,7 +57,7 @@ export default ({ strapi }) => ({
     await deductCurrency(userId, draw, multiply);
 
     const itemId = await drawItem(draw.draw_info, multiply);
-    const { item, exp } = await addItemToUser(
+    const { item, exp, historyId } = await addItemToUser(
       userId,
       draw.id,
       itemId,
@@ -62,6 +67,7 @@ export default ({ strapi }) => ({
     const result: CapsuleResult = {
       rewards: [{ type: "item", detail: item, exp }],
       multiply,
+      historyId,
     };
 
     result.events = [];
@@ -201,15 +207,21 @@ async function addRewardToUser(
     await updateRewards(userId, reward, multiply);
   }
 
-  await strapi.entityService.create("api::draw-history.draw-history", {
-    data: {
-      draw: drawId,
-      users_permissions_user: userId,
-      draw_result: { type: reward.type, amount: reward.amount },
-      multiply,
-      publishedAt: new Date(),
-    },
-  });
+  const history = await strapi.entityService.create(
+    "api::draw-history.draw-history",
+    {
+      fields: ["id"],
+      data: {
+        draw: drawId,
+        users_permissions_user: userId,
+        draw_result: { type: reward.type, amount: reward.amount },
+        multiply,
+        publishedAt: new Date(),
+      },
+    }
+  );
+
+  return history.id;
 }
 
 async function updateRewards(userId: number, reward: Reward, multiply: number) {
@@ -237,7 +249,7 @@ async function addItemToUser(
   drawId: number,
   itemId: number,
   multiply: number
-): Promise<{ item: Partial<Item>; exp: number }> {
+): Promise<{ item: Partial<Item>; exp: number; historyId: number }> {
   const userItems = [];
 
   return (await strapi.db.transaction(async ({ trx }) => {
@@ -328,19 +340,23 @@ async function addItemToUser(
       }
     );
 
-    await strapi.entityService.create("api::draw-history.draw-history", {
-      data: {
-        draw: drawId,
-        users_permissions_user: userId,
-        draw_result: { item: updatedItem.id },
-        user_items: { connect: userItems },
-        multiply,
-        publishedAt: new Date(),
-      },
-    });
+    const history = await strapi.entityService.create(
+      "api::draw-history.draw-history",
+      {
+        fields: ["id"],
+        data: {
+          draw: drawId,
+          users_permissions_user: userId,
+          draw_result: { item: updatedItem.id },
+          user_items: { connect: userItems },
+          multiply,
+          publishedAt: new Date(),
+        },
+      }
+    );
 
-    return { item: updatedItem, exp };
-  })) as { item: Partial<Item>; exp: number };
+    return { item: updatedItem, exp, historyId: history.id };
+  })) as { item: Partial<Item>; exp: number; historyId: number };
 }
 
 async function checkRelayEvent(userId: number, result: CapsuleResult) {

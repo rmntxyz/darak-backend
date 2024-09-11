@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attacks",
+  "info": {
+    "singularName": "attack",
+    "pluralName": "attacks",
+    "displayName": "Attack"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "attacker": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "target": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -145,6 +145,14 @@ module.exports = (plugin) => {
       .service("api::relay.relay")
       .getCurrentRelays(user.id);
 
+    const gachaInfo = await strapi
+      .service("api::gacha-info.gacha-info")
+      .getGachaInfo();
+
+    const statusEffects = await strapi
+      .service("api::user-status-effect.user-status-effect")
+      .getActiveEffects(user.id);
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
@@ -155,6 +163,8 @@ module.exports = (plugin) => {
       daily_quest_progresses: dailyQuestProgresses,
       daily_trade_count: 0,
       daily_draw_count: 0,
+      gacha_info: gachaInfo,
+      status_effects: statusEffects,
     });
   };
 

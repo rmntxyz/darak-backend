@@ -172,6 +172,7 @@ type CapsuleResult = {
     relay: Relay;
   }[];
   multiply: number;
+  historyId: number;
 };
 
 type DailyQuestProgress = {
@@ -196,6 +197,7 @@ type DailyQuest = {
 type Reward = {
   type: RewardType;
   amount: number;
+  tier?: number;
   detail?: Item;
   exp?: number;
 };
@@ -438,9 +440,46 @@ interface ExtendedStrapi extends Strapi {
   };
 }
 
+type GachaInfo = {
+  id: number;
+  probability: number;
+  reward_table: {
+    rewards: Reward[];
+  };
+};
+
 type UserUpdateData = {
   username?: string;
   avatar?: any;
   device_token?: string;
   handle?: string;
 };
+
+type EffectType = "gacha_rate" | "multiply";
+
+type StatusEffect = {
+  id: number;
+  name: string;
+  desc: string;
+  duration: number;
+  icon: { url: string };
+  details: {
+    type: EffectType;
+    value: number | number[];
+    for_stack?: number;
+  }[];
+  max_stack: number;
+};
+
+type UserStatusEffect = {
+  id: number;
+  user: User;
+  status_effect: StatusEffect;
+  start_time: number;
+  end_time: number;
+  stack: number;
+  active: boolean;
+};
+interface UserStatusEffectHandler {
+  refresh: (effect: UserStatusEffect) => Promise<UserStatusEffect>;
+}
