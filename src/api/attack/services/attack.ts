@@ -46,7 +46,11 @@ LIMIT ${count};
             .select("al.user_id as id", "a.created_at as attacked_at")
             .join("attacks_attacker_links as al", "a.id", "al.attack_id")
             .join("attacks_target_links as tl", "a.id", "tl.attack_id")
+            .join("up_users as u", "al.user_id", "u.id")
             .where("tl.user_id", userId)
+            .andWhere(function () {
+              this.whereNot("u.deactivated", true);
+            })
             .orderBy([
               { column: "al.user_id" },
               { column: "a.created_at", order: "desc" },

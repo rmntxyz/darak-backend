@@ -29,47 +29,47 @@ export default factories.createCoreController(
       let randoms: { id: number; active_broken_count: number }[] = await strapi
         .service("api::attack.attack")
         .getRandoms([userId, ...friendsIds, ...revengesIds]);
-      const randomsIds = randoms.map((r) => r.id);
 
-      let recommandedId = null;
+      if (randoms.length < 2) {
+        const extra = await strapi
+          .service("api::attack.attack")
+          .getRandoms(
+            [userId, ...friendsIds, ...revengesIds],
+            2 - randoms.length,
+            99999
+          );
 
-      // 1st: revenge who attacked me in the last 6 hour
+        randoms = randoms.concat(extra);
+      }
+
+      let recommendedId = null;
+      let randomId = null;
+
       if (
         revenges.length > 0 &&
         new Date(revenges[0].attacked_at).getTime() >
           Date.now() - 3600 * 6 * 1000
       ) {
-        recommandedId = revenges[0].id;
-
+        // 1st: revenge who attacked me in the last 6 hour
+        recommendedId = revenges[0].id;
+        randomId = randoms[0] ? randoms[0].id : null;
+      } else if (randoms.length == 2) {
         // 2nd: randoms length > 1, pick first one
-      } else if (randoms.length > 1) {
-        recommandedId = randoms[0].id;
-
-        // 3rd: revenge who attacked me most recently
+        recommendedId = randoms[0].id;
+        randomId = randoms[1] ? randoms[1].id : null;
       } else if (revenges.length > 0) {
-        recommandedId = revenges[0].id;
-
-        // 4th: friend
+        // 3rd: revenge
+        recommendedId = revenges[0].id;
+        randomId = randoms[0] ? randoms[0].id : null;
       } else if (friends.length > 0) {
-        recommandedId = friends[0].id;
+        // 4th: friend (random)
+        const idx = Math.floor(Math.random() * friends.length);
+        recommendedId = friends[idx].id;
+        randomId = randoms[0] ? randoms[0].id : null;
+      }
 
-        // 5th: randoms length = 1, pick the only one
-      } else if (randoms.length === 1) {
-        recommandedId = randoms[0].id;
-
-        // 6h: fallback, random in the whole user pool
-      } else {
-        // if no recommanded
-        randoms = await strapi
-          .service("api::attack.attack")
-          .getRandoms([userId, ...friendsIds, ...revengesIds], 2, 99999);
-        // throw new Error("No targets found");
-
-        if (randoms.length > 0) {
-          recommandedId = randoms[0].id;
-        } else {
-          throw ctx.notFound("No targets found");
-        }
+      if (recommendedId === null) {
+        throw ctx.notFound("No targets found");
       }
 
       const users = await strapi.entityService.findMany(
@@ -77,23 +77,27 @@ export default factories.createCoreController(
         {
           filters: {
             id: {
-              $in: [...randomsIds, ...friendsIds, ...revengesIds],
+              $in: [
+                recommendedId,
+                randomId,
+                ...friendsIds,
+                ...revengesIds,
+              ].filter((id) => id !== null),
             },
           },
           ...TargetUserOptions,
         }
       );
 
-      const recommandedTarget =
-        users.find((u) => u.id === recommandedId) || null;
-      recommandedTarget.user_status_effects = await strapi
+      const recommendedTarget =
+        users.find((u) => u.id === recommendedId) || null;
+      recommendedTarget.user_status_effects = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getActiveEffects(recommandedId);
+        .getActiveEffects(recommendedId);
 
-      const randomTarget =
-        users.find(
-          (u) => u.id !== recommandedId && randomsIds.includes(u.id)
-        ) || null;
+      const randomTarget = randomId
+        ? users.find((u) => u.id === randomId)
+        : null;
 
       const revengeTargets = revenges.map((r) => {
         const user = users.find((u) => u.id === r.id);
@@ -109,7 +113,7 @@ export default factories.createCoreController(
       );
 
       return {
-        recommanded: recommandedTarget,
+        recommended: recommendedTarget,
         random: randomTarget,
         revenges: revengeTargets,
         friends: friendTargets,
