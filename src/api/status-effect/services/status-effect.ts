@@ -22,14 +22,14 @@ export default factories.createCoreService(
       return effect;
     },
 
-    async verify(userEffect: UserStatusEffect, userId: number) {
+    async verify(userEffect: UserStatusEffect, userId: number, data: any) {
       const verifierService = verifier[userEffect.status_effect.name];
 
       if (!verifierService) {
         return true;
       }
 
-      return await verifierService.verify(userEffect, userId);
+      return await verifierService.verify(userEffect, userId, data);
     },
   })
 );

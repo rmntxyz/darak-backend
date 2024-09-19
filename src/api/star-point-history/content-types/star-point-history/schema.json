@@ -37,7 +37,10 @@
         "check_in",
         "free_gift",
         "room_unlock",
-        "room_complete"
+        "room_complete",
+        "attack",
+        "repair",
+        "steal"
       ]
     },
     "inventories": {

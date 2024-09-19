@@ -3,7 +3,6 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { UserStatusEffectOptions } from "../services/user-status-effect";
 
 export default factories.createCoreController(
   "api::user-status-effect.user-status-effect",
@@ -27,7 +26,7 @@ export default factories.createCoreController(
 
       return await strapi
         .service("api::user-status-effect.user-status-effect")
-        .activate(user.id, userEffect);
+        .updateStack(userEffect, 1);
     },
   })
 );

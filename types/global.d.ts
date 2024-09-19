@@ -61,6 +61,16 @@ type Room = {
   key_scenes: { url: string }[];
 };
 
+type DrawHistory = {
+  id: number;
+  draw: Draw;
+  users_permissions_user: User;
+  draw_result: Reward;
+  multiply: number;
+  reviewed: boolean;
+  publishedAt: Date;
+};
+
 type StarPoint = {
   id: number;
   amount: number;
@@ -78,6 +88,9 @@ type StarPointHistory = {
 
 type StarPointChangeDetail =
   // -
+  | "repair"
+  | "attack"
+  | "steal"
   | "item_draw"
   | "gacha"
   | "room_unlock"
@@ -107,6 +120,8 @@ type WheelSpinChangeDetail =
   | "daily_quest_reward"
   | "free_gift"
   | "room_complete";
+
+type ShieldChangeDetail = "gacha_result" | "attack" | "steal";
 
 type ItemAcquisitionType =
   // +
@@ -153,7 +168,10 @@ type RewardType =
   | "wheel_spin"
   | "relay_token"
   | "ranking_relay_token"
-  | "event_token";
+  | "event_token"
+  | "attack"
+  | "steal"
+  | "shield";
 
 type RewardDetail = {
   type: RewardType;
@@ -196,7 +214,7 @@ type DailyQuest = {
 
 type Reward = {
   type: RewardType;
-  amount: number;
+  amount?: number;
   tier?: number;
   detail?: Item;
   exp?: number;

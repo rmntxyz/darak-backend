@@ -806,6 +806,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::user-profile-picture.user-profile-picture'
     >;
+    shield: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::shield.shield'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1035,6 +1040,7 @@ export interface ApiAttackAttack extends Schema.CollectionType {
     singularName: 'attack';
     pluralName: 'attacks';
     displayName: 'Attack';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1050,6 +1056,12 @@ export interface ApiAttackAttack extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    result: Attribute.JSON;
+    status: Attribute.Enumeration<['success', 'blocked']>;
+    effect_name: Attribute.Enumeration<
+      ['part1_broken', 'part2_broken', 'part3_broken', 'part4_broken']
+    >;
+    multiply: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1209,6 +1221,43 @@ export interface ApiCharacterCharacter extends Schema.CollectionType {
       'api::character.character'
     >;
     locale: Attribute.String;
+  };
+}
+
+export interface ApiConfigConfig extends Schema.SingleType {
+  collectionName: 'configs';
+  info: {
+    singularName: 'config';
+    pluralName: 'configs';
+    displayName: 'Config';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    ITEM_PROBABILITY: Attribute.JSON;
+    EXP_MULT_FOR_DUPLICATE: Attribute.Float;
+    EXP_BY_RARITY: Attribute.JSON;
+    ATTACK_REWARDS: Attribute.JSON;
+    IOS_APP_VERSION: Attribute.String;
+    ANDROID_APP_VERSION: Attribute.String;
+    REPAIR_COST: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::config.config',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::config.config',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
   };
 }
 
@@ -1536,6 +1585,7 @@ export interface ApiDrawHistoryDrawHistory extends Schema.CollectionType {
       'api::inventory.inventory'
     >;
     multiply: Attribute.Integer;
+    reviewed: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1819,6 +1869,7 @@ export interface ApiGachaInfoGachaInfo extends Schema.CollectionType {
   attributes: {
     probability: Attribute.Decimal;
     reward_table: Attribute.Component<'reward.gacha-reward', true>;
+    type: Attribute.UID;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2503,6 +2554,85 @@ export interface ApiRoomRoom extends Schema.CollectionType {
   };
 }
 
+export interface ApiShieldShield extends Schema.CollectionType {
+  collectionName: 'shields';
+  info: {
+    singularName: 'shield';
+    pluralName: 'shields';
+    displayName: 'Shield';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    amount: Attribute.Integer;
+    user: Attribute.Relation<
+      'api::shield.shield',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    shield_histories: Attribute.Relation<
+      'api::shield.shield',
+      'oneToMany',
+      'api::shield-history.shield-history'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::shield.shield',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::shield.shield',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiShieldHistoryShieldHistory extends Schema.CollectionType {
+  collectionName: 'shield_histories';
+  info: {
+    singularName: 'shield-history';
+    pluralName: 'shield-histories';
+    displayName: 'ShieldHistory';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    shield: Attribute.Relation<
+      'api::shield-history.shield-history',
+      'manyToOne',
+      'api::shield.shield'
+    >;
+    change: Attribute.Integer;
+    result: Attribute.Integer;
+    detail: Attribute.Enumeration<['gacha_result', 'attack', 'steal']>;
+    date: Attribute.DateTime;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::shield-history.shield-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::shield-history.shield-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStarPointStarPoint extends Schema.CollectionType {
   collectionName: 'star_points';
   info: {
@@ -2578,7 +2708,10 @@ export interface ApiStarPointHistoryStarPointHistory
         'check_in',
         'free_gift',
         'room_unlock',
-        'room_complete'
+        'room_complete',
+        'attack',
+        'repair',
+        'steal'
       ]
     >;
     inventories: Attribute.Relation<
@@ -2909,6 +3042,40 @@ export interface ApiTradingCreditHistoryTradingCreditHistory
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::trading-credit-history.trading-credit-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUpgradeUpgrade extends Schema.CollectionType {
+  collectionName: 'upgrades';
+  info: {
+    singularName: 'upgrade';
+    pluralName: 'upgrades';
+    displayName: 'Upgrade';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.UID;
+    desc: Attribute.Text;
+    icon: Attribute.Media;
+    details: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::upgrade.upgrade',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::upgrade.upgrade',
       'oneToOne',
       'admin::user'
     > &
@@ -3435,6 +3602,7 @@ declare module '@strapi/strapi' {
       'api::attack.attack': ApiAttackAttack;
       'api::badge.badge': ApiBadgeBadge;
       'api::character.character': ApiCharacterCharacter;
+      'api::config.config': ApiConfigConfig;
       'api::creator.creator': ApiCreatorCreator;
       'api::daily-quest.daily-quest': ApiDailyQuestDailyQuest;
       'api::daily-quest-progress.daily-quest-progress': ApiDailyQuestProgressDailyQuestProgress;
@@ -3459,6 +3627,8 @@ declare module '@strapi/strapi' {
       'api::relay-group.relay-group': ApiRelayGroupRelayGroup;
       'api::reward.reward': ApiRewardReward;
       'api::room.room': ApiRoomRoom;
+      'api::shield.shield': ApiShieldShield;
+      'api::shield-history.shield-history': ApiShieldHistoryShieldHistory;
       'api::star-point.star-point': ApiStarPointStarPoint;
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::status.status': ApiStatusStatus;
@@ -3468,6 +3638,7 @@ declare module '@strapi/strapi' {
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;
+      'api::upgrade.upgrade': ApiUpgradeUpgrade;
       'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
       'api::user-profile-picture.user-profile-picture': ApiUserProfilePictureUserProfilePicture;
       'api::user-relay-token.user-relay-token': ApiUserRelayTokenUserRelayToken;

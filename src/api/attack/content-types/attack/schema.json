@@ -4,7 +4,8 @@
   "info": {
     "singularName": "attack",
     "pluralName": "attacks",
-    "displayName": "Attack"
+    "displayName": "Attack",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -20,6 +21,28 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "result": {
+      "type": "json"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "success",
+        "blocked"
+      ]
+    },
+    "effect_name": {
+      "type": "enumeration",
+      "enum": [
+        "part1_broken",
+        "part2_broken",
+        "part3_broken",
+        "part4_broken"
+      ]
+    },
+    "multiply": {
+      "type": "integer"
     }
   }
 }

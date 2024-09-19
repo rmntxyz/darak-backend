@@ -11,26 +11,41 @@ import {
 export default ({ strapi }) => ({
   async drawWithCoin(
     userId,
-    gachaInfo,
+    gachaInfos,
     draw,
     multiply
   ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
       await deductCurrency(userId, draw, multiply);
 
-      let result: CapsuleResult;
+      let result: CapsuleResult = null;
 
       const random = Math.random();
-      if (random < gachaInfo.probability) {
-        const rewards = drawReward(gachaInfo);
-        let historyId;
+      let probability = 0;
 
-        for (const reward of rewards) {
-          await addRewardToUser(userId, draw.id, reward, multiply);
+      for (const gachaInfo of gachaInfos) {
+        probability += gachaInfo.probability;
+
+        if (random < probability) {
+          const rewards = drawReward(gachaInfo);
+          let historyId;
+
+          for (const reward of rewards) {
+            historyId = await addRewardToUser(
+              userId,
+              draw.id,
+              reward,
+              multiply
+            );
+          }
+
+          result = { rewards, multiply, historyId };
+
+          break;
         }
+      }
 
-        result = { rewards, multiply, historyId };
-      } else {
+      if (random >= probability && !result) {
         const itemId = await drawItem(draw.draw_info, multiply);
         const { item, exp, historyId } = await addItemToUser(
           userId,
@@ -204,7 +219,9 @@ async function addRewardToUser(
   multiply: number
 ) {
   if (reward) {
-    await updateRewards(userId, reward, multiply);
+    await strapi
+      .service("api::reward.reward")
+      .claim(userId, [reward], "gacha_result", multiply);
   }
 
   const history = await strapi.entityService.create(
@@ -214,7 +231,7 @@ async function addRewardToUser(
       data: {
         draw: drawId,
         users_permissions_user: userId,
-        draw_result: { type: reward.type, amount: reward.amount },
+        draw_result: { ...reward },
         multiply,
         publishedAt: new Date(),
       },
@@ -222,26 +239,6 @@ async function addRewardToUser(
   );
 
   return history.id;
-}
-
-async function updateRewards(userId: number, reward: Reward, multiply: number) {
-  switch (reward.type) {
-    case "freebie":
-      await strapi
-        .service("api::freebie.freebie")
-        .updateFreebie(userId, reward.amount * multiply);
-      break;
-    case "star_point":
-      await strapi
-        .service("api::star-point.star-point")
-        .updateStarPoint(userId, reward.amount * multiply, "gacha_result");
-      break;
-    case "wheel_spin":
-      await strapi
-        .service("api::wheel-spin.wheel-spin")
-        .updateWheelSpin(userId, reward.amount * multiply, "gacha_result");
-      break;
-  }
 }
 
 async function addItemToUser(
@@ -347,7 +344,7 @@ async function addItemToUser(
         data: {
           draw: drawId,
           users_permissions_user: userId,
-          draw_result: { item: updatedItem.id },
+          draw_result: { type: "item", item_id: updatedItem.id },
           user_items: { connect: userItems },
           multiply,
           publishedAt: new Date(),

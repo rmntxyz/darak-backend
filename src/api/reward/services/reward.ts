@@ -8,29 +8,41 @@ import { EXP_BY_RARITY, EXP_MULT_FOR_DUPLICATE } from "../../../constant";
 export default factories.createCoreService(
   "api::reward.reward",
   ({ strapi }) => ({
-    claim: async (userId: number, rewards: Reward[], reason: string) => {
+    claim: async (
+      userId: number,
+      rewards: Reward[],
+      reason: string,
+      multiply: number = 1
+    ) => {
       for (const reward of rewards) {
         switch (reward.type) {
           case "exp":
             await strapi
               .service("api::status.status")
               .updateExp(userId, reward.amount);
+
           case "freebie":
             await strapi
               .service("api::freebie.freebie")
-              .updateFreebie(userId, reward.amount);
+              .updateFreebie(userId, reward.amount * multiply);
             break;
 
           case "star_point":
             await strapi
               .service("api::star-point.star-point")
-              .updateStarPoint(userId, reward.amount, reason);
+              .updateStarPoint(userId, reward.amount * multiply, reason);
             break;
 
           case "wheel_spin":
             await strapi
               .service("api::wheel-spin.wheel-spin")
-              .updateWheelSpin(userId, reward.amount, reason);
+              .updateWheelSpin(userId, reward.amount * multiply, reason);
+            break;
+
+          case "shield":
+            await strapi
+              .service("api::shield.shield")
+              .updateShield(userId, reward.amount * multiply, reason);
             break;
 
           case "relay_token":
@@ -41,7 +53,7 @@ export default factories.createCoreService(
             if (relay) {
               await strapi
                 .service("api::user-relay-token.user-relay-token")
-                .updateRelayToken(userId, relay.id, reward.amount);
+                .updateRelayToken(userId, relay.id, reward.amount * multiply);
             }
             break;
 

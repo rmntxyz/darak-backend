@@ -1,0 +1,37 @@
+{
+  "kind": "singleType",
+  "collectionName": "configs",
+  "info": {
+    "singularName": "config",
+    "pluralName": "configs",
+    "displayName": "Config",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ITEM_PROBABILITY": {
+      "type": "json"
+    },
+    "EXP_MULT_FOR_DUPLICATE": {
+      "type": "float"
+    },
+    "EXP_BY_RARITY": {
+      "type": "json"
+    },
+    "ATTACK_REWARDS": {
+      "type": "json"
+    },
+    "IOS_APP_VERSION": {
+      "type": "string"
+    },
+    "ANDROID_APP_VERSION": {
+      "type": "string"
+    },
+    "REPAIR_COST": {
+      "type": "json"
+    }
+  }
+}

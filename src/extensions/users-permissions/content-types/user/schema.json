@@ -209,6 +209,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::user-profile-picture.user-profile-picture"
+    },
+    "shield": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::shield.shield",
+      "mappedBy": "user"
     }
   }
 }

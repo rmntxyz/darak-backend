@@ -84,6 +84,12 @@ module.exports = (plugin) => {
         .getWheelSpin(user.id);
     }
 
+    if (user.shield === null) {
+      user.shield = await strapi
+        .service("api::shield.shield")
+        .getShield(user.id);
+    }
+
     // TEMP
     if (user.trading_credit === null) {
       user.trading_credit = await strapi
@@ -164,7 +170,7 @@ module.exports = (plugin) => {
       daily_trade_count: 0,
       daily_draw_count: 0,
       gacha_info: gachaInfo,
-      status_effects: statusEffects,
+      user_status_effects: statusEffects,
     });
   };
 

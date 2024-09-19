@@ -150,16 +150,38 @@ export const ErrorCode = {
     message: "Invalid multiply",
   },
 
+  // wheel spins
+  NOT_ENOUGH_WHEEL_SPINS: {
+    code: 4001,
+    message: "Not enough wheel spins",
+  },
+
   // get random items
   NOT_FOUND_ITEM_LIST: {
     code: 5001,
     message: "Not found item list",
   },
 
-  // wheel spins
-  NOT_ENOUGH_WHEEL_SPINS: {
-    code: 4001,
-    message: "Not enough wheel spins",
+  // shield
+  NOT_ENOUGH_SHIELDS: {
+    code: 6001,
+    message: "Not enough shield",
+  },
+
+  // attack
+  UNAUTHORIZED_ATTACK: {
+    code: 7001,
+    message: "Unauthorized attack",
+  },
+  // not enough star points
+  NOT_ENOUGH_STAR_POINT: {
+    code: 7002,
+    message: "Not enough star points",
+  },
+  // effect not active
+  EFFECT_NOT_ACTIVE: {
+    code: 7003,
+    message: "Effect is not active",
   },
 };
 
@@ -184,15 +206,6 @@ export const TRADE_ITEM_LIMIT = 3;
 export const AVAILABLE_MULTIPLY = [1, 2, 3, 5, 10 /*, 20*/];
 
 export const COUNTING_RARITIES = ["common", "uncommon", "rare", "unique"];
-
-// 100 레벨까지
-export const EXP_TABLE = [
-  0, 500, 1100, 1800, 2600, 3500, 4500, 5600, 6800, 8100, 9500, 11000, 12600,
-  14300, 16100, 18000, 20000, 22100, 24300, 26600, 29000, 31500, 34100, 36800,
-  39600, 42500, 45500, 48600, 51800, 55100, 58500, 62000, 65600, 69300, 73100,
-  77000, 81000, 85100, 89300, 93600, 98000, 102500, 107100, 111800, 116600,
-  121500, 126500, 131600, 136800, 142100,
-];
 
 export const EXP_BY_RARITY = {
   common: 30,

@@ -54,11 +54,10 @@ export default {
     }
 
     if (currency_type === "freebie") {
-      const gachaInfo = await strapi.entityService.findOne(
+      const gachaInfos = await strapi.entityService.findMany(
         "api::gacha-info.gacha-info",
-        1,
         {
-          fields: ["probability"],
+          fields: ["probability", "type"],
           populate: {
             reward_table: {
               populate: {
@@ -73,7 +72,7 @@ export default {
 
       const result = await strapi
         .service("api::random-capsule.random-capsule")
-        .drawWithCoin(userId, gachaInfo, draw, multiply);
+        .drawWithCoin(userId, gachaInfos, draw, multiply);
 
       if (result) {
         const { locale } = ctx.query;

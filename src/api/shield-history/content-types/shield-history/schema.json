@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shield_histories",
+  "info": {
+    "singularName": "shield-history",
+    "pluralName": "shield-histories",
+    "displayName": "ShieldHistory",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "shield": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shield.shield",
+      "inversedBy": "shield_histories"
+    },
+    "change": {
+      "type": "integer"
+    },
+    "result": {
+      "type": "integer"
+    },
+    "detail": {
+      "type": "enumeration",
+      "enum": [
+        "gacha_result",
+        "attack",
+        "steal"
+      ]
+    },
+    "date": {
+      "type": "datetime"
+    }
+  }
+}

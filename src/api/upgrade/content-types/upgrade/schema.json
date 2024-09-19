@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "upgrades",
+  "info": {
+    "singularName": "upgrade",
+    "pluralName": "upgrades",
+    "displayName": "Upgrade",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "uid"
+    },
+    "desc": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "details": {
+      "type": "json"
+    }
+  }
+}

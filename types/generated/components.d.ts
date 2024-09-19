@@ -113,6 +113,15 @@ export interface EffectDetail extends Schema.Component {
   };
 }
 
+export interface EffectName extends Schema.Component {
+  collectionName: 'components_effect_names';
+  info: {
+    displayName: 'name';
+    icon: 'link';
+  };
+  attributes: {};
+}
+
 export interface HistoryFreeGiftHistory extends Schema.Component {
   collectionName: 'components_history_free_gift_histories';
   info: {
@@ -341,7 +350,10 @@ export interface RewardWithAmount extends Schema.Component {
         'wheel_spin',
         'exp',
         'relay_token',
-        'ranking_relay_token'
+        'ranking_relay_token',
+        'shield',
+        'attack',
+        'steal'
       ]
     >;
     amount: Attribute.Integer;
@@ -412,6 +424,7 @@ declare module '@strapi/strapi' {
       'decoration.line': DecorationLine;
       'decoration.text': DecorationText;
       'effect.detail': EffectDetail;
+      'effect.name': EffectName;
       'history.free-gift-history': HistoryFreeGiftHistory;
       'history.relay-rewards': HistoryRelayRewards;
       'history.relay': HistoryRelay;

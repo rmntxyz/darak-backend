@@ -41,35 +41,49 @@ export default factories.createCoreService(
               end_time: 0,
               stack: 0,
               active: false,
+              publishedAt: new Date(),
             },
             ...UserStatusEffectOptions,
           }
         );
       }
 
+      this.refresh(userStatusEffect);
+
       return userStatusEffect;
     },
 
-    async activate(
-      userId: number,
-      userEffect: UserStatusEffect,
-      stackToAdd: number = 1
-    ) {
+    async updateStack(userEffect: UserStatusEffect, change: number = 1) {
       let {
         id,
         start_time,
         end_time,
         stack,
+        active,
         status_effect: { duration, max_stack },
       } = userEffect;
 
-      // renew start_time and end_time
-      start_time = (Date.now() / 1000) | 0;
-      end_time = duration > 0 ? start_time + duration : 0;
+      const newStack = Math.max(0, Math.min(stack + change, max_stack));
 
-      if (max_stack > 1 && stack < max_stack) {
-        stack = Math.min(stack + stackToAdd, max_stack);
+      if (stack === newStack) {
+        return userEffect;
       }
+
+      if (newStack === 0) {
+        start_time = 0;
+        end_time = 0;
+        active = false;
+      } else if (newStack > 0 && stack === 0) {
+        start_time = (Date.now() / 1000) | 0;
+        end_time = duration > 0 ? start_time + duration : 0;
+        active = true;
+      } else if (newStack > 0 && stack > 0) {
+        if (duration > 0) {
+          end_time = (Date.now() / 1000) | (0 + duration);
+        }
+      }
+
+      stack = newStack;
 
       const updated = await strapi.entityService.update(
         "api::user-status-effect.user-status-effect",
@@ -79,7 +93,7 @@ export default factories.createCoreService(
             start_time,
             end_time,
             stack,
-            active: true,
+            active,
           },
         }
       );
@@ -88,22 +102,35 @@ export default factories.createCoreService(
     },
 
     async getActiveEffects(userId: number) {
-      const userEffects = await strapi.entityService.findMany(
-        "api::user-status-effect.user-status-effect",
+      const { user_status_effects } = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        userId,
         {
-          filters: {
-            user: { id: userId },
-            active: true,
+          fields: ["id"],
+          populate: {
+            user_status_effects: {
+              ...UserStatusEffectOptions,
+            },
           },
-          ...UserStatusEffectOptions,
         }
       );
 
-      for (const effect of userEffects) {
+      const { REPAIR_COST } = await strapi
+        .service("api::config.config")
+        .getConfig();
+
+      for (const effect of user_status_effects) {
         await this.refresh(effect);
+
+        let repair_cost = 0;
+        if (effect.active) {
+          repair_cost = REPAIR_COST[`stack${effect.stack}`].amount;
+        }
+
+        effect.repair_cost = repair_cost;
       }
 
-      return userEffects.filter((effect) => effect.active);
+      return user_status_effects.filter((effect) => effect.active);
     },
 
     async refresh(userEffect: UserStatusEffect) {
@@ -142,8 +169,8 @@ export const UserStatusEffectOptions = {
     status_effect: {
       ...StatusEffectOptions,
     },
-    user: {
-      fields: ["id"],
-    },
+    // user: {
+    //   fields: ["id"],
+    // },
   },
 };

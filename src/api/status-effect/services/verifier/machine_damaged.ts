@@ -1,13 +1,13 @@
 export default {
-  verify: async (userEffect: UserStatusEffect, userId: number, data: any) => {
-    const { attacker, target, ref } = data;
+  verify: async (
+    userEffect: UserStatusEffect,
+    userId: number,
+    data: any = {}
+  ): Promise<boolean> => {
+    const { target, drawHistory } = data;
 
-    if (!attacker || !target) {
-      return false;
-    }
-
-    if (userId !== attacker.id) {
-      return false;
+    if (!target) {
+      throw new Error("Target not found");
     }
 
     const {
@@ -16,28 +16,29 @@ export default {
     } = userEffect;
 
     if (stack >= max_stack) {
-      return false;
+      throw new Error("Max stack reached");
     }
 
-    const drawHistory = await strapi.entityService.findOne(
-      "api::draw-history.draw-history",
-      ref,
-      {
-        fields: ["id", "multiply", "draw_result"],
-        populate: {
-          users_permissions_user: {
-            fields: ["id"],
-          },
-        },
-      }
-    );
-
     if (drawHistory.draw_result.type !== "attack") {
-      return false;
+      throw new Error("Invalid draw type");
     }
 
     if (drawHistory.users_permissions_user.id !== userId) {
-      return false;
+      throw new Error("User is not the owner of the draw history");
+    }
+
+    if (drawHistory.reviewed) {
+      throw new Error("Draw history already reviewed");
+    } else {
+      await strapi.entityService.update(
+        "api::draw-history.draw-history",
+        drawHistory.id,
+        {
+          data: {
+            reviewed: true,
+          },
+        }
+      );
     }
 
     return true;

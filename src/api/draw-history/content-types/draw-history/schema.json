@@ -32,6 +32,10 @@
     },
     "multiply": {
       "type": "integer"
+    },
+    "reviewed": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

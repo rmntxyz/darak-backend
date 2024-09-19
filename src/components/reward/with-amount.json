@@ -22,7 +22,10 @@
         "wheel_spin",
         "exp",
         "relay_token",
-        "ranking_relay_token"
+        "ranking_relay_token",
+        "shield",
+        "attack",
+        "steal"
       ]
     },
     "amount": {

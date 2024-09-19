@@ -11,62 +11,75 @@ export default factories.createCoreService(
   "api::daily-quest-progress.daily-quest-progress",
   ({ strapi }) => ({
     async getTodayQuests(userId: number) {
-      let progresses = (await getDailyQuestProgresses(
-        userId
-      )) as DailyQuestProgress[];
+      return await strapi.db.transaction(async ({ trx }) => {
+        let [{ deactivated }] = await strapi.db
+          .connection("up_users")
+          .transacting(trx)
+          .forUpdate()
+          .where("id", userId)
+          .select("deactivated");
 
-      if (progresses!.length === 0) {
-        const dayIndex = getDayFromRefDate(new Date());
-        const day = DAYS[dayIndex];
+        if (!deactivated) {
+          return [];
+        }
 
-        const dailyQuests = await strapi.entityService.findMany(
-          "api::daily-quest.daily-quest",
-          {
-            filters: {
-              days: {
-                $contains: day,
-              },
-            },
-            populate: {
-              rewards: true,
-            },
-          }
-        );
+        let progresses = (await getDailyQuestProgresses(
+          userId
+        )) as DailyQuestProgress[];
 
-        const quests: any[] = [];
+        if (progresses!.length === 0) {
+          const dayIndex = getDayFromRefDate(new Date());
+          const day = DAYS[dayIndex];
 
-        for (const dailyQuest of dailyQuests) {
-          let progress = await strapi.entityService.create(
-            "api::daily-quest-progress.daily-quest-progress",
+          const dailyQuests = await strapi.entityService.findMany(
+            "api::daily-quest.daily-quest",
             {
-              ...progressDefaultOptions,
-              data: {
-                daily_quest: { id: dailyQuest.id },
-                progress: 0,
-                is_reward_claimed: false,
-                is_completed: false,
-                completed_date: null,
-                users_permissions_user: {
-                  id: userId,
+              filters: {
+                days: {
+                  $contains: day,
                 },
-                publishedAt: new Date(),
+              },
+              populate: {
+                rewards: true,
               },
             }
           );
 
-          // 쿼리 한 결과랑 같은 폼을 만들어 준다.
-          progresses.push({ ...progress, daily_quest: dailyQuest });
-        }
-      }
+          const quests: any[] = [];
 
-      for (const progress of progresses) {
-        if (!progress.is_completed) {
-          const verified = await progressHandler.verify(userId, progress);
-          Object.assign(progress, verified);
-        }
-      }
+          for (const dailyQuest of dailyQuests) {
+            let progress = await strapi.entityService.create(
+              "api::daily-quest-progress.daily-quest-progress",
+              {
+                ...progressDefaultOptions,
+                data: {
+                  daily_quest: { id: dailyQuest.id },
+                  progress: 0,
+                  is_reward_claimed: false,
+                  is_completed: false,
+                  completed_date: null,
+                  users_permissions_user: {
+                    id: userId,
+                  },
+                  publishedAt: new Date(),
+                },
+              }
+            );
 
-      return progresses;
+            // 쿼리 한 결과랑 같은 폼을 만들어 준다.
+            progresses.push({ ...progress, daily_quest: dailyQuest });
+          }
+        }
+
+        for (const progress of progresses) {
+          if (!progress.is_completed) {
+            const verified = await progressHandler.verify(userId, progress);
+            Object.assign(progress, verified);
+          }
+        }
+
+        return progresses;
+      });
     },
 
     async verify(userId: number, progressId: number) {
@@ -103,40 +116,40 @@ export default factories.createCoreService(
       return progress;
     },
 
-    async verifyAll(userId: number) {
-      // get all daily quests
-      let progresses: any = [];
+    // async verifyAll(userId: number) {
+    //   // get all daily quests
+    //   let progresses: any = [];
 
-      await strapi.db.transaction(async () => {
-        const dailyQuestProgresses = await strapi
-          .service("api::daily-quest-progress.daily-quest-progress")
-          .getTodayQuests(userId);
+    //   await strapi.db.transaction(async () => {
+    //     const dailyQuestProgresses = await strapi
+    //       .service("api::daily-quest-progress.daily-quest-progress")
+    //       .getTodayQuests(userId);
 
-        const user = await strapi.entityService.findOne(
-          "plugin::users-permissions.user",
-          userId,
-          {
-            fields: ["id"],
-          }
-        );
+    //     const user = await strapi.entityService.findOne(
+    //       "plugin::users-permissions.user",
+    //       userId,
+    //       {
+    //         fields: ["id"],
+    //       }
+    //     );
 
-        for (const dailyQuestProgress of dailyQuestProgresses) {
-          let progress = null;
+    //     for (const dailyQuestProgress of dailyQuestProgresses) {
+    //       let progress = null;
 
-          if (!dailyQuestProgress.is_completed) {
-            progress = await progressHandler.verify(user, dailyQuestProgress);
-          }
+    //       if (!dailyQuestProgress.is_completed) {
+    //         progress = await progressHandler.verify(user, dailyQuestProgress);
+    //       }
 
-          if (!progress) {
-            progress = dailyQuestProgress;
-          }
+    //       if (!progress) {
+    //         progress = dailyQuestProgress;
+    //       }
 
-          progresses.push(progress);
-        }
-      });
+    //       progresses.push(progress);
+    //     }
+    //   });
 
-      return progresses;
-    },
+    //   return progresses;
+    // },
 
     async claimRewards(userId: number, progressId: number) {
       let results: any = null;
@@ -206,7 +219,6 @@ export const progressDefaultOptions = {
 async function getDailyQuestProgresses(userId: number) {
   const now = new Date();
   const refTimestamp = getRefTimestamp(now);
-
   return await strapi.entityService.findMany(
     "api::daily-quest-progress.daily-quest-progress",
     {
