@@ -9,6 +9,15 @@ let LAST_CACHE_TIME = 0;
 // const CACHE_DURATION = 1000 * 60 * 5;
 const CACHE_DURATION = 1000 * 60 * 1;
 
+// TEMP
+import {
+  ITEM_PROBABILITY,
+  EXP_MULT_FOR_DUPLICATE,
+  EXP_BY_RARITY,
+  ATTACK_REWARDS,
+  REPAIR_COST,
+} from "../../../constant";
+
 export default factories.createCoreService(
   "api::config.config",
   ({ strapi }) => ({
@@ -17,10 +26,18 @@ export default factories.createCoreService(
         return CACHED_CONFIG;
       }
 
-      const config = await strapi.entityService.findOne(
-        "api::config.config",
-        1
-      );
+      let config = await strapi.entityService.findOne("api::config.config", 1);
+
+      // TEMP fallback
+      if (config === null) {
+        config = {
+          ITEM_PROBABILITY,
+          EXP_MULT_FOR_DUPLICATE,
+          EXP_BY_RARITY,
+          ATTACK_REWARDS,
+          REPAIR_COST,
+        };
+      }
 
       CACHED_CONFIG = config;
       LAST_CACHE_TIME = Date.now();

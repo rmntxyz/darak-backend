@@ -225,6 +225,26 @@ export const ITEM_PROBABILITY = {
   secret: 0.01,
 };
 
+export const ATTACK_REWARDS = {
+  blocked: {
+    type: "star_point",
+    amount: 3000,
+  },
+  success: {
+    type: "star_point",
+    amount: 1000,
+  },
+};
+
+export const REPAIR_COST = {
+  stack1: {
+    amount: 500,
+  },
+  stack2: {
+    amount: 1000,
+  },
+};
+
 // deprecated
 export const DAILY_DRAW_LIMIT = 5;
 export const RANKING_LIMIT = 10;
