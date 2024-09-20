@@ -2711,7 +2711,9 @@ export interface ApiStarPointHistoryStarPointHistory
         'room_complete',
         'attack',
         'repair',
-        'steal'
+        'steal',
+        'robbed',
+        'redeem'
       ]
     >;
     inventories: Attribute.Relation<
@@ -3550,7 +3552,8 @@ export interface ApiWheelSpinHistoryWheelSpinHistory
         'level_up',
         'free_gift',
         'check_in',
-        'room_complete'
+        'room_complete',
+        'redeem'
       ]
     >;
     date: Attribute.DateTime;

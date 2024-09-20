@@ -24,7 +24,8 @@
         "level_up",
         "free_gift",
         "check_in",
-        "room_complete"
+        "room_complete",
+        "redeem"
       ]
     },
     "date": {

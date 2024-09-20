@@ -183,6 +183,24 @@ export const ErrorCode = {
     code: 7003,
     message: "Effect is not active",
   },
+
+  // event-coupon
+  COUPON_CODE_NOT_FOUND: {
+    code: 8001,
+    message: "Coupon not found",
+  },
+  COUPON_ALREADY_REDEEMED: {
+    code: 8002,
+    message: "Coupon already redeemed",
+  },
+  COUPON_NOT_STARTED: {
+    code: 8003,
+    message: "Coupon not started",
+  },
+  COUPON_EXPIRED: {
+    code: 8004,
+    message: "Coupon expired",
+  },
 };
 
 export const REACTIVATION_PERIOD = 15 * 24 * 60 * 60 * 1000; // 15 days

@@ -40,7 +40,9 @@
         "room_complete",
         "attack",
         "repair",
-        "steal"
+        "steal",
+        "robbed",
+        "redeem"
       ]
     },
     "inventories": {

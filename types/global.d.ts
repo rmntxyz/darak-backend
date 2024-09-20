@@ -89,12 +89,14 @@ type StarPointHistory = {
 type StarPointChangeDetail =
   // -
   | "repair"
-  | "attack"
-  | "steal"
+  | "robbed"
   | "item_draw"
   | "gacha"
   | "room_unlock"
   // +
+  | "redeem"
+  | "attack"
+  | "steal"
   | "item_sale"
   | "gacha_result"
   | "spin_result"
@@ -111,6 +113,7 @@ type WheelSpinChangeDetail =
   // -
   | "spin"
   // +
+  | "redeem"
   | "gacha_result"
   | "level_up"
   | "check_in"
