@@ -19,7 +19,7 @@ export default factories.createCoreService(
           .where("id", userId)
           .select("deactivated");
 
-        if (!deactivated) {
+        if (deactivated) {
           return [];
         }
 

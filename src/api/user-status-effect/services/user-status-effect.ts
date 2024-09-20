@@ -95,6 +95,7 @@ export default factories.createCoreService(
             stack,
             active,
           },
+          ...UserStatusEffectOptions,
         }
       );
 

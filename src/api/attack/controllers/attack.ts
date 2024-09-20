@@ -136,7 +136,7 @@ export default factories.createCoreController(
         .updateStack(userEffect, userEffect.stack * -1);
 
       return {
-        user_status_effect: updated,
+        // user_status_effect: updated,
         cost,
         remaining: amount,
       };
