@@ -32,6 +32,7 @@ const roomsDefaultOptions = {
         "name",
         "desc",
         "rarity",
+        "price",
         "category",
         "attribute",
         "current_serial_number",
