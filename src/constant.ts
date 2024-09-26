@@ -101,6 +101,10 @@ export const ErrorCode = {
     code: 1015,
     message: "not enough partner items",
   },
+  DEVICE_TOKEN_NOT_FOUND: {
+    code: 1016,
+    message: "Device token not found",
+  },
 
   // Inventory Management
   INVALID_ITEMS_STATUS: {

@@ -606,7 +606,7 @@ offset ${pageNum - 1} * ${pageSize};
       const { notification } = strapi as unknown as ExtendedStrapi;
       const { title, body } = TRADE_NOTIFICATIONS[reason];
 
-      notification.sendNotification(device_token, {
+      return await notification.sendNotification(device_token, {
         notification: {
           title: title[language],
           body: body[language].replace("${username}", username),
@@ -618,6 +618,8 @@ offset ${pageNum - 1} * ${pageSize};
           }),
         },
       });
+    } else {
+      throw ErrorCode.DEVICE_TOKEN_NOT_FOUND;
     }
   },
 
