@@ -335,6 +335,7 @@ offset ${pageNum - 1} * ${pageSize};
           "api::inventory.inventory",
           inventoryId,
           {
+            fields: ["id", "status"],
             populate: {
               users_permissions_user: {
                 fields: ["id"],
@@ -583,13 +584,15 @@ offset ${pageNum - 1} * ${pageSize};
     to: number,
     reason: keyof typeof TRADE_NOTIFICATIONS
   ) => {
-    const { device_token, language } = await strapi.entityService.findOne(
+    let { device_token, language } = await strapi.entityService.findOne(
       "plugin::users-permissions.user",
       to,
       {
         fields: ["device_token", "language"],
       }
     );
+
+    language = language || "en";
 
     if (device_token) {
       const { username } = await strapi.entityService.findOne(

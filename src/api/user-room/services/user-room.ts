@@ -170,82 +170,91 @@ export default factories.createCoreService(
       itemsToAdd: number[],
       itemsToRemove: number[]
     ) {
-      const {
-        id,
-        start_time,
-        owned_items,
-        room,
-        completed: prev_completed,
-      } = userRoom;
+      await strapi.db.transaction(async ({ trx }) => {
+        await strapi.db
+          .connection("user_rooms")
+          .transacting(trx)
+          .forUpdate()
+          .where("id", userRoom.id)
+          .select("owned_items");
 
-      for (const itemId of itemsToAdd) {
-        if (!owned_items[itemId]) {
-          owned_items[itemId] = 0;
+        const {
+          id,
+          start_time,
+          owned_items,
+          room,
+          completed: prev_completed,
+        } = userRoom;
+
+        for (const itemId of itemsToAdd) {
+          if (!owned_items[itemId]) {
+            owned_items[itemId] = 0;
+          }
+          owned_items[itemId] += 1;
         }
-        owned_items[itemId] += 1;
-      }
 
-      for (const itemId of itemsToRemove) {
-        if (owned_items[itemId]) {
-          owned_items[itemId] -= 1;
+        for (const itemId of itemsToRemove) {
+          if (owned_items[itemId]) {
+            owned_items[itemId] -= 1;
+          }
         }
-      }
 
-      const itemList = room.items.filter(
-        (item) =>
-          item.category === "decoration" &&
-          COUNTING_RARITIES.includes(item.rarity)
-      );
+        const itemList = room.items.filter(
+          (item) =>
+            item.category === "decoration" &&
+            COUNTING_RARITIES.includes(item.rarity)
+        );
 
-      const rarityMap = itemList.reduce((acc, item) => {
-        acc[item.id] = item.rarity;
-        return acc;
-      }, {});
+        const rarityMap = itemList.reduce((acc, item) => {
+          acc[item.id] = item.rarity;
+          return acc;
+        }, {});
 
-      const total = itemList.length;
+        const total = itemList.length;
 
-      const current = Object.entries(owned_items).filter(
-        ([itemId, count]) =>
-          count > 0 && COUNTING_RARITIES.includes(rarityMap[itemId])
-      ).length;
+        const current = Object.entries(owned_items).filter(
+          ([itemId, count]) =>
+            count > 0 && COUNTING_RARITIES.includes(rarityMap[itemId])
+        ).length;
 
-      const completion_rate = Math.round((current / total) * 100);
+        const completion_rate = Math.round((current / total) * 100);
 
-      const completed = completion_rate === 100;
+        const completed = completion_rate === 100;
 
-      const data: Partial<UserRoom> = {
-        owned_items,
-        completion_rate,
-        completed,
-      };
+        const data: Partial<UserRoom> = {
+          owned_items,
+          completion_rate,
+          completed,
+        };
 
-      if (!prev_completed && completed) {
-        const now = new Date();
-        data.completion_time = now;
-        data.duration = now.getTime() - new Date(start_time).getTime();
-      }
+        if (!prev_completed && completed) {
+          const now = new Date();
+          data.completion_time = now;
+          data.duration = now.getTime() - new Date(start_time).getTime();
+        }
 
-      const updatedUserRoom = await strapi.entityService.update(
-        "api::user-room.user-room",
-        id,
-        {
-          data,
-          populate: {
-            user: {
-              fields: ["id"],
+        const updatedUserRoom = await strapi.entityService.update(
+          "api::user-room.user-room",
+          id,
+          {
+            data,
+            populate: {
+              user: {
+                fields: ["id"],
+              },
+              room: {
+                fields: ["id"],
+              },
             },
-            room: {
-              fields: ["id"],
-            },
-          },
-        }
-      );
+          }
+        );
 
-      if (prev_completed !== completed) {
-        await strapi
-          .service("api::update-manager.update-manager")
-          .updateRoomCompletion(updatedUserRoom);
-      }
+        if (prev_completed !== completed) {
+          await strapi
+            .service("api::update-manager.update-manager")
+            .updateRoomCompletion(updatedUserRoom);
+        }
+      });
     },
 
     async getUserRooms(userId: number) {
@@ -373,7 +382,13 @@ export default factories.createCoreService(
                   },
                   items: {
                     fields: ["category", "rarity"],
+                    populate: {
+                      image: {
+                        fields: ["url"],
+                      },
+                    },
                   },
+                  complete_rewards: true,
                   localizations: {
                     fields: ["name", "locale"],
                   },

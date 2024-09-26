@@ -69,26 +69,28 @@ export default ({ strapi }) => ({
   },
 
   async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
-    await deductCurrency(userId, draw, multiply);
+    return await strapi.db.transaction(async ({ trx }) => {
+      await deductCurrency(userId, draw, multiply);
 
-    const itemId = await drawItem(draw.draw_info, multiply);
-    const { item, exp, historyId } = await addItemToUser(
-      userId,
-      draw.id,
-      itemId,
-      multiply
-    );
+      const itemId = await drawItem(draw.draw_info, multiply);
+      const { item, exp, historyId } = await addItemToUser(
+        userId,
+        draw.id,
+        itemId,
+        multiply
+      );
 
-    const result: CapsuleResult = {
-      rewards: [{ type: "item", detail: item, exp }],
-      multiply,
-      historyId,
-    };
+      const result: CapsuleResult = {
+        rewards: [{ type: "item", detail: item, exp }],
+        multiply,
+        historyId,
+      };
 
-    result.events = [];
-    await checkRelayEvent(userId, result);
+      result.events = [];
+      await checkRelayEvent(userId, result);
 
-    return result;
+      return result;
+    });
   },
 });
 
@@ -247,9 +249,9 @@ async function addItemToUser(
   itemId: number,
   multiply: number
 ): Promise<{ item: Partial<Item>; exp: number; historyId: number }> {
-  const userItems = [];
-
   return (await strapi.db.transaction(async ({ trx }) => {
+    const userItems = [];
+
     const [{ current_serial_number }] = await strapi.db
       .connection("items")
       .transacting(trx)

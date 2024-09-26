@@ -132,22 +132,6 @@ export default {
     }
 
     return await strapi.db.transaction(async () => {
-      // check trading credit
-      const tradingCredit = await strapi
-        .service("api::trading-credit.trading-credit")
-        .getTradingCredit(userId);
-
-      if (tradingCredit.current <= 0) {
-        return ctx.badRequest(
-          "not enough trading credits",
-          ErrorCode.NOT_ENOUGH_TRADING_CREDITS
-        );
-      } else {
-        await strapi
-          .service("api::trading-credit.trading-credit")
-          .updateTradingCredit(userId, -1, "trade");
-      }
-
       // check if user has enough items in inventory to trade
       const proposerItemsInInventory = await strapi
         .service("api::trade-process.trade-process")
@@ -171,20 +155,42 @@ export default {
         );
       }
 
+      // check trading credit
+      const tradingCredit = await strapi
+        .service("api::trading-credit.trading-credit")
+        .getTradingCredit(userId);
+
+      if (tradingCredit.current <= 0) {
+        return ctx.badRequest(
+          "not enough trading credits",
+          ErrorCode.NOT_ENOUGH_TRADING_CREDITS
+        );
+      } else {
+        await strapi
+          .service("api::trading-credit.trading-credit")
+          .updateTradingCredit(userId, -1, "trade");
+      }
+
       const trade = await strapi
         .service("api::trade-process.trade-process")
         .proposeTrade(userId, partnerId, proposerItems, partnerItems);
 
       // send notification to partner
-      strapi
-        .service("api::trade-process.trade-process")
-        .sendTradeNotification(trade.id, userId, partnerId, "trade_proposed");
+      try {
+        const result = await strapi
+          .service("api::trade-process.trade-process")
+          .sendTradeNotification(trade.id, userId, partnerId, "trade_proposed");
+        console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
 
       return trade;
     });
   },
 
-  // NOT USED
+  // deprecated
+  // 처음부터 다시 구현해야 함.
   "counter-propose-trade": async (ctx) => {
     const userId = ctx.state.user?.id;
 
@@ -391,19 +397,24 @@ export default {
         return ctx.badRequest("trading failed", errorCode);
       }
 
-      // send notification to proposer
-      strapi
-        .service("api::trade-process.trade-process")
-        .sendTradeNotification(
-          trade.id,
-          userId,
-          trade.proposer.id,
-          "trade_accepted"
-        );
-
       const status = await strapi
         .service("api::trade-process.trade-process")
         .changeStatus(trade, "success", userId);
+
+      // send notification to proposer
+      try {
+        const result = strapi
+          .service("api::trade-process.trade-process")
+          .sendTradeNotification(
+            trade.id,
+            userId,
+            trade.proposer.id,
+            "trade_accepted"
+          );
+        console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
 
       return status;
     });
@@ -459,14 +470,19 @@ export default {
 
       if (trade.status === "proposed") {
         // send notification to proposer or partner
-        strapi
-          .service("api::trade-process.trade-process")
-          .sendTradeNotification(
-            trade.id,
-            userId,
-            isUserProposer ? trade.partner.id : trade.proposer.id,
-            isUserProposer ? "trade_canceled" : "trade_rejected"
-          );
+        try {
+          const result = await strapi
+            .service("api::trade-process.trade-process")
+            .sendTradeNotification(
+              trade.id,
+              userId,
+              isUserProposer ? trade.partner.id : trade.proposer.id,
+              isUserProposer ? "trade_canceled" : "trade_rejected"
+            );
+          console.log(result);
+        } catch (error) {
+          console.error(error);
+        }
 
         return await strapi
           .service("api::trade-process.trade-process")
