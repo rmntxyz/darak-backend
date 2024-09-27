@@ -66,19 +66,26 @@ export default {
     return exist ? 200 : 400;
   },
   "reset-user-room": async (ctx) => {
-    // strapi transaction
-    // const result = await strapi.db.transaction(async () => {
-    // find all user rooms
     const userRooms = await strapi.entityService.findMany(
       "api::user-room.user-room",
       {
+        fields: [
+          "id",
+          "start_time",
+          "completed",
+          "completion_rate",
+          "owned_items",
+        ],
         populate: {
           room: {
             fields: ["id"],
             populate: {
-              draws: {
-                fields: ["id"],
+              items: {
+                fields: ["id", "category", "rarity"],
               },
+              // draws: {
+              //   fields: ["id"],
+              // },
             },
           },
           user: {
@@ -88,46 +95,128 @@ export default {
       }
     );
 
-    const promises = userRooms.map(async (userRoom) => {
-      const id = userRoom.id;
-      const userId = userRoom.user.id;
-      const userRoomInfo = await strapi
-        .service("api::admin.admin")
-        .getLatestUserRoomInfo(userRoom);
+    const brokens = [];
 
-      const result = await strapi.entityService.update(
-        "api::user-room.user-room",
-        id,
+    const COUNTING_RARITIES = ["common", "uncommon", "rare", "unique"];
+
+    const getBrokens = userRooms.map(async (userRoom) => {
+      const { id, user, room, owned_items } = userRoom;
+      const userId = user.id;
+      const roomId = room.id;
+
+      const inventories = await strapi.entityService.findMany(
+        "api::inventory.inventory",
         {
-          data: userRoomInfo,
+          filters: {
+            users_permissions_user: { id: userId },
+            item: { room: { id: roomId } },
+          },
+          fields: ["id", "updatedAt"],
+          populate: {
+            item: {
+              fields: ["id"],
+            },
+          },
+          sort: "updatedAt",
         }
       );
 
-      // return userRoomInfo;
-      console.log(`user ${userId}, user-room ${id} done`);
+      const inventory_items = inventories.reduce((acc, inventory) => {
+        acc[inventory.item.id] = (acc[inventory.item.id] || 0) + 1;
+        return acc;
+      }, {});
 
-      return result;
+      const differences = diff(owned_items, inventory_items);
+
+      if (differences) {
+        const list = new Set();
+        for (const item of room.items) {
+          if (
+            item.category !== "built-in" &&
+            COUNTING_RARITIES.includes(item.rarity)
+          ) {
+            list.add(item.id);
+          }
+        }
+
+        brokens.push({
+          userRoom,
+          ledger: list,
+          ordered_inventories: inventories,
+          owned_items,
+          inventory_items,
+        });
+      }
     });
 
-    const result = await Promise.all(promises);
-    console.log("completed");
-    return result;
-    // });
+    await Promise.all(getBrokens);
 
-    // return result;
+    const fixes = brokens.map(async (broken) => {
+      const { ledger, ordered_inventories, inventory_items, userRoom } = broken;
+      const { start_time } = userRoom;
+      const data: any = {
+        owned_items: inventory_items,
+        completed: false,
+        completion_time: null,
+        completion_rate: 0,
+        duration: null,
+      };
+
+      const total = ledger.size;
+
+      for (const userItem of ordered_inventories) {
+        if (ledger.has(userItem.item.id)) {
+          ledger.delete(userItem.item.id);
+        }
+
+        if (ledger.size === 0) {
+          data.completion_time = userItem.updatedAt;
+          data.duration =
+            new Date(userItem.updatedAt).getTime() -
+            new Date(start_time).getTime();
+          data.completed = true;
+          break;
+        }
+      }
+
+      data.completion_rate = Math.round(((total - ledger.size) / total) * 100);
+
+      // return data;
+
+      return await strapi.entityService.update(
+        "api::user-room.user-room",
+        userRoom.id,
+        {
+          data,
+        }
+      );
+    });
+
+    console.log("completed");
+    return await Promise.all(fixes);
   },
 
   "check-user-room": async (ctx) => {
     const userRooms = await strapi.entityService.findMany(
       "api::user-room.user-room",
       {
+        fields: [
+          "id",
+          "start_time",
+          "completed",
+          "completion_rate",
+          "owned_items",
+        ],
         populate: {
           room: {
             fields: ["id"],
             populate: {
-              draws: {
-                fields: ["id"],
+              items: {
+                fields: ["id", "category", "rarity"],
               },
+              // draws: {
+              //   fields: ["id"],
+              // },
             },
           },
           user: {
@@ -137,33 +226,65 @@ export default {
       }
     );
 
-    for (const userRoom of userRooms as UserRoom[]) {
-      const id = userRoom.id;
-      const userId = userRoom.user.id;
-      // if (!(id === 166 && userId === 45)) {
-      //   continue;
-      // }
+    const brokens = [];
 
-      const userRoomInfo = await strapi
-        .service("api::admin.admin")
-        .getLatestUserRoomInfo(userRoom);
+    const COUNTING_RARITIES = ["common", "uncommon", "rare", "unique"];
 
-      const { owned_items: prevOwnedItems } = userRoom;
-      const { owned_items: newOwnedItems } = userRoomInfo;
+    const getBrokens = userRooms.map(async (userRoom) => {
+      const { id, user, room, owned_items } = userRoom;
+      const userId = user.id;
+      const roomId = room.id;
 
-      // console.log("prev", prevOwnedItems);
-      // console.log("new", newOwnedItems);
+      const inventories = await strapi.entityService.findMany(
+        "api::inventory.inventory",
+        {
+          filters: {
+            users_permissions_user: { id: userId },
+            item: { room: { id: roomId } },
+          },
+          fields: ["id", "updatedAt"],
+          populate: {
+            item: {
+              fields: ["id"],
+            },
+          },
+          sort: "updatedAt",
+        }
+      );
 
-      const changes = diff(prevOwnedItems, newOwnedItems);
+      const inventory_items = inventories.reduce((acc, inventory) => {
+        acc[inventory.item.id] = (acc[inventory.item.id] || 0) + 1;
+        return acc;
+      }, {});
 
-      if (changes) {
-        console.log(`user ${userId}, user-room ${id} has diffs`);
-        console.log(changes);
+      const differences = diff(owned_items, inventory_items);
+
+      if (differences) {
+        const list = new Set();
+        for (const item of room.items) {
+          if (
+            item.category !== "built-in" &&
+            COUNTING_RARITIES.includes(item.rarity)
+          ) {
+            list.add(item.id);
+          }
+        }
+
+        brokens.push({
+          userRoom,
+          ledger: list,
+          ordered_inventories: inventories,
+          owned_items,
+          inventory_items,
+        });
       }
-    }
-    console.log("done");
+    });
 
-    return 200;
+    await Promise.all(getBrokens);
+
+    console.log("completed");
+
+    return brokens;
   },
 
   "reset-owned-items": async (ctx) => {
