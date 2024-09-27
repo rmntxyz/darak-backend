@@ -403,7 +403,7 @@ export default {
 
       // send notification to proposer
       try {
-        const result = strapi
+        const result = await strapi
           .service("api::trade-process.trade-process")
           .sendTradeNotification(
             trade.id,
