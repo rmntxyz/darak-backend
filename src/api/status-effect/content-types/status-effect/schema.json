@@ -12,13 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "unique": true
-    },
-    "desc": {
-      "type": "text"
-    },
     "duration": {
       "type": "integer"
     },
@@ -42,6 +35,15 @@
     "max_stack": {
       "type": "integer",
       "default": 1
+    },
+    "symbol": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "text"
     }
   }
 }

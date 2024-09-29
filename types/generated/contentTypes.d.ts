@@ -2791,12 +2791,13 @@ export interface ApiStatusEffectStatusEffect extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    name: Attribute.String & Attribute.Unique;
-    desc: Attribute.Text;
     duration: Attribute.Integer;
     icon: Attribute.Media;
     details: Attribute.Component<'effect.detail', true>;
     max_stack: Attribute.Integer & Attribute.DefaultTo<1>;
+    symbol: Attribute.UID;
+    name: Attribute.String;
+    desc: Attribute.Text;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
