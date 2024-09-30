@@ -32,17 +32,13 @@
         "blocked"
       ]
     },
-    "effect_name": {
-      "type": "enumeration",
-      "enum": [
-        "part1_broken",
-        "part2_broken",
-        "part3_broken",
-        "part4_broken"
-      ]
-    },
     "multiply": {
       "type": "integer"
+    },
+    "status_effect": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::status-effect.status-effect"
     }
   }
 }

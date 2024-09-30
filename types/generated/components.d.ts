@@ -108,7 +108,7 @@ export interface EffectDetail extends Schema.Component {
   };
   attributes: {
     type: Attribute.Enumeration<
-      ['star_reduction', '\bexp_reduction', 'coin_penalty', 'star_cost_up']
+      ['star_reduction', 'exp_reduction', 'coin_penalty', 'star_cost_up']
     >;
     value: Attribute.JSON;
     for_stack: Attribute.Integer;

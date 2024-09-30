@@ -476,19 +476,33 @@ type UserUpdateData = {
   handle?: string;
 };
 
-type EffectType = "gacha_rate" | "multiply";
+type StatusEffectDetail = {
+  type: EffectType;
+  value: number | number[];
+  desc: string;
+  for_stack?: number;
+};
+
+type EffectType =
+  | "star_reduction"
+  | "exp_reduction"
+  | "coin_penalty"
+  | "star_cost_up";
+
+type EffectSymbol =
+  | "tr_damage"
+  | "tl_glass_damage"
+  | "btn_damage"
+  | "bl_damage";
 
 type StatusEffect = {
   id: number;
+  symbol: EffectSymbol;
   name: string;
   desc: string;
   duration: number;
   icon: { url: string };
-  details: {
-    type: EffectType;
-    value: number | number[];
-    for_stack?: number;
-  }[];
+  details: StatusEffectDetail[];
   max_stack: number;
 };
 
@@ -504,3 +518,5 @@ type UserStatusEffect = {
 interface UserStatusEffectHandler {
   refresh: (effect: UserStatusEffect) => Promise<UserStatusEffect>;
 }
+
+type StarReductionData = {};

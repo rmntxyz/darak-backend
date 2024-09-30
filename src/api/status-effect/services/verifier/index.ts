@@ -1,8 +1,8 @@
 import machine_damaged from "./machine_damaged";
 
 export default {
-  part1_broken: machine_damaged,
-  part2_broken: machine_damaged,
-  part3_broken: machine_damaged,
-  part4_broken: machine_damaged,
+  tr_damage: machine_damaged,
+  tl_glass_damage: machine_damaged,
+  btn_damage: machine_damaged,
+  bl_damage: machine_damaged,
 };

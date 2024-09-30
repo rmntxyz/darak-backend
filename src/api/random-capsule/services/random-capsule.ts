@@ -2,11 +2,7 @@
  * random-capsule service
  */
 
-import {
-  EXP_MULT_FOR_DUPLICATE,
-  EXP_BY_RARITY,
-  ErrorCode,
-} from "../../../constant";
+import { EXP_MULT_FOR_DUPLICATE, EXP_BY_RARITY } from "../../../constant";
 
 export default ({ strapi }) => ({
   async drawWithCoin(
@@ -16,7 +12,11 @@ export default ({ strapi }) => ({
     multiply
   ): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
-      await deductCurrency(userId, draw, multiply);
+      const activEffects: UserStatusEffect[] = await strapi
+        .service("api::user-status-effect.user-status-effect")
+        .getActiveEffects(userId);
+
+      await deductCurrency(userId, draw, multiply, activEffects);
 
       let result: CapsuleResult = null;
 
@@ -31,11 +31,21 @@ export default ({ strapi }) => ({
           let historyId;
 
           for (const reward of rewards) {
+            const [details, change] = applyStatusEffect(
+              ["star_reduction"],
+              activEffects,
+              reward
+            );
+            if (details.length > 0 && change !== 0) {
+              reward.amount += change;
+            }
+
             historyId = await addRewardToUser(
               userId,
               draw.id,
               reward,
-              multiply
+              multiply,
+              details
             );
           }
 
@@ -51,7 +61,8 @@ export default ({ strapi }) => ({
           userId,
           draw.id,
           itemId,
-          multiply
+          multiply,
+          activEffects
         );
 
         result = {
@@ -70,14 +81,19 @@ export default ({ strapi }) => ({
 
   async drawWithStarPoint(userId, draw, multiply): Promise<CapsuleResult> {
     return await strapi.db.transaction(async ({ trx }) => {
-      await deductCurrency(userId, draw, multiply);
+      const activEffects: UserStatusEffect[] = await strapi
+        .service("api::user-status-effect.user-status-effect")
+        .getActiveEffects(userId);
+
+      await deductCurrency(userId, draw, multiply, activEffects);
 
       const itemId = await drawItem(draw.draw_info, multiply);
       const { item, exp, historyId } = await addItemToUser(
         userId,
         draw.id,
         itemId,
-        multiply
+        multiply,
+        activEffects
       );
 
       const result: CapsuleResult = {
@@ -94,13 +110,35 @@ export default ({ strapi }) => ({
   },
 });
 
-async function deductCurrency(userId: number, draw: Draw, multiply: number) {
-  const { cost, currency_type } = draw;
+async function deductCurrency(
+  userId: number,
+  draw: Draw,
+  multiply: number,
+  activEffects: UserStatusEffect[]
+) {
+  let { cost, currency_type } = draw;
   if (currency_type === "star_point") {
+    const [details, change] = applyStatusEffect(
+      ["star_cost_up"],
+      activEffects,
+      cost
+    );
+    if (details.length > 0 && change !== 0) {
+      cost += change;
+    }
+
     await strapi
       .service("api::star-point.star-point")
       .updateStarPoint(userId, -cost * multiply, "gacha");
   } else if (currency_type === "freebie") {
+    const [details, change] = applyStatusEffect(
+      ["coin_penalty"],
+      activEffects,
+      cost
+    );
+    if (details.length > 0 && change !== 0) {
+      cost += change;
+    }
     await strapi
       .service("api::freebie.freebie")
       .updateFreebie(userId, -cost * multiply);
@@ -218,7 +256,8 @@ async function addRewardToUser(
   userId: number,
   drawId: number,
   reward: Reward,
-  multiply: number
+  multiply: number,
+  effectDetails: StatusEffectDetail[] = null
 ) {
   if (reward) {
     await strapi
@@ -235,6 +274,7 @@ async function addRewardToUser(
         users_permissions_user: userId,
         draw_result: { ...reward },
         multiply,
+        effect_details: effectDetails,
         publishedAt: new Date(),
       },
     }
@@ -247,7 +287,8 @@ async function addItemToUser(
   userId: number,
   drawId: number,
   itemId: number,
-  multiply: number
+  multiply: number,
+  activEffects: UserStatusEffect[] = []
 ): Promise<{ item: Partial<Item>; exp: number; historyId: number }> {
   return (await strapi.db.transaction(async ({ trx }) => {
     const userItems = [];
@@ -317,6 +358,15 @@ async function addItemToUser(
       exp *= EXP_MULT_FOR_DUPLICATE;
     }
 
+    const [details, change] = applyStatusEffect(
+      ["exp_reduction"],
+      activEffects,
+      exp
+    );
+    if (details.length > 0 && change !== 0) {
+      exp += change;
+    }
+
     await strapi
       .service("api::user-room.user-room")
       .updateItems(userRoom, [updatedItem.id], []);
@@ -334,6 +384,7 @@ async function addItemToUser(
           inventories: { connect: [userItem.id] },
           multiply,
           exp,
+          effect_details: details,
           publishedAt: new Date(),
         },
       }
@@ -383,4 +434,26 @@ async function checkRelayEvent(userId: number, result: CapsuleResult) {
       });
     }
   }
+}
+
+function applyStatusEffect(
+  effectTypes: EffectType[],
+  activEffects: UserStatusEffect[],
+  value: any
+) {
+  const details = strapi
+    .service("api::status-effect.status-effect")
+    .getEffectDetails(effectTypes, activEffects);
+
+  let change = 0;
+
+  if (details.length > 0) {
+    for (const detail of details) {
+      change += strapi
+        .service("api::status-effect.status-effect")
+        .apply(detail, value);
+    }
+  }
+
+  return [details, change];
 }

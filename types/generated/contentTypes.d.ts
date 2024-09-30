@@ -1058,10 +1058,12 @@ export interface ApiAttackAttack extends Schema.CollectionType {
     >;
     result: Attribute.JSON;
     status: Attribute.Enumeration<['success', 'blocked']>;
-    effect_name: Attribute.Enumeration<
-      ['part1_broken', 'part2_broken', 'part3_broken', 'part4_broken']
-    >;
     multiply: Attribute.Integer;
+    status_effect: Attribute.Relation<
+      'api::attack.attack',
+      'oneToOne',
+      'api::status-effect.status-effect'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1586,6 +1588,7 @@ export interface ApiDrawHistoryDrawHistory extends Schema.CollectionType {
     >;
     multiply: Attribute.Integer;
     reviewed: Attribute.Boolean & Attribute.DefaultTo<false>;
+    effect_details: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2099,6 +2102,7 @@ export interface ApiItemAcquisitionHistoryItemAcquisitionHistory
     >;
     multiply: Attribute.Integer;
     exp: Attribute.Integer;
+    effect_details: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

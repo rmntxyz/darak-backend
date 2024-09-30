@@ -170,8 +170,8 @@ export const UserStatusEffectOptions = {
     status_effect: {
       ...StatusEffectOptions,
     },
-    // user: {
-    //   fields: ["id"],
-    // },
+    user: {
+      fields: ["id"],
+    },
   },
 };

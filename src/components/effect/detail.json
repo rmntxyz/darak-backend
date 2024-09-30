@@ -11,7 +11,7 @@
       "type": "enumeration",
       "enum": [
         "star_reduction",
-        "\bexp_reduction",
+        "exp_reduction",
         "coin_penalty",
         "star_cost_up"
       ]

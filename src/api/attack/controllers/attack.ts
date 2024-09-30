@@ -79,7 +79,7 @@ export default factories.createCoreController(
           result: reward,
           status,
           multiply,
-          effect_name: userEffect.status_effect.name,
+          effect_effect: { id: userEffect.id },
           publishedAt: new Date(),
         },
         fields: ["result", "status", "multiply"],

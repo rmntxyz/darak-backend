@@ -52,6 +52,9 @@
     },
     "exp": {
       "type": "integer"
+    },
+    "effect_details": {
+      "type": "json"
     }
   }
 }

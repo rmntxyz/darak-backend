@@ -187,6 +187,10 @@ export const ErrorCode = {
     code: 7003,
     message: "Effect is not active",
   },
+  INVALID_STATUS_EFFECT: {
+    code: 7004,
+    message: "Invalid status effect",
+  },
 
   // event-coupon
   COUPON_CODE_NOT_FOUND: {
@@ -335,3 +339,5 @@ export const TRADE_NOTIFICATIONS = {
   //   },
   // },
 };
+
+export const BYPASS_VALUE = (v) => v;

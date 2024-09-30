@@ -1,7 +1,6 @@
 export default {
   verify: async (
     userEffect: UserStatusEffect,
-    userId: number,
     data: any = {}
   ): Promise<boolean> => {
     const { target, drawHistory } = data;
@@ -23,7 +22,7 @@ export default {
       throw new Error("Invalid draw type");
     }
 
-    if (drawHistory.users_permissions_user.id !== userId) {
+    if (drawHistory.users_permissions_user.id !== userEffect.user.id) {
       throw new Error("User is not the owner of the draw history");
     }
 
