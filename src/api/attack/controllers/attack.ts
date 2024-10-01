@@ -37,7 +37,7 @@ export default factories.createCoreController(
         const verified: boolean = await strapi
           .service("api::status-effect.status-effect")
           .verify(userEffect, {
-            target: targetId,
+            attacker: userId,
             drawHistory,
           });
       } catch (e) {
@@ -168,9 +168,9 @@ export default factories.createCoreController(
           .refresh(effect);
       }
 
-      user_status_effects.filter((effect) => effect.active);
-
-      target.user_status_effects = user_status_effects;
+      target.user_status_effects = user_status_effects.filter(
+        (effect) => effect.active
+      );
 
       return target;
     },
