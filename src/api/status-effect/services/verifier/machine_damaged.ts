@@ -1,13 +1,9 @@
 export default {
   verify: async (
     userEffect: UserStatusEffect,
-    data: any = {}
+    data: { attacker?: number; drawHistory?: DrawHistory } = {}
   ): Promise<boolean> => {
-    const { target, drawHistory } = data;
-
-    if (!target) {
-      throw new Error("Target not found");
-    }
+    const { attacker, drawHistory } = data;
 
     const {
       status_effect: { max_stack },
@@ -22,7 +18,7 @@ export default {
       throw new Error("Invalid draw type");
     }
 
-    if (drawHistory.users_permissions_user.id !== userEffect.user.id) {
+    if (drawHistory.users_permissions_user.id !== attacker) {
       throw new Error("User is not the owner of the draw history");
     }
 
