@@ -9,16 +9,16 @@ export default factories.createCoreController(
   ({ strapi }) => ({
     async request(ctx) {
       const { user } = ctx.state;
-      const { effectName } = ctx.params;
+      const { effect } = ctx.params;
       const data = ctx.request.body;
 
       const userEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getUserStatusEffect(user.id, effectName);
+        .getUserStatusEffect(user.id, effect);
 
       const verified = await strapi
         .service("api::status-effect.status-effect")
-        .verify(userEffect, user.id, data);
+        .verify(userEffect, data);
 
       if (!verified) {
         throw new Error("StatusEffect not verified");

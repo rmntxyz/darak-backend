@@ -13,12 +13,12 @@ export default factories.createCoreController(
     attack: async (ctx) => {
       const userId = ctx.state.user.id;
       const targetId = ctx.request.body.target;
-      const effectName = ctx.request.body.effect;
+      const effectSymbol = ctx.request.body.effect;
       const capsuleHistoryId = ctx.request.body.capsule_history_id;
 
       const userEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getUserStatusEffect(targetId, effectName);
+        .getUserStatusEffect(targetId, effectSymbol);
 
       const drawHistory = await strapi.entityService.findOne(
         "api::draw-history.draw-history",
@@ -36,7 +36,7 @@ export default factories.createCoreController(
       try {
         const verified: boolean = await strapi
           .service("api::status-effect.status-effect")
-          .verify(userEffect, userId, {
+          .verify(userEffect, {
             target: targetId,
             drawHistory,
           });
@@ -90,11 +90,11 @@ export default factories.createCoreController(
 
     repair: async (ctx) => {
       const userId = ctx.state.user.id;
-      const effectName = ctx.request.body.effect;
+      const effectSymbol = ctx.request.body.effect;
 
       const userEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getUserStatusEffect(userId, effectName);
+        .getUserStatusEffect(userId, effectSymbol);
 
       if (!userEffect.active) {
         return ctx.badRequest(

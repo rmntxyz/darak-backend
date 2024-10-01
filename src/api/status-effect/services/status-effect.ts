@@ -10,12 +10,12 @@ import { ErrorCode, BYPASS_VALUE } from "../../../constant";
 export default factories.createCoreService(
   "api::status-effect.status-effect",
   ({ strapi }) => ({
-    async getStatusEffect(effectName: string) {
+    async getStatusEffect(effectSymbol: string) {
       const effect = (
         await strapi.entityService.findMany(
           "api::status-effect.status-effect",
           {
-            filters: { name: effectName },
+            filters: { symbol: effectSymbol },
             ...StatusEffectOptions,
           }
         )

@@ -8,10 +8,10 @@ import { StatusEffectOptions } from "../../status-effect/services/status-effect"
 export default factories.createCoreService(
   "api::user-status-effect.user-status-effect",
   ({ strapi }) => ({
-    async getUserStatusEffect(userId: number, effectName: string) {
+    async getUserStatusEffect(userId: number, effectSymbol: string) {
       const effect = await strapi
         .service("api::status-effect.status-effect")
-        .getStatusEffect(effectName);
+        .getStatusEffect(effectSymbol);
 
       if (!effect) {
         throw new Error("StatusEffect not found");
