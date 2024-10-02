@@ -280,50 +280,50 @@ export const ACCOUNT_DELETION_GRACE_PERIOD = 15; // 15 days
 export const TRADE_NOTIFICATIONS = {
   trade_proposed: {
     title: {
-      en: "Trade proposed",
-      ko: "거래 제안됨",
-      ja: "取引提案",
+      en: "You’ve received a trade request!",
+      ko: "트레이드 요청을 받았어요!",
+      ja: "トレードリクエストをいただきました！",
     },
     body: {
-      en: "${username} has proposed a trade.",
-      ko: "${username}님이 거래를 제안했습니다.",
-      ja: "${username}さんが取引を提案しました。",
+      en: "${username} requested a trade!",
+      ko: "${username}님이 트레이드를 신청했어요!",
+      ja: "${username}さんがトレードを申請しました！",
     },
   },
   trade_accepted: {
     title: {
-      en: "Trade accepted",
-      ko: "거래 수락됨",
-      ja: "取引承諾",
+      en: "Trade successful!",
+      ko: "트레이드 성공!",
+      ja: "トレード成功！",
     },
     body: {
-      en: "${username} has accepted the trade.",
-      ko: "${username}님이 거래를 수락했습니다.",
-      ja: "${username}さんが取引を承諾しました。",
+      en: "${username} accepted your trade request!",
+      ko: "${username}님과 트레이드를 성공적으로 완료했습니다!",
+      ja: "${username}さんとのトレードが成功しました！",
     },
   },
   trade_rejected: {
     title: {
-      en: "Trade rejected",
-      ko: "거래 거부됨",
-      ja: "取引拒否",
+      en: "${username} rejected your trade request.",
+      ko: "${username}님이 트레이드를 거절했습니다.",
+      ja: "${username}さんがトレードを拒否しました。",
     },
     body: {
-      en: "${username} has rejected the trade.",
-      ko: "${username}님이 거래를 거부했습니다.",
-      ja: "${username}さんが取引を拒否しました。",
+      en: "The requested trade was unsuccessful 🥲 How about looking for other users with the same item?",
+      ko: "요청한 트레이드가 성공하지 못했어요. 🥲 같은 아이템을 가진 다른 유저를 찾아보는건 어떨까요?",
+      ja: "リクエストしたトレードは成功しませんでした 🥲 同じアイテムを持っている他のユーザーを探してみませんか？",
     },
   },
   trade_canceled: {
     title: {
-      en: "Trade canceled",
-      ko: "거래 취소됨",
-      ja: "取引キャンセル",
+      en: "The trade was canceled.",
+      ko: "트레이드가 취소되었어요.",
+      ja: "トレードがキャンセルされました。",
     },
     body: {
-      en: "${username} has canceled the trade.",
-      ko: "${username}님이 거래를 취소했습니다.",
-      ja: "${username}さんが取引をキャンセルしました。",
+      en: "${username} canceled the trade.",
+      ko: "${username}님이 트레이드를 취소했어요.",
+      ja: "${username}さんがトレードをキャンセルしました。",
     },
   },
   // trade_expired: {
