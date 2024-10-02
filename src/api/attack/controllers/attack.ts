@@ -3,7 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { TargetUserOptions } from "../services/attack";
+import attack, { TargetUserOptions } from "../services/attack";
 import { UserStatusEffectOptions } from "../../user-status-effect/services/user-status-effect";
 import { ErrorCode } from "../../../constant";
 
@@ -185,13 +185,15 @@ export default factories.createCoreController(
       const friendsIds = friends.map((f) => f.id);
 
       // get revenges
-      const revenges: { id: number; attacked_at: string }[] = await strapi
-        .service("api::attack.attack")
-        .getRevenges(userId);
+      const revenges: {
+        id: number;
+        total_stack: number;
+        attacked_at: string;
+      }[] = await strapi.service("api::attack.attack").getRevenges(userId);
       const revengesIds = revenges.map((r) => r.id);
 
       // get randoms
-      let randoms: { id: number; active_broken_count: number }[] = await strapi
+      let randoms: { id: number; total_stack: number }[] = await strapi
         .service("api::attack.attack")
         .getRandoms([userId, ...friendsIds, ...revengesIds]);
 
@@ -209,22 +211,25 @@ export default factories.createCoreController(
 
       let recommendedId = null;
       let randomId = null;
+      const attackableRevenges = revenges.filter((r) => r.total_stack < 8);
+      // shuffle
+      attackableRevenges.sort(() => Math.random() - 0.5);
 
       if (
-        revenges.length > 0 &&
-        new Date(revenges[0].attacked_at).getTime() >
-          Date.now() - 3600 * 6 * 1000
+        attackableRevenges.length > 0 &&
+        new Date(attackableRevenges[0].attacked_at).getTime() >
+          Date.now() - 24 * 60 * 60 * 1000
       ) {
-        // 1st: revenge who attacked me in the last 6 hour
-        recommendedId = revenges[0].id;
+        // 1st: revenge who attacked me in the last 1 day
+        recommendedId = attackableRevenges[0].id;
         randomId = randoms[0] ? randoms[0].id : null;
       } else if (randoms.length == 2) {
         // 2nd: randoms length > 1, pick first one
         recommendedId = randoms[0].id;
         randomId = randoms[1] ? randoms[1].id : null;
-      } else if (revenges.length > 0) {
+      } else if (attackableRevenges.length > 0) {
         // 3rd: revenge
-        recommendedId = revenges[0].id;
+        recommendedId = attackableRevenges[0].id;
         randomId = randoms[0] ? randoms[0].id : null;
       } else if (friends.length > 0) {
         // 4th: friend (random)
@@ -254,11 +259,12 @@ export default factories.createCoreController(
         }
       );
 
-      const recommendedTarget =
-        users.find((u) => u.id === recommendedId) || null;
-      recommendedTarget.user_status_effects = await strapi
-        .service("api::user-status-effect.user-status-effect")
-        .getActiveEffects(recommendedId);
+      const recommendedTarget = {
+        ...users.find((u) => u.id === recommendedId),
+        user_status_effects: await strapi
+          .service("api::user-status-effect.user-status-effect")
+          .getActiveEffects(recommendedId),
+      };
 
       const randomTarget = randomId
         ? users.find((u) => u.id === randomId)
