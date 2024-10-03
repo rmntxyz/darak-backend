@@ -62,30 +62,34 @@ LIMIT ${count};
       // return revenges;
 
       const { rows } = await strapi.db.connection.raw(`
-SELECT
-    al.user_id AS id,
-    a.created_at AS attacked_at,
-    SUM(CASE
-            WHEN se.symbol IN ('tr_damage', 'tl_glass_damage', 'btn_damage', 'bl_damage')
-                 AND use.active = true THEN use.stack
-            ELSE 0
-        END) AS total_stack
-FROM attacks AS a
-LEFT JOIN attacks_attacker_links AS al ON a.id = al.attack_id
-LEFT JOIN attacks_target_links AS tl ON a.id = tl.attack_id
-LEFT JOIN up_users AS u ON al.user_id = u.id
-LEFT JOIN user_status_effects_user_links AS usul ON u.id = usul.user_id
-LEFT JOIN user_status_effects AS use ON usul.user_status_effect_id = use.id
-LEFT JOIN user_status_effects_status_effect_links AS usesl ON use.id = usesl.user_status_effect_id
-LEFT JOIN status_effects AS se ON usesl.status_effect_id = se.id
-WHERE
-    tl.user_id = ${userId}
-    AND u.deactivated = false
-GROUP BY
-    al.user_id, a.created_at
-ORDER BY
-    a.created_at DESC
-LIMIT ${count};`);
+SELECT *
+FROM (
+    SELECT DISTINCT ON (al.user_id)
+        al.user_id AS id,
+        a.created_at AS attacked_at,
+        SUM(CASE 
+                WHEN se.symbol IN ('tr_damage', 'tl_glass_damage', 'btn_damage', 'bl_damage')
+                    AND use.active = true THEN use.stack 
+                ELSE 0 
+            END) AS total_stack
+    FROM attacks AS a
+    LEFT JOIN attacks_attacker_links AS al ON a.id = al.attack_id
+    LEFT JOIN attacks_target_links AS tl ON a.id = tl.attack_id
+    LEFT JOIN up_users AS u ON al.user_id = u.id
+    LEFT JOIN user_status_effects_user_links AS usul ON u.id = usul.user_id
+    LEFT JOIN user_status_effects AS use ON usul.user_status_effect_id = use.id
+    LEFT JOIN user_status_effects_status_effect_links AS usesl ON use.id = usesl.user_status_effect_id
+    LEFT JOIN status_effects AS se ON usesl.status_effect_id = se.id
+    WHERE
+        tl.user_id = ${userId}
+        AND u.deactivated = false
+    GROUP BY 
+        al.user_id, a.created_at
+    ORDER BY 
+        al.user_id, a.created_at DESC
+    LIMIT ${count}
+) AS subquery
+ORDER BY attacked_at DESC;`);
 
       return rows;
     },
