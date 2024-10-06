@@ -2564,6 +2564,7 @@ export interface ApiShieldShield extends Schema.CollectionType {
     singularName: 'shield';
     pluralName: 'shields';
     displayName: 'Shield';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -2580,6 +2581,7 @@ export interface ApiShieldShield extends Schema.CollectionType {
       'oneToMany',
       'api::shield-history.shield-history'
     >;
+    max: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

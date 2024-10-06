@@ -39,6 +39,7 @@ module.exports = (plugin) => {
           freebie: true,
           streak: true,
           free_gift: true,
+          shield: true,
           star_point: {
             fields: ["amount"],
           },
