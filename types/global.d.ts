@@ -221,6 +221,7 @@ type Reward = {
   tier?: number;
   detail?: Item;
   exp?: number;
+  to_coin?: number;
 };
 
 type Item = {

@@ -40,6 +40,8 @@ export default ({ strapi }) => ({
               reward.amount += change;
             }
 
+            reviseReward(userId, reward, multiply);
+
             historyId = await addRewardToUser(
               userId,
               draw.id,
@@ -136,12 +138,15 @@ async function deductCurrency(
       activEffects,
       cost
     );
+
+    let penalty = 0;
     if (details.length > 0 && change !== 0) {
-      cost += change;
+      penalty += change;
     }
+
     await strapi
       .service("api::freebie.freebie")
-      .updateFreebie(userId, -cost * multiply);
+      .updateFreebie(userId, -(cost * multiply + penalty));
   }
 }
 
@@ -252,6 +257,18 @@ function calcProbability(
   return info;
 }
 
+async function reviseReward(userId: number, reward: Reward, multiply: number) {
+  if (reward.type === "shield") {
+    const convertedCoin = await strapi
+      .service("api::shield.shield")
+      .calcConvertedCoinAmount(userId, reward.amount * multiply);
+
+    reward.to_coin = convertedCoin;
+  }
+
+  return reward;
+}
+
 async function addRewardToUser(
   userId: number,
   drawId: number,
@@ -263,6 +280,18 @@ async function addRewardToUser(
     await strapi
       .service("api::reward.reward")
       .claim(userId, [reward], "gacha_result", multiply);
+
+    // for converting shield to coin
+    if (reward.to_coin) {
+      await strapi
+        .service("api::reward.reward")
+        .claim(
+          userId,
+          [{ type: "freebie", amount: reward.to_coin }],
+          "gacha_result",
+          1
+        );
+    }
   }
 
   const history = await strapi.entityService.create(
