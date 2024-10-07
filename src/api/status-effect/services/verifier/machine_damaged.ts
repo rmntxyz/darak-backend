@@ -1,3 +1,5 @@
+import { ErrorCode } from "../../../../constant";
+
 export default {
   verify: async (
     userEffect: UserStatusEffect,
@@ -11,19 +13,19 @@ export default {
     } = userEffect;
 
     if (stack >= max_stack) {
-      throw new Error("Max stack reached");
+      throw ErrorCode.TARGET_STACK_EXCEEDED;
     }
 
     if (drawHistory.draw_result.type !== "attack") {
-      throw new Error("Invalid draw type");
+      throw ErrorCode.INVALID_DRAW_TYPE;
     }
 
     if (drawHistory.users_permissions_user.id !== attacker) {
-      throw new Error("User is not the owner of the draw history");
+      throw ErrorCode.NOT_OWNER_OF_DRAW_HISTORY;
     }
 
     if (drawHistory.reviewed) {
-      throw new Error("Draw history already reviewed");
+      throw ErrorCode.ALREADY_REVIEWED;
     } else {
       await strapi.entityService.update(
         "api::draw-history.draw-history",

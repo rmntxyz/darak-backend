@@ -177,12 +177,10 @@ export const ErrorCode = {
     code: 7001,
     message: "Unauthorized attack",
   },
-  // not enough star points
   NOT_ENOUGH_STAR_POINT: {
     code: 7002,
     message: "Not enough star points",
   },
-  // effect not active
   EFFECT_NOT_ACTIVE: {
     code: 7003,
     message: "Effect is not active",
@@ -190,6 +188,22 @@ export const ErrorCode = {
   INVALID_STATUS_EFFECT: {
     code: 7004,
     message: "Invalid status effect",
+  },
+  TARGET_STACK_EXCEEDED: {
+    code: 7005,
+    message: "Target's stack is already at max",
+  },
+  INVALID_DRAW_TYPE: {
+    code: 7006,
+    message: "Invalid draw type",
+  },
+  NOT_OWNER_OF_DRAW_HISTORY: {
+    code: 7007,
+    message: "User is not the owner of the draw history",
+  },
+  ALREADY_REVIEWED: {
+    code: 7008,
+    message: "Draw history already reviewed",
   },
 
   // event-coupon

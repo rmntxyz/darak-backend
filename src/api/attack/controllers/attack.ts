@@ -41,7 +41,7 @@ export default factories.createCoreController(
             drawHistory,
           });
       } catch (e) {
-        return ctx.badRequest(e.message, ErrorCode.UNAUTHORIZED_ATTACK);
+        return ctx.badRequest("Unauthorized attack", e);
       }
 
       const { multiply } = drawHistory;
