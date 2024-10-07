@@ -28,16 +28,13 @@ export default factories.createCoreService(
 
       let config = await strapi.entityService.findOne("api::config.config", 1);
 
-      // TEMP fallback
-      if (config === null) {
-        config = {
-          ITEM_PROBABILITY,
-          EXP_MULT_FOR_DUPLICATE,
-          EXP_BY_RARITY,
-          ATTACK_REWARDS,
-          REPAIR_COST,
-        };
-      }
+      config["ITEM_PROBABILITY"] =
+        config["ITEM_PROBABILITY"] || ITEM_PROBABILITY;
+      config["EXP_MULT_FOR_DUPLICATE"] =
+        config["EXP_MULT_FOR_DUPLICATE"] || EXP_MULT_FOR_DUPLICATE;
+      config["EXP_BY_RARITY"] = config["EXP_BY_RARITY"] || EXP_BY_RARITY;
+      config["ATTACK_REWARDS"] = config["ATTACK_REWARDS"] || ATTACK_REWARDS;
+      config["REPAIR_COST"] = config["REPAIR_COST"] || REPAIR_COST;
 
       CACHED_CONFIG = config;
       LAST_CACHE_TIME = Date.now();
