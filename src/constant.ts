@@ -259,7 +259,7 @@ export const ATTACK_REWARDS = {
     },
     {
       type: "exp",
-      amount: 100,
+      amount: 10,
     },
   ],
   success: [
@@ -269,7 +269,7 @@ export const ATTACK_REWARDS = {
     },
     {
       type: "exp",
-      amount: 50,
+      amount: 5,
     },
   ],
 };

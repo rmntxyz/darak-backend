@@ -19,7 +19,7 @@ export default factories.createCoreService(
           case "exp":
             await strapi
               .service("api::status.status")
-              .updateExp(userId, reward.amount);
+              .updateExp(userId, reward.amount * multiply);
 
           case "freebie":
             await strapi
