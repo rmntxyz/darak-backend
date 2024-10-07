@@ -160,6 +160,16 @@ module.exports = (plugin) => {
       .service("api::user-status-effect.user-status-effect")
       .getActiveEffects(user.id);
 
+    statusEffects.forEach((effect) => {
+      const { status_effect } = effect;
+      applyLocalizations(effect.status_effect, ctx.query.locale);
+
+      const { details } = status_effect;
+      details.forEach((detail) => {
+        applyLocalizations(detail, ctx.query.locale);
+      });
+    });
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,

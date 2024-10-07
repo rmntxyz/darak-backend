@@ -83,8 +83,14 @@ export const StatusEffectOptions = {
     },
     details: {
       fields: ["type", "value", "desc", "for_stack"],
+      populate: {
+        localizations: {
+          fields: ["desc", "locale"],
+        },
+      },
     },
-    // localizations: {
-    //   fields: ["name", "desc", "locale"],
+    localizations: {
+      fields: ["name", "desc", "locale"],
+    },
   },
 };

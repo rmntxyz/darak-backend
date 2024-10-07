@@ -2796,14 +2796,49 @@ export interface ApiStatusEffectStatusEffect extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    duration: Attribute.Integer;
-    icon: Attribute.Media;
-    details: Attribute.Component<'effect.detail', true>;
-    max_stack: Attribute.Integer & Attribute.DefaultTo<1>;
+    duration: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    icon: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    max_stack: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<1>;
     symbol: Attribute.UID;
-    name: Attribute.String;
-    desc: Attribute.Text;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    details: Attribute.Relation<
+      'api::status-effect.status-effect',
+      'oneToMany',
+      'api::status-effect-detail.status-effect-detail'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2819,6 +2854,80 @@ export interface ApiStatusEffectStatusEffect extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::status-effect.status-effect',
+      'oneToMany',
+      'api::status-effect.status-effect'
+    >;
+    locale: Attribute.String;
+  };
+}
+
+export interface ApiStatusEffectDetailStatusEffectDetail
+  extends Schema.CollectionType {
+  collectionName: 'status_effect_details';
+  info: {
+    singularName: 'status-effect-detail';
+    pluralName: 'status-effect-details';
+    displayName: 'StatusEffectDetail';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    type: Attribute.Enumeration<
+      ['star_reduction', 'exp_reduction', 'coin_penalty', 'star_cost_up']
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    value: Attribute.JSON &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    for_stack: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    desc: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::status-effect-detail.status-effect-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::status-effect-detail.status-effect-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::status-effect-detail.status-effect-detail',
+      'oneToMany',
+      'api::status-effect-detail.status-effect-detail'
+    >;
+    locale: Attribute.String;
   };
 }
 
@@ -3643,6 +3752,7 @@ declare module '@strapi/strapi' {
       'api::star-point-history.star-point-history': ApiStarPointHistoryStarPointHistory;
       'api::status.status': ApiStatusStatus;
       'api::status-effect.status-effect': ApiStatusEffectStatusEffect;
+      'api::status-effect-detail.status-effect-detail': ApiStatusEffectDetailStatusEffectDetail;
       'api::streak.streak': ApiStreakStreak;
       'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
       'api::trade.trade': ApiTradeTrade;
