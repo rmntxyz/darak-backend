@@ -66,17 +66,17 @@ export default factories.createCoreController(
       const { ATTACK_REWARDS } = await strapi
         .service("api::config.config")
         .getConfig();
-      const reward = ATTACK_REWARDS[status];
+      const rewards = ATTACK_REWARDS[status];
 
       await strapi
         .service("api::reward.reward")
-        .claim(userId, [reward], "attack", multiply);
+        .claim(userId, rewards, "attack", multiply);
 
       const attack = await strapi.entityService.create("api::attack.attack", {
         data: {
           attacker: { id: userId },
           target: { id: targetId },
-          result: reward,
+          result: rewards,
           status,
           multiply,
           effect_effect: { id: userEffect.id },

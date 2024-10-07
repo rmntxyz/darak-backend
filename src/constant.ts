@@ -252,14 +252,26 @@ export const ITEM_PROBABILITY = {
 };
 
 export const ATTACK_REWARDS = {
-  blocked: {
-    type: "star_point",
-    amount: 3000,
-  },
-  success: {
-    type: "star_point",
-    amount: 1000,
-  },
+  blocked: [
+    {
+      type: "star_point",
+      amount: 1000,
+    },
+    {
+      type: "exp",
+      amount: 100,
+    },
+  ],
+  success: [
+    {
+      type: "star_point",
+      amount: 500,
+    },
+    {
+      type: "exp",
+      amount: 50,
+    },
+  ],
 };
 
 export const REPAIR_COST = {
