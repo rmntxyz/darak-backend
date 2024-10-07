@@ -25,7 +25,7 @@ export default factories.createCoreService(
         shield = await strapi.entityService.create("api::shield.shield", {
           data: {
             amount: 0,
-            max: 5,
+            max: 3,
             user: { id: userId },
             publishedAt: new Date(),
           },
