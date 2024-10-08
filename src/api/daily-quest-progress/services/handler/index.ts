@@ -5,8 +5,10 @@ import draw_uncommon from "./draw_uncommon";
 import draw_yellow from "./draw_yellow";
 import x3_draw from "./x3_draw";
 import x5_draw from "./x5_draw";
+import attack from "./attack";
 
 const Handler = {
+  attack,
   x3_draw,
   x5_draw,
   draw_mint,
