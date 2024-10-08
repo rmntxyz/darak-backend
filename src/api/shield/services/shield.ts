@@ -8,14 +8,14 @@ import { ErrorCode } from "../../../constant";
 export default factories.createCoreService(
   "api::shield.shield",
   ({ strapi }) => ({
-    getShield: async (userId: number) => {
+    async getShield(userId: number) {
       let { shield } = await strapi.entityService.findOne(
         "plugin::users-permissions.user",
         userId,
         {
           populate: {
             shield: {
-              fields: ["amount"],
+              fields: ["amount, max"],
             },
           },
         }
@@ -25,14 +25,27 @@ export default factories.createCoreService(
         shield = await strapi.entityService.create("api::shield.shield", {
           data: {
             amount: 0,
+            max: 3,
             user: { id: userId },
             publishedAt: new Date(),
           },
-          fields: ["amount"],
+          fields: ["amount", "max"],
         });
       }
 
       return shield;
+    },
+
+    async calcConvertedCoinAmount(userId: number, amount: number) {
+      const { amount: current, max } = await this.getShield(userId);
+
+      const exceeded = current + amount - max;
+
+      if (exceeded > 0) {
+        return exceeded;
+      }
+
+      return 0;
     },
 
     updateShield: async (
@@ -55,6 +68,10 @@ export default factories.createCoreService(
 
         if (shield.amount + change < 0) {
           throw ErrorCode.NOT_ENOUGH_SHIELDS;
+        }
+
+        if (shield.amount + change > shield.max) {
+          change = shield.max - shield.amount;
         }
 
         const updated = await strapi.entityService.update(

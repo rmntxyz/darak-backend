@@ -107,9 +107,12 @@ export interface EffectDetail extends Schema.Component {
     description: '';
   };
   attributes: {
-    type: Attribute.Enumeration<['gacha_rate', 'multiply']>;
+    type: Attribute.Enumeration<
+      ['star_reduction', 'exp_reduction', 'coin_penalty', 'star_cost_up']
+    >;
     value: Attribute.JSON;
     for_stack: Attribute.Integer;
+    desc: Attribute.Text;
   };
 }
 

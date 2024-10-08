@@ -3,7 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { TargetUserOptions } from "../services/attack";
+import attack, { TargetUserOptions } from "../services/attack";
 import { UserStatusEffectOptions } from "../../user-status-effect/services/user-status-effect";
 import { ErrorCode } from "../../../constant";
 
@@ -13,12 +13,12 @@ export default factories.createCoreController(
     attack: async (ctx) => {
       const userId = ctx.state.user.id;
       const targetId = ctx.request.body.target;
-      const effectName = ctx.request.body.effect;
+      const effectSymbol = ctx.request.body.effect;
       const capsuleHistoryId = ctx.request.body.capsule_history_id;
 
       const userEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getUserStatusEffect(targetId, effectName);
+        .getUserStatusEffect(targetId, effectSymbol);
 
       const drawHistory = await strapi.entityService.findOne(
         "api::draw-history.draw-history",
@@ -36,12 +36,12 @@ export default factories.createCoreController(
       try {
         const verified: boolean = await strapi
           .service("api::status-effect.status-effect")
-          .verify(userEffect, userId, {
-            target: targetId,
+          .verify(userEffect, {
+            attacker: userId,
             drawHistory,
           });
       } catch (e) {
-        return ctx.badRequest(e.message, ErrorCode.UNAUTHORIZED_ATTACK);
+        return ctx.badRequest("Unauthorized attack", e);
       }
 
       const { multiply } = drawHistory;
@@ -66,20 +66,20 @@ export default factories.createCoreController(
       const { ATTACK_REWARDS } = await strapi
         .service("api::config.config")
         .getConfig();
-      const reward = ATTACK_REWARDS[status];
+      const rewards = ATTACK_REWARDS[status];
 
       await strapi
         .service("api::reward.reward")
-        .claim(userId, [reward], "attack", multiply);
+        .claim(userId, rewards, "attack", multiply);
 
       const attack = await strapi.entityService.create("api::attack.attack", {
         data: {
           attacker: { id: userId },
           target: { id: targetId },
-          result: reward,
+          result: rewards,
           status,
           multiply,
-          effect_name: userEffect.status_effect.name,
+          effect_effect: { id: userEffect.id },
           publishedAt: new Date(),
         },
         fields: ["result", "status", "multiply"],
@@ -90,11 +90,11 @@ export default factories.createCoreController(
 
     repair: async (ctx) => {
       const userId = ctx.state.user.id;
-      const effectName = ctx.request.body.effect;
+      const effectSymbol = ctx.request.body.effect;
 
       const userEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
-        .getUserStatusEffect(userId, effectName);
+        .getUserStatusEffect(userId, effectSymbol);
 
       if (!userEffect.active) {
         return ctx.badRequest(
@@ -168,9 +168,9 @@ export default factories.createCoreController(
           .refresh(effect);
       }
 
-      user_status_effects.filter((effect) => effect.active);
-
-      target.user_status_effects = user_status_effects;
+      target.user_status_effects = user_status_effects.filter(
+        (effect) => effect.active
+      );
 
       return target;
     },
@@ -185,13 +185,15 @@ export default factories.createCoreController(
       const friendsIds = friends.map((f) => f.id);
 
       // get revenges
-      const revenges: { id: number; attacked_at: string }[] = await strapi
-        .service("api::attack.attack")
-        .getRevenges(userId);
+      const revenges: {
+        id: number;
+        total_stack: number;
+        attacked_at: string;
+      }[] = await strapi.service("api::attack.attack").getRevenges(userId);
       const revengesIds = revenges.map((r) => r.id);
 
       // get randoms
-      let randoms: { id: number; active_broken_count: number }[] = await strapi
+      let randoms: { id: number; total_stack: number }[] = await strapi
         .service("api::attack.attack")
         .getRandoms([userId, ...friendsIds, ...revengesIds]);
 
@@ -209,22 +211,25 @@ export default factories.createCoreController(
 
       let recommendedId = null;
       let randomId = null;
+      const attackableRevenges = revenges.filter((r) => r.total_stack < 8);
+      // shuffle
+      attackableRevenges.sort(() => Math.random() - 0.5);
 
       if (
-        revenges.length > 0 &&
-        new Date(revenges[0].attacked_at).getTime() >
-          Date.now() - 3600 * 6 * 1000
+        attackableRevenges.length > 0 &&
+        new Date(attackableRevenges[0].attacked_at).getTime() >
+          Date.now() - 24 * 60 * 60 * 1000
       ) {
-        // 1st: revenge who attacked me in the last 6 hour
-        recommendedId = revenges[0].id;
+        // 1st: revenge who attacked me in the last 1 day
+        recommendedId = attackableRevenges[0].id;
         randomId = randoms[0] ? randoms[0].id : null;
       } else if (randoms.length == 2) {
         // 2nd: randoms length > 1, pick first one
         recommendedId = randoms[0].id;
         randomId = randoms[1] ? randoms[1].id : null;
-      } else if (revenges.length > 0) {
+      } else if (attackableRevenges.length > 0) {
         // 3rd: revenge
-        recommendedId = revenges[0].id;
+        recommendedId = attackableRevenges[0].id;
         randomId = randoms[0] ? randoms[0].id : null;
       } else if (friends.length > 0) {
         // 4th: friend (random)
@@ -254,11 +259,12 @@ export default factories.createCoreController(
         }
       );
 
-      const recommendedTarget =
-        users.find((u) => u.id === recommendedId) || null;
-      recommendedTarget.user_status_effects = await strapi
-        .service("api::user-status-effect.user-status-effect")
-        .getActiveEffects(recommendedId);
+      const recommendedTarget = {
+        ...users.find((u) => u.id === recommendedId),
+        user_status_effects: await strapi
+          .service("api::user-status-effect.user-status-effect")
+          .getActiveEffects(recommendedId),
+      };
 
       const randomTarget = randomId
         ? users.find((u) => u.id === randomId)

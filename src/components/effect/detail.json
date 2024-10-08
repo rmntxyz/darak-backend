@@ -10,8 +10,10 @@
     "type": {
       "type": "enumeration",
       "enum": [
-        "gacha_rate",
-        "multiply"
+        "star_reduction",
+        "exp_reduction",
+        "coin_penalty",
+        "star_cost_up"
       ]
     },
     "value": {
@@ -19,6 +21,9 @@
     },
     "for_stack": {
       "type": "integer"
+    },
+    "desc": {
+      "type": "text"
     }
   }
 }

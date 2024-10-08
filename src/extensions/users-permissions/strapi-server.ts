@@ -39,6 +39,7 @@ module.exports = (plugin) => {
           freebie: true,
           streak: true,
           free_gift: true,
+          shield: true,
           star_point: {
             fields: ["amount"],
           },
@@ -158,6 +159,16 @@ module.exports = (plugin) => {
     const statusEffects = await strapi
       .service("api::user-status-effect.user-status-effect")
       .getActiveEffects(user.id);
+
+    statusEffects.forEach((effect) => {
+      const { status_effect } = effect;
+      applyLocalizations(effect.status_effect, ctx.query.locale);
+
+      const { details } = status_effect;
+      details.forEach((detail) => {
+        applyLocalizations(detail, ctx.query.locale);
+      });
+    });
 
     ctx.body = sanitizeOutput({
       ...user,

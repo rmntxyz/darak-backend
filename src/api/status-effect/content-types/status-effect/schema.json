@@ -10,17 +10,19 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
-    "name": {
-      "type": "string",
-      "unique": true
-    },
-    "desc": {
-      "type": "text"
-    },
     "duration": {
-      "type": "integer"
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "icon": {
       "type": "media",
@@ -31,17 +33,45 @@
         "files",
         "videos",
         "audios"
-      ]
-    },
-    "details": {
-      "displayName": "detail",
-      "type": "component",
-      "repeatable": true,
-      "component": "effect.detail"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "max_stack": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "symbol": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "desc": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "details": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::status-effect-detail.status-effect-detail"
     }
   }
 }

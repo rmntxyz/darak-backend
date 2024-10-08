@@ -1,14 +1,11 @@
+import { ErrorCode } from "../../../../constant";
+
 export default {
   verify: async (
     userEffect: UserStatusEffect,
-    userId: number,
-    data: any = {}
+    data: { attacker?: number; drawHistory?: DrawHistory } = {}
   ): Promise<boolean> => {
-    const { target, drawHistory } = data;
-
-    if (!target) {
-      throw new Error("Target not found");
-    }
+    const { attacker, drawHistory } = data;
 
     const {
       status_effect: { max_stack },
@@ -16,19 +13,19 @@ export default {
     } = userEffect;
 
     if (stack >= max_stack) {
-      throw new Error("Max stack reached");
+      throw ErrorCode.TARGET_STACK_EXCEEDED;
     }
 
     if (drawHistory.draw_result.type !== "attack") {
-      throw new Error("Invalid draw type");
+      throw ErrorCode.INVALID_DRAW_TYPE;
     }
 
-    if (drawHistory.users_permissions_user.id !== userId) {
-      throw new Error("User is not the owner of the draw history");
+    if (drawHistory.users_permissions_user.id !== attacker) {
+      throw ErrorCode.NOT_OWNER_OF_DRAW_HISTORY;
     }
 
     if (drawHistory.reviewed) {
-      throw new Error("Draw history already reviewed");
+      throw ErrorCode.ALREADY_REVIEWED;
     } else {
       await strapi.entityService.update(
         "api::draw-history.draw-history",

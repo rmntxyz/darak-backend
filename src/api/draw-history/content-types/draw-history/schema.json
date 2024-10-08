@@ -36,6 +36,9 @@
     "reviewed": {
       "type": "boolean",
       "default": false
+    },
+    "effect_details": {
+      "type": "json"
     }
   }
 }

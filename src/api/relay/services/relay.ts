@@ -87,6 +87,14 @@ export default factories.createCoreService(
 
         for (const relay of relays) {
           if (relay && relay.user_relay_tokens.length === 0) {
+            // lock relays
+            await strapi.db
+              .connection("relays")
+              .transacting(trx)
+              .forUpdate()
+              .where("id", relay.id)
+              .select("relays.*");
+
             if (relay.type === "relay_only") {
               const userToken = await strapi.entityService.create(
                 "api::user-relay-token.user-relay-token",
@@ -107,14 +115,6 @@ export default factories.createCoreService(
               );
               relay.user_relay_tokens = [userToken];
             } else if (relay.type === "with_group_ranking") {
-              // lock relays
-              await strapi.db
-                .connection("relays")
-                .transacting(trx)
-                .forUpdate()
-                .where("id", relay.id)
-                .select("relays.*");
-
               // check tokens
               const groups = await strapi.db
                 .connection("relay_groups")

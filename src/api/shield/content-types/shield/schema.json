@@ -4,7 +4,8 @@
   "info": {
     "singularName": "shield",
     "pluralName": "shields",
-    "displayName": "Shield"
+    "displayName": "Shield",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -25,6 +26,9 @@
       "relation": "oneToMany",
       "target": "api::shield-history.shield-history",
       "mappedBy": "shield"
+    },
+    "max": {
+      "type": "integer"
     }
   }
 }

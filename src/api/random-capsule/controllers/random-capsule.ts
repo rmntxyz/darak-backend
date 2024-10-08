@@ -70,37 +70,45 @@ export default {
         }
       );
 
-      const result = await strapi
-        .service("api::random-capsule.random-capsule")
-        .drawWithCoin(userId, gachaInfos, draw, multiply);
+      try {
+        const result = await strapi
+          .service("api::random-capsule.random-capsule")
+          .drawWithCoin(userId, gachaInfos, draw, multiply);
 
-      if (result) {
-        const { locale } = ctx.query;
+        if (result) {
+          const { locale } = ctx.query;
 
-        result.rewards.forEach((reward) => {
-          if (reward.type === "item") {
-            applyLocalizations(reward.detail, locale);
-          }
-        });
+          result.rewards.forEach((reward) => {
+            if (reward.type === "item") {
+              applyLocalizations(reward.detail, locale);
+            }
+          });
+        }
+
+        return result;
+      } catch (error) {
+        return ctx.badRequest("draw with coin failed", error);
       }
-
-      return result;
     } else if (currency_type === "star_point") {
-      const result = await strapi
-        .service("api::random-capsule.random-capsule")
-        .drawWithStarPoint(userId, draw, multiply);
+      try {
+        const result = await strapi
+          .service("api::random-capsule.random-capsule")
+          .drawWithStarPoint(userId, draw, multiply);
 
-      if (result) {
-        const { locale } = ctx.query;
+        if (result) {
+          const { locale } = ctx.query;
 
-        result.rewards.forEach((reward) => {
-          if (reward.type === "item") {
-            applyLocalizations(reward.detail, locale);
-          }
-        });
+          result.rewards.forEach((reward) => {
+            if (reward.type === "item") {
+              applyLocalizations(reward.detail, locale);
+            }
+          });
+        }
+
+        return result;
+      } catch (error) {
+        return ctx.badRequest("draw with star point failed", error);
       }
-
-      return result;
     }
   },
 
