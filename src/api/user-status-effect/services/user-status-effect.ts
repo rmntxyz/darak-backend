@@ -56,7 +56,7 @@ export default factories.createCoreService(
     async updateStack(
       userEffect: UserStatusEffect,
       change: number = 1,
-      from?: number
+      from: number = null
     ) {
       let {
         id,
@@ -107,7 +107,7 @@ export default factories.createCoreService(
               end_time,
               stack,
               active,
-              from: { id: from },
+              from: from,
             },
             ...UserStatusEffectOptions,
           }

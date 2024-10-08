@@ -60,7 +60,7 @@ export default factories.createCoreController(
       } else {
         await strapi
           .service("api::user-status-effect.user-status-effect")
-          .updateStack(userEffect, 1);
+          .updateStack(userEffect, 1, userId);
       }
 
       const { ATTACK_REWARDS } = await strapi
