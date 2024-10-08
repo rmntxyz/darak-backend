@@ -3407,6 +3407,11 @@ export interface ApiUserStatusEffectUserStatusEffect
     start_time: Attribute.Integer;
     stack: Attribute.Integer;
     end_time: Attribute.Integer;
+    from: Attribute.Relation<
+      'api::user-status-effect.user-status-effect',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

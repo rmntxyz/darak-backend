@@ -53,7 +53,11 @@ export default factories.createCoreService(
       return userStatusEffect;
     },
 
-    async updateStack(userEffect: UserStatusEffect, change: number = 1) {
+    async updateStack(
+      userEffect: UserStatusEffect,
+      change: number = 1,
+      from?: number
+    ) {
       let {
         id,
         start_time,
@@ -69,37 +73,48 @@ export default factories.createCoreService(
         return userEffect;
       }
 
-      if (newStack === 0) {
-        start_time = 0;
-        end_time = 0;
-        active = false;
-      } else if (newStack > 0 && stack === 0) {
-        start_time = (Date.now() / 1000) | 0;
-        end_time = duration > 0 ? start_time + duration : 0;
-        active = true;
-      } else if (newStack > 0 && stack > 0) {
-        if (duration > 0) {
-          end_time = (Date.now() / 1000) | (0 + duration);
+      // lock user status effect
+      return await strapi.db.transaction(async ({ trx }) => {
+        const [lockedUserEffect] = await strapi.db
+          .connection("user_status_effects")
+          .transacting(trx)
+          .forUpdate()
+          .where("id", id)
+          .select("*");
+
+        if (newStack === 0) {
+          start_time = 0;
+          end_time = 0;
+          active = false;
+        } else if (newStack > 0 && stack === 0) {
+          start_time = (Date.now() / 1000) | 0;
+          end_time = duration > 0 ? start_time + duration : 0;
+          active = true;
+        } else if (newStack > 0 && stack > 0) {
+          if (duration > 0) {
+            end_time = (Date.now() / 1000) | (0 + duration);
+          }
         }
-      }
 
-      stack = newStack;
+        stack = newStack;
 
-      const updated = await strapi.entityService.update(
-        "api::user-status-effect.user-status-effect",
-        id,
-        {
-          data: {
-            start_time,
-            end_time,
-            stack,
-            active,
-          },
-          ...UserStatusEffectOptions,
-        }
-      );
+        const updated = await strapi.entityService.update(
+          "api::user-status-effect.user-status-effect",
+          id,
+          {
+            data: {
+              start_time,
+              end_time,
+              stack,
+              active,
+              from: { id: from },
+            },
+            ...UserStatusEffectOptions,
+          }
+        );
 
-      return updated;
+        return updated;
+      });
     },
 
     async getActiveEffects(userId: number) {
@@ -172,6 +187,19 @@ export const UserStatusEffectOptions = {
     },
     user: {
       fields: ["id"],
+    },
+    from: {
+      fields: ["username"],
+      populate: {
+        profile_picture: {
+          fields: ["id"],
+          populate: {
+            image: {
+              fields: ["url"],
+            },
+          },
+        },
+      },
     },
   },
 };

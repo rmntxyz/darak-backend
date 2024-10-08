@@ -35,6 +35,11 @@
     },
     "end_time": {
       "type": "integer"
+    },
+    "from": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }
