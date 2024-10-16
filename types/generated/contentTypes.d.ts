@@ -3007,6 +3007,28 @@ export interface ApiStreakRewardStreakReward extends Schema.CollectionType {
   };
 }
 
+export interface ApiTestTest extends Schema.CollectionType {
+  collectionName: 'tests';
+  info: {
+    singularName: 'test';
+    pluralName: 'tests';
+    displayName: 'test';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    desc: Attribute.RichText;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiTradeTrade extends Schema.CollectionType {
   collectionName: 'trades';
   info: {
@@ -3760,6 +3782,7 @@ declare module '@strapi/strapi' {
       'api::status-effect-detail.status-effect-detail': ApiStatusEffectDetailStatusEffectDetail;
       'api::streak.streak': ApiStreakStreak;
       'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
+      'api::test.test': ApiTestTest;
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;
