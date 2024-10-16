@@ -2157,6 +2157,47 @@ export interface ApiLeaderboardLeaderboard extends Schema.CollectionType {
   };
 }
 
+export interface ApiNoticeNotice extends Schema.CollectionType {
+  collectionName: 'notices';
+  info: {
+    singularName: 'notice';
+    pluralName: 'notices';
+    displayName: 'Notice';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    content: Attribute.RichText;
+    title_image: Attribute.Media;
+    banner_image: Attribute.Media;
+    bg_image: Attribute.Media;
+    end_date: Attribute.DateTime;
+    display_type: Attribute.Enumeration<['forced', 'blockable']>;
+    version: Attribute.Integer;
+    links: Attribute.Component<'notice.link', true>;
+    order: Attribute.Integer;
+    text_color: Attribute.Enumeration<['black', 'white', 'mint']>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::notice.notice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::notice.notice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProfilePictureProfilePicture extends Schema.CollectionType {
   collectionName: 'profile_pictures';
   info: {
@@ -3007,28 +3048,6 @@ export interface ApiStreakRewardStreakReward extends Schema.CollectionType {
   };
 }
 
-export interface ApiTestTest extends Schema.CollectionType {
-  collectionName: 'tests';
-  info: {
-    singularName: 'test';
-    pluralName: 'tests';
-    displayName: 'test';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    desc: Attribute.RichText;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
 export interface ApiTradeTrade extends Schema.CollectionType {
   collectionName: 'trades';
   info: {
@@ -3766,6 +3785,7 @@ declare module '@strapi/strapi' {
       'api::item.item': ApiItemItem;
       'api::item-acquisition-history.item-acquisition-history': ApiItemAcquisitionHistoryItemAcquisitionHistory;
       'api::leaderboard.leaderboard': ApiLeaderboardLeaderboard;
+      'api::notice.notice': ApiNoticeNotice;
       'api::profile-picture.profile-picture': ApiProfilePictureProfilePicture;
       'api::quest.quest': ApiQuestQuest;
       'api::quest-progress.quest-progress': ApiQuestProgressQuestProgress;
@@ -3782,7 +3802,6 @@ declare module '@strapi/strapi' {
       'api::status-effect-detail.status-effect-detail': ApiStatusEffectDetailStatusEffectDetail;
       'api::streak.streak': ApiStreakStreak;
       'api::streak-reward.streak-reward': ApiStreakRewardStreakReward;
-      'api::test.test': ApiTestTest;
       'api::trade.trade': ApiTradeTrade;
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;

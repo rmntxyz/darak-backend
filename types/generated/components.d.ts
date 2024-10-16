@@ -255,6 +255,18 @@ export interface LevelTable extends Schema.Component {
   };
 }
 
+export interface NoticeLink extends Schema.Component {
+  collectionName: 'components_notice_links';
+  info: {
+    displayName: 'link';
+    icon: 'link';
+  };
+  attributes: {
+    url: Attribute.String;
+    icon: Attribute.Media;
+  };
+}
+
 export interface RelayToken extends Schema.Component {
   collectionName: 'components_relay_tokens';
   info: {
@@ -437,6 +449,7 @@ declare module '@strapi/strapi' {
       'leaderboard.leaderboard-record': LeaderboardLeaderboardRecord;
       'level.claim-log': LevelClaimLog;
       'level.table': LevelTable;
+      'notice.link': NoticeLink;
       'relay.token': RelayToken;
       'reward.gacha-reward': RewardGachaReward;
       'reward.relay-ranking': RewardRelayRanking;
