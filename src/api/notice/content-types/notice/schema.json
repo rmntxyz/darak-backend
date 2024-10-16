@@ -10,13 +10,27 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "content": {
-      "type": "richtext"
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "title_image": {
       "type": "media",
@@ -27,7 +41,12 @@
         "files",
         "videos",
         "audios"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "banner_image": {
       "type": "media",
@@ -38,7 +57,12 @@
         "files",
         "videos",
         "audios"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "bg_image": {
       "type": "media",
@@ -49,29 +73,59 @@
         "files",
         "videos",
         "audios"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "end_date": {
-      "type": "datetime"
+      "type": "datetime",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "display_type": {
       "type": "enumeration",
       "enum": [
         "forced",
         "blockable"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "version": {
-      "type": "integer"
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "links": {
       "displayName": "link",
       "type": "component",
       "repeatable": true,
-      "component": "notice.link"
+      "component": "notice.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "order": {
-      "type": "integer"
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "text_color": {
       "type": "enumeration",
@@ -79,7 +133,12 @@
         "black",
         "white",
         "mint"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

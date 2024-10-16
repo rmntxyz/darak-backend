@@ -366,4 +366,31 @@ export const TRADE_NOTIFICATIONS = {
   // },
 };
 
+export const ATTACK_NOTIFICATIONS = {
+  blocked: {
+    title: {
+      en: "You were blocked from an attack!",
+      ko: "공격을 막았어요!",
+      ja: "攻撃を防ぎました！",
+    },
+    body: {
+      en: "${username} tried to attack your machine! Get revenge now!",
+      ko: "${username}님이 당신의 머신을 공격했어요! 지금 복수하세요!",
+      ja: "${username}さんがあなたのマシンを攻撃しました！今すぐ復讐しましょう！",
+    },
+  },
+  success: {
+    title: {
+      en: "You were attacked!",
+      ko: "공격을 받았어요!",
+      ja: "攻撃を受けました！",
+    },
+    body: {
+      en: "${username} attacked your machine! Get revenge now!",
+      ko: "${username}님이 당신의 머신을 공격했어요! 지금 복수하세요!",
+      ja: "${username}さんがあなたのマシンを攻撃しました！今すぐ復讐しましょう！",
+    },
+  },
+};
+
 export const BYPASS_VALUE = (v) => v;

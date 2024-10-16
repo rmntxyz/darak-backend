@@ -2168,18 +2168,78 @@ export interface ApiNoticeNotice extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    title: Attribute.String;
-    content: Attribute.RichText;
-    title_image: Attribute.Media;
-    banner_image: Attribute.Media;
-    bg_image: Attribute.Media;
-    end_date: Attribute.DateTime;
-    display_type: Attribute.Enumeration<['forced', 'blockable']>;
-    version: Attribute.Integer;
-    links: Attribute.Component<'notice.link', true>;
-    order: Attribute.Integer;
-    text_color: Attribute.Enumeration<['black', 'white', 'mint']>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    content: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    banner_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    bg_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    end_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    display_type: Attribute.Enumeration<['forced', 'blockable']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    version: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    links: Attribute.Component<'notice.link', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    text_color: Attribute.Enumeration<['black', 'white', 'mint']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2195,6 +2255,12 @@ export interface ApiNoticeNotice extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::notice.notice',
+      'oneToMany',
+      'api::notice.notice'
+    >;
+    locale: Attribute.String;
   };
 }
 
