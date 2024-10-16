@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { ATTACK_NOTIFICATIONS, ErrorCode } from "../../../constant";
 
 export default factories.createCoreService(
   "api::attack.attack",
@@ -96,6 +97,44 @@ ORDER BY attacked_at DESC;`);
 
     async getFriends(userId) {
       return [];
+    },
+
+    async sendAttackNotification(
+      from: number,
+      to: number,
+      status: keyof typeof ATTACK_NOTIFICATIONS
+    ) {
+      let { device_token, language } = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        to,
+        {
+          fields: ["device_token", "language"],
+        }
+      );
+
+      language = language || "en";
+
+      if (device_token) {
+        const { username } = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          from,
+          {
+            fields: ["username"],
+          }
+        );
+
+        const { notification } = strapi as unknown as ExtendedStrapi;
+        const { title, body } = ATTACK_NOTIFICATIONS[status];
+
+        return await notification.sendNotification(device_token, {
+          notification: {
+            title: title[language],
+            body: body[language].replace("${username}", username),
+          },
+        });
+      } else {
+        throw ErrorCode.DEVICE_TOKEN_NOT_FOUND;
+      }
     },
   })
 );

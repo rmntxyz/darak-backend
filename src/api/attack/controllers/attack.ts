@@ -85,6 +85,15 @@ export default factories.createCoreController(
         fields: ["result", "status", "multiply"],
       });
 
+      try {
+        const result = await strapi
+          .service("api::attack.attack")
+          .sendAttackNotification(userId, targetId, status);
+        console.log(result);
+      } catch (e) {
+        console.error(e);
+      }
+
       return attack;
     },
 
