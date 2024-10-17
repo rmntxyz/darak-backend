@@ -85,6 +85,20 @@ export default ({ strapi }) => {
       throw new Error(`Email is already taken. (${users[0].provider})`);
     }
 
+    let username = profile.username;
+
+    if (!username) {
+      throw new Error("Username was not available.");
+    }
+
+    users = await strapi.query("plugin::users-permissions.user").findMany({
+      where: { username },
+    });
+
+    if (users.length) {
+      username = `${username}#${users.length}`;
+    }
+
     const date = new Date();
     const createdFreebie = await strapi.entityService.create(
       "api::freebie.freebie",
@@ -177,7 +191,7 @@ export default ({ strapi }) => {
 
     // Create the new user.
     const newUser = {
-      ...profile,
+      username,
       email, // overwrite with lowercased email
       provider,
       role: defaultRole.id,

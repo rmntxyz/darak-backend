@@ -57,6 +57,19 @@ module.exports = (plugin) => {
             },
           },
           followings: true,
+          avatar: {
+            fields: ["serial_number", "claim_date"],
+            populate: {
+              profile_picture: {
+                fields: ["name", "desc"],
+                populate: {
+                  image: {
+                    fields: ["url"],
+                  },
+                },
+              },
+            },
+          },
         },
       }
     );

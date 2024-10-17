@@ -11,6 +11,15 @@ export default {
     },
     {
       method: "GET",
+      path: "/admin/register-profile-pictures",
+      handler: "admin.register-profile-pictures",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/admin/update-monthly-criteria",
       handler: "admin.update-monthly-criteria",
       config: {

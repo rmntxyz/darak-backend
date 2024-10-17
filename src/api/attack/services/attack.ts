@@ -145,7 +145,7 @@ export const TargetUserOptions = {
     status: {
       fields: ["level"],
     },
-    profile_picture: {
+    avatar: {
       fields: ["id"],
       populate: {
         image: {

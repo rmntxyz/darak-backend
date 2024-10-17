@@ -47,6 +47,43 @@ export default {
     // await Promise.all(promises);
     // return inactiveUsers;
   },
+  "register-profile-pictures": async (ctx) => {
+    const profilePictures = await strapi.entityService.findMany(
+      "api::profile-picture.profile-picture",
+      {
+        fields: ["id"],
+        filters: {
+          publishedAt: { $ne: null },
+          type: "default",
+        },
+      }
+    );
+
+    const pictureIds = profilePictures.map((picture) => picture.id);
+
+    const users = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        fields: ["id"],
+        filters: {
+          deactivated: false,
+        },
+      }
+    );
+    const userIds = users.map((user) => user.id);
+
+    const results = [];
+    for (const userId of userIds) {
+      const result = await strapi
+        .service("api::user-profile-picture.user-profile-picture")
+        .addUserProfilePictures(userId, pictureIds);
+
+      results.push({ userId, result });
+    }
+
+    console.log("completed");
+    return results;
+  },
   "update-monthly-criteria": async (ctx) => {
     return await strapi
       .service("api::leaderboard.leaderboard")

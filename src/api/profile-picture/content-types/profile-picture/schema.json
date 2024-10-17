@@ -38,9 +38,17 @@
     "current_serial_number": {
       "type": "integer"
     },
-    "user_profile_picture": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "default",
+        "limited",
+        "rewarded"
+      ]
+    },
+    "user_profile_pictures": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::user-profile-picture.user-profile-picture",
       "mappedBy": "profile_picture"
     }

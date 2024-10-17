@@ -26,9 +26,9 @@
     },
     "profile_picture": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::profile-picture.profile-picture",
-      "inversedBy": "user_profile_picture"
+      "inversedBy": "user_profile_pictures"
     }
   }
 }

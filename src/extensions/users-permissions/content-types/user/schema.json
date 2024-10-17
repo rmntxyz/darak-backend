@@ -205,7 +205,7 @@
       "target": "api::user-profile-picture.user-profile-picture",
       "mappedBy": "user"
     },
-    "profile_picture": {
+    "avatar": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::user-profile-picture.user-profile-picture"

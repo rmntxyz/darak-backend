@@ -191,7 +191,7 @@ export const UserStatusEffectOptions = {
     from: {
       fields: ["username"],
       populate: {
-        profile_picture: {
+        avatar: {
           fields: ["id"],
           populate: {
             image: {

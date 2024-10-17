@@ -801,7 +801,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::user-profile-picture.user-profile-picture'
     >;
-    profile_picture: Attribute.Relation<
+    avatar: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToOne',
       'api::user-profile-picture.user-profile-picture'
@@ -2285,9 +2285,10 @@ export interface ApiProfilePictureProfilePicture extends Schema.CollectionType {
       'api::creator.creator'
     >;
     current_serial_number: Attribute.Integer;
-    user_profile_picture: Attribute.Relation<
+    type: Attribute.Enumeration<['default', 'limited', 'rewarded']>;
+    user_profile_pictures: Attribute.Relation<
       'api::profile-picture.profile-picture',
-      'oneToOne',
+      'oneToMany',
       'api::user-profile-picture.user-profile-picture'
     >;
     createdAt: Attribute.DateTime;
@@ -3370,7 +3371,7 @@ export interface ApiUserProfilePictureUserProfilePicture
     serial_number: Attribute.Integer;
     profile_picture: Attribute.Relation<
       'api::user-profile-picture.user-profile-picture',
-      'oneToOne',
+      'manyToOne',
       'api::profile-picture.profile-picture'
     >;
     createdAt: Attribute.DateTime;
