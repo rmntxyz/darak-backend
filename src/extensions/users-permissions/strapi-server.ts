@@ -2,6 +2,7 @@ import bootstrap from "./server/bootstrap";
 import providersRegistry from "./server/services/providers-registry";
 import providers from "./server/services/providers";
 import { applyLocalizations } from "../../utils";
+import { userProfilePicturesOptions } from "../../api/user-profile-picture/services/user-profile-picture";
 
 module.exports = (plugin) => {
   // for kakao login
@@ -57,19 +58,8 @@ module.exports = (plugin) => {
             },
           },
           followings: true,
-          avatar: {
-            fields: ["serial_number", "claim_date"],
-            populate: {
-              profile_picture: {
-                fields: ["name", "desc"],
-                populate: {
-                  image: {
-                    fields: ["url"],
-                  },
-                },
-              },
-            },
-          },
+          avatar: userProfilePicturesOptions,
+          user_profile_pictures: userProfilePicturesOptions,
         },
       }
     );

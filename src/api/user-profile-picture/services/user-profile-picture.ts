@@ -103,7 +103,7 @@ export default factories.createCoreService(
   })
 );
 
-const userProfilePicturesOptions = {
+export const userProfilePicturesOptions = {
   fields: ["claim_date", "serial_number"],
   populate: {
     profile_picture: {
