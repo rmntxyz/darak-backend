@@ -148,8 +148,13 @@ export const TargetUserOptions = {
     avatar: {
       fields: ["id"],
       populate: {
-        image: {
-          fields: ["url"],
+        profile_picture: {
+          fields: ["id"],
+          populate: {
+            image: {
+              fields: ["url"],
+            },
+          },
         },
       },
     },

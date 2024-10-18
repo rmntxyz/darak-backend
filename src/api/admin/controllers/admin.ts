@@ -6,46 +6,38 @@ import Hashids from "hashids";
 
 export default {
   test: async (ctx) => {
-    // const inactiveUsers = await strapi.entityService.findMany(
-    //   "plugin::users-permissions.user",
-    //   {
-    //     filters: {
-    //       deactivated: true,
-    //       blocked: false,
-    //       deactivated_at: {
-    //         $lt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    //       },
-    //     },
-    //     fields: ["email", "deactivated_at", "provider"],
-    //   }
-    // );
-    // if (inactiveUsers.length === 0) {
-    //   return 200;
-    // }
-    // const hashids = new Hashids("", 3, process.env.NONCE_FOR_ENCRYPTION);
-    // const promises = inactiveUsers.map((user) => {
-    //   const [identifier, domain] = user.email.split("@");
-    //   const codeFromEmail = identifier.split("").map((c) => c.charCodeAt());
-    //   const encodedEmail = hashids.encode(codeFromEmail) + "@ROOMIX.INACTIVE";
-    //   // const encoded = hashids.encode(codeFromEmail);
-    //   // const decodedCodes = hashids.decode(encoded) as number[];
-    //   // const decoded = String.fromCharCode(...decodedCodes);
-    //   // console.log("decode", decoded);
-    //   return strapi.entityService.update(
-    //     "plugin::users-permissions.user",
-    //     user.id,
-    //     {
-    //       data: {
-    //         blocked: true,
-    //         username: "ROOMIX.INACTIVE",
-    //         email: encodedEmail,
-    //         device_token: "",
-    //       },
-    //     }
-    //   );
-    // });
-    // await Promise.all(promises);
-    // return inactiveUsers;
+    let status = (
+      await strapi.entityService.findMany("api::status.status", {
+        filters: { user: 3 },
+        fields: ["id", "level", "exp", "level_up_reward_claimed"],
+        populate: {
+          level_up_reward_claim_history: {
+            sort: "level:asc",
+          },
+        },
+      })
+    )[0];
+
+    const { exp_table } = await strapi
+      .service("api::experience-table.experience-table")
+      .getExperienceTable("user_level");
+
+    const { level } = status;
+
+    const currentLevel = exp_table[level - 1];
+    const nextLevel = exp_table[level];
+
+    if (true) {
+      status.exp_table = exp_table;
+    } else {
+    }
+
+    return {
+      ...status,
+      next_level_rewards: nextLevel ? nextLevel.rewards : [],
+      exp_range: [currentLevel.exp, nextLevel ? nextLevel.exp : null],
+      max_level: exp_table.length,
+    };
   },
   "register-profile-pictures": async (ctx) => {
     const profilePictures = await strapi.entityService.findMany(
