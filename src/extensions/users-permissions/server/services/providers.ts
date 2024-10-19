@@ -223,6 +223,22 @@ export default ({ strapi }) => {
       .service("api::user-room.user-room")
       .createUserRoomsWithoutUnlockCondition(createdUser.id);
 
+    // 가입시 유저 프로필 사진 생성
+    const profilePictures = await strapi.entityService.findMany(
+      "api::profile-picture.profile-picture",
+      {
+        fields: ["id"],
+        filters: {
+          publishedAt: { $ne: null },
+          type: "default",
+        },
+      }
+    );
+    const pictureIds = profilePictures.map((picture) => picture.id);
+    await strapi
+      .service("api::user-profile-picture.user-profile-picture")
+      .addUserProfilePictures(createdUser.id, pictureIds);
+
     return { ...createdUser, achievement_progresses };
   };
 
