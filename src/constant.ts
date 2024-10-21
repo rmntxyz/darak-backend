@@ -369,26 +369,26 @@ export const TRADE_NOTIFICATIONS = {
 export const ATTACK_NOTIFICATIONS = {
   blocked: {
     title: {
-      en: "You were blocked from an attack!",
-      ko: "공격을 막았어요!",
-      ja: "攻撃を防ぎました！",
+      en: "You lost your shield!",
+      ko: "방패가 사라졌습니다.",
+      ja: "シールドが破壊されました！",
     },
     body: {
-      en: "${username} tried to attack your machine! Get revenge now!",
-      ko: "${username}님이 당신의 머신을 공격했어요! 지금 복수하세요!",
-      ja: "${username}さんがあなたのマシンを攻撃しました！今すぐ復讐しましょう！",
+      en: "{username} broke your shield!🛡️ Get revenge now!",
+      ko: "{username}님이 방패를 부셨어요!🛡️ 지금 바로 복수하러 가요!",
+      ja: "{username}があなたのシールドを壊しました！🛡️ 今すぐリベンジしましょう！",
     },
   },
   success: {
     title: {
-      en: "You were attacked!",
-      ko: "공격을 받았어요!",
-      ja: "攻撃を受けました！",
+      en: "You are attacked!",
+      ko: "공격 당했습니다!",
+      ja: "アタックされました！",
     },
     body: {
-      en: "${username} attacked your machine! Get revenge now!",
-      ko: "${username}님이 당신의 머신을 공격했어요! 지금 복수하세요!",
-      ja: "${username}さんがあなたのマシンを攻撃しました！今すぐ復讐しましょう！",
+      en: "{username} broke your machine!🔨 Fix it now!",
+      ko: "{username}님의 공격으로 머신이 망가졌어요!🔨 얼른 수리하세요!",
+      ja: "{username}があなたのマシンを壊しました！🔨 今すぐ修理してください！",
     },
   },
 };
