@@ -374,9 +374,9 @@ export const ATTACK_NOTIFICATIONS = {
       ja: "シールドが破壊されました！",
     },
     body: {
-      en: "{username} broke your shield!🛡️ Get revenge now!",
-      ko: "{username}님이 방패를 부셨어요!🛡️ 지금 바로 복수하러 가요!",
-      ja: "{username}があなたのシールドを壊しました！🛡️ 今すぐリベンジしましょう！",
+      en: "${username} broke your shield!🛡️ Get revenge now!",
+      ko: "${username}님이 방패를 부셨어요!🛡️ 지금 바로 복수하러 가요!",
+      ja: "${username}があなたのシールドを壊しました！🛡️ 今すぐリベンジしましょう！",
     },
   },
   success: {
@@ -386,9 +386,9 @@ export const ATTACK_NOTIFICATIONS = {
       ja: "アタックされました！",
     },
     body: {
-      en: "{username} broke your machine!🔨 Fix it now!",
-      ko: "{username}님의 공격으로 머신이 망가졌어요!🔨 얼른 수리하세요!",
-      ja: "{username}があなたのマシンを壊しました！🔨 今すぐ修理してください！",
+      en: "${username} broke your machine!🔨 Fix it now!",
+      ko: "${username}님의 공격으로 머신이 망가졌어요!🔨 얼른 수리하세요!",
+      ja: "${username}があなたのマシンを壊しました！🔨 今すぐ修理してください！",
     },
   },
 };

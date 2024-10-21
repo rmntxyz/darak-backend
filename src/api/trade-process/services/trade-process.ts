@@ -608,7 +608,7 @@ offset ${pageNum - 1} * ${pageSize};
 
       return await notification.sendNotification(device_token, {
         notification: {
-          title: title[language],
+          title: title[language].replace("${username}", username),
           body: body[language].replace("${username}", username),
         },
         data: {
