@@ -105,7 +105,7 @@ export default factories.createCoreService(
 
             await strapi
               .service("api::status.status")
-              .updateExp(userId, totalExp);
+              .updateExp(userId, totalExp * multiply);
 
             await strapi.entityService.create(
               "api::item-acquisition-history.item-acquisition-history",
