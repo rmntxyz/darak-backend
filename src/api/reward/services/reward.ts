@@ -90,7 +90,7 @@ export default factories.createCoreService(
               let exp = EXP_BY_RARITY[rarity];
 
               if (!isNew) {
-                exp *= EXP_MULT_FOR_DUPLICATE;
+                exp *= EXP_MULT_FOR_DUPLICATE * multiply;
               }
 
               totalExp += exp;

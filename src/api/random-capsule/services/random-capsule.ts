@@ -385,7 +385,7 @@ async function addItemToUser(
     let exp = EXP_BY_RARITY[updatedItem.rarity];
 
     if (!isNew) {
-      exp *= EXP_MULT_FOR_DUPLICATE;
+      exp *= EXP_MULT_FOR_DUPLICATE * multiply;
     }
 
     const [details, change] = applyStatusEffect(
