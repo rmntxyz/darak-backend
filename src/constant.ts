@@ -266,24 +266,24 @@ export const ITEM_PROBABILITY = {
 };
 
 export const ATTACK_REWARDS = {
-  success: [
-    {
-      type: "star_point",
-      amount: 1000,
-    },
-    {
-      type: "exp",
-      amount: 10,
-    },
-  ],
   blocked: [
     {
       type: "star_point",
-      amount: 500,
+      amount: 40,
     },
     {
       type: "exp",
-      amount: 5,
+      amount: 12,
+    },
+  ],
+  success: [
+    {
+      type: "star_point",
+      amount: 100,
+    },
+    {
+      type: "exp",
+      amount: 30,
     },
   ],
 };

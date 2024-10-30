@@ -383,9 +383,11 @@ async function addItemToUser(
     const isNew = !userRoom.owned_items[itemId];
 
     let exp = EXP_BY_RARITY[updatedItem.rarity];
+    let expForDisplay = exp;
 
     if (!isNew) {
       exp *= EXP_MULT_FOR_DUPLICATE * multiply;
+      expForDisplay *= EXP_MULT_FOR_DUPLICATE;
     }
 
     const [details, change] = applyStatusEffect(
@@ -413,7 +415,7 @@ async function addItemToUser(
           items: { connect: [updatedItem.id] },
           inventories: { connect: [userItem.id] },
           multiply,
-          exp,
+          exp: expForDisplay,
           effect_details: details,
           publishedAt: new Date(),
         },
@@ -435,7 +437,7 @@ async function addItemToUser(
       }
     );
 
-    return { item: updatedItem, exp, historyId: history.id };
+    return { item: updatedItem, exp: expForDisplay, historyId: history.id };
   })) as { item: Partial<Item>; exp: number; historyId: number };
 }
 
