@@ -16,7 +16,7 @@ export default factories.createCoreController(
       const effectSymbol = ctx.request.body.effect;
       const capsuleHistoryId = ctx.request.body.capsule_history_id;
 
-      const userEffect = await strapi
+      const userEffect: UserStatusEffect = await strapi
         .service("api::user-status-effect.user-status-effect")
         .getUserStatusEffect(targetId, effectSymbol);
 
@@ -79,7 +79,7 @@ export default factories.createCoreController(
           result: rewards,
           status,
           multiply,
-          effect_effect: { id: userEffect.id },
+          status_effect: { id: userEffect.status_effect.id },
           publishedAt: new Date(),
         },
         fields: ["result", "status", "multiply"],
