@@ -19,7 +19,6 @@ export default {
 
     const tokens = await handler.verify(relay, result);
 
-    console.log("tokens in verify", tokens);
     if (tokens > 0) {
       // update user relay token
       await strapi

@@ -96,7 +96,6 @@ export default factories.createCoreController(
 
       attack.events = [];
       await checkRankingRelayEvent(userId, attack);
-      console.log(attack);
       return attack;
     },
 
@@ -316,8 +315,6 @@ async function checkRankingRelayEvent(userId: number, result: AttackResult) {
     const tokens = await strapi
       .service("api::relay.relay")
       .verify(userId, relay, result);
-
-    console.log(tokens);
 
     if (tokens > 0) {
       const { rewards, total } = await strapi
