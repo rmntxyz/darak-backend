@@ -94,6 +94,9 @@ export default factories.createCoreController(
         console.error(e);
       }
 
+      attack.events = [];
+      await checkRankingRelayEvent(userId, attack);
+      console.log(attack);
       return attack;
     },
 
@@ -301,3 +304,33 @@ export default factories.createCoreController(
     },
   })
 );
+
+async function checkRankingRelayEvent(userId: number, result: AttackResult) {
+  const relays = await strapi
+    .service("api::relay.relay")
+    .getCurrentRelays(userId);
+
+  const relay = relays.find((relay) => relay.type === "with_group_ranking");
+
+  if (relay) {
+    const tokens = await strapi
+      .service("api::relay.relay")
+      .verify(userId, relay, result);
+
+    console.log(tokens);
+
+    if (tokens > 0) {
+      const { rewards, total } = await strapi
+        .service("api::relay.relay")
+        .claimRewards(userId, relay);
+
+      result.events.push({
+        type: "relay",
+        amount: tokens,
+        total,
+        rewards,
+        relay,
+      });
+    }
+  }
+}

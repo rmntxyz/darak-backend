@@ -40,6 +40,7 @@ export default ({ strapi }) => ({
               reward.amount += change;
             }
 
+            // for converting shield to coin
             reviseReward(userId, reward, multiply);
 
             historyId = await addRewardToUser(
@@ -444,6 +445,7 @@ async function checkRelayEvent(userId: number, result: CapsuleResult) {
     .getCurrentRelays(userId);
 
   const relay = relays.find((relay) => relay.type === "relay_only");
+
   if (relay) {
     const tokens = await strapi
       .service("api::relay.relay")

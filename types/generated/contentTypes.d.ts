@@ -2422,7 +2422,9 @@ export interface ApiRelayRelay extends Schema.CollectionType {
       'api::relay-group.relay-group'
     >;
     detail: Attribute.JSON;
-    condition: Attribute.Enumeration<['probability', 'reward_related']>;
+    condition: Attribute.Enumeration<
+      ['probability', 'reward_related', 'attack']
+    >;
     user_relay_tokens: Attribute.Relation<
       'api::relay.relay',
       'oneToMany',

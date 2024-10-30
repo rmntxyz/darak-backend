@@ -71,12 +71,22 @@ export default factories.createCoreService(
                   fields: ["amount"],
                   populate: {
                     user: {
-                      fields: ["id", "username"],
-                      // populate: {
-                      //   profile_image: {
-                      //     fields: ["url"],
-                      //   }
-                      // }
+                      fields: ["username"],
+                      populate: {
+                        avatar: {
+                          fields: ["id"],
+                          populate: {
+                            profile_picture: {
+                              fields: ["id"],
+                              populate: {
+                                image: {
+                                  fields: ["url"],
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                 },

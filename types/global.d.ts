@@ -196,6 +196,19 @@ type CapsuleResult = {
   historyId: number;
 };
 
+type AttackResult = {
+  status: "success" | "blocked";
+  multiply: number;
+  result: Reward[];
+  events?: {
+    type: "relay";
+    amount: number;
+    total: number;
+    rewards: RewardDetail[];
+    relay: Relay;
+  }[];
+};
+
 type DailyQuestProgress = {
   id: number;
   daily_quest: DailyQuest;
@@ -272,7 +285,7 @@ type Inventory = {
   updatedAt: Date;
 };
 
-type RelayConditionType = "probaility" | "reward_related";
+type RelayConditionType = "probaility" | "reward_related" | "attack";
 
 type RelayType = "relay_only" | "with_group_ranking";
 
@@ -300,6 +313,7 @@ type RelayReward = {
 type RelayDetail = {
   conditions: {
     amount: number;
+    attack_status?: "success" | "blocked";
     probability?: number;
     reward_type?: RewardType;
     rarity?: "common" | "uncommon" | "rare" | "unique" | "secret" | "variant";

@@ -71,7 +71,8 @@
       "type": "enumeration",
       "enum": [
         "probability",
-        "reward_related"
+        "reward_related",
+        "attack"
       ]
     },
     "user_relay_tokens": {
