@@ -382,10 +382,11 @@ async function addItemToUser(
     const isNew = !userRoom.owned_items[itemId];
 
     let exp = EXP_BY_RARITY[updatedItem.rarity];
-    const expForDisplay = exp;
+    let expForDisplay = exp;
 
     if (!isNew) {
       exp *= EXP_MULT_FOR_DUPLICATE * multiply;
+      expForDisplay *= EXP_MULT_FOR_DUPLICATE;
     }
 
     const [details, change] = applyStatusEffect(
