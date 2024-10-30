@@ -384,7 +384,7 @@ async function addItemToUser(
     let exp = EXP_BY_RARITY[updatedItem.rarity];
 
     if (!isNew) {
-      exp *= EXP_MULT_FOR_DUPLICATE;
+      exp *= EXP_MULT_FOR_DUPLICATE * multiply;
     }
 
     const [details, change] = applyStatusEffect(
@@ -400,9 +400,7 @@ async function addItemToUser(
       .service("api::user-room.user-room")
       .updateItems(userRoom, [updatedItem.id], []);
 
-    await strapi
-      .service("api::status.status")
-      .updateExp(userId, exp * multiply);
+    await strapi.service("api::status.status").updateExp(userId, exp);
 
     await strapi.entityService.create(
       "api::item-acquisition-history.item-acquisition-history",

@@ -90,7 +90,7 @@ export default factories.createCoreService(
               let exp = EXP_BY_RARITY[rarity];
 
               if (!isNew) {
-                exp *= EXP_MULT_FOR_DUPLICATE;
+                exp *= EXP_MULT_FOR_DUPLICATE * multiply;
               }
 
               totalExp += exp;
@@ -105,7 +105,7 @@ export default factories.createCoreService(
 
             await strapi
               .service("api::status.status")
-              .updateExp(userId, totalExp * multiply);
+              .updateExp(userId, totalExp);
 
             await strapi.entityService.create(
               "api::item-acquisition-history.item-acquisition-history",
