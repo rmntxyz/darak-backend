@@ -377,6 +377,24 @@ async function getCollectStatus(): Promise<CollectionStatusByUser> {
       populate: {
         user: {
           fields: ["username"],
+          populate: {
+            status: {
+              fields: ["level"],
+            },
+            avatar: {
+              fields: ["id"],
+              populate: {
+                profile_picture: {
+                  fields: ["id"],
+                  populate: {
+                    image: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     }
@@ -390,6 +408,7 @@ async function getCollectStatus(): Promise<CollectionStatusByUser> {
         acc[userId] = {
           id: userId,
           username: room.user.username,
+          avatar: room.user.avatar?.profile_picture.image.url,
           completion_count: 0,
           items_count: 0,
         };
