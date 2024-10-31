@@ -353,7 +353,7 @@ export default factories.createCoreService(
         user: {
           id: userId,
           username: user.username,
-          avatar: user.avatar?.profile_picture.image.url,
+          avatar: user.avatar,
         },
         rank,
       };
