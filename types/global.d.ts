@@ -37,6 +37,7 @@ type User = {
   freebie: Freebie;
   streak: Streak;
   daily_quest_progresses: DailyQuestProgress[];
+  avatar: any;
 };
 
 type Creator = {};

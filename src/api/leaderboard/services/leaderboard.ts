@@ -107,6 +107,24 @@ export default factories.createCoreService(
         populate: {
           user: {
             fields: ["username"],
+            populate: {
+              status: {
+                fields: ["level"],
+              },
+              avatar: {
+                fields: ["id"],
+                populate: {
+                  profile_picture: {
+                    fields: ["id"],
+                    populate: {
+                      image: {
+                        fields: ["url"],
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         sort: "completion_time",
@@ -120,6 +138,7 @@ export default factories.createCoreService(
       const list = userRooms.map((room) => ({
         id: room.user.id,
         username: room.user.username,
+        avatar: room.user.avatar?.profile_picture.image.url,
         completion_time: room.completion_time,
       }));
 
@@ -253,6 +272,21 @@ export default factories.createCoreService(
           populate: {
             user: {
               fields: ["username"],
+              populate: {
+                avatar: {
+                  fields: ["id"],
+                  populate: {
+                    profile_picture: {
+                      fields: ["id"],
+                      populate: {
+                        image: {
+                          fields: ["url"],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           sort: { exp: "desc" },
@@ -287,6 +321,19 @@ export default factories.createCoreService(
             status: {
               fields: ["exp", "level"],
             },
+            avatar: {
+              fields: ["id"],
+              populate: {
+                profile_picture: {
+                  fields: ["id"],
+                  populate: {
+                    image: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
           },
         }
       );
@@ -306,6 +353,7 @@ export default factories.createCoreService(
         user: {
           id: userId,
           username: user.username,
+          avatar: user.avatar?.profile_picture.image.url,
         },
         rank,
       };
