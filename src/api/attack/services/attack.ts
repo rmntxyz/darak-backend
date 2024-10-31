@@ -99,6 +99,29 @@ ORDER BY attacked_at DESC;`);
       return [];
     },
 
+    async isAttackedin(userId, hours = 8) {
+      const results = await strapi.entityService.findMany(
+        "api::attack.attack",
+        {
+          filters: {
+            target: {
+              id: userId,
+            },
+            createdAt: {
+              $gte: new Date(Date.now() - hours * 60 * 60 * 1000).toISOString(),
+            },
+          },
+          fields: ["id"],
+        }
+      );
+
+      if (results.length) {
+        return true;
+      }
+
+      return false;
+    },
+
     async sendAttackNotification(
       from: number,
       to: number,

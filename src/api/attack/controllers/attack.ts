@@ -229,24 +229,25 @@ export default factories.createCoreController(
       if (
         attackableRevenges.length > 0 &&
         new Date(attackableRevenges[0].attacked_at).getTime() >
-          Date.now() - 24 * 60 * 60 * 1000
+          Date.now() - 24 * 60 * 60 * 1000 &&
+        !(await strapi
+          .service("api::attack.attack")
+          .isAttackedin(attackableRevenges[0].id))
       ) {
         // 1st: revenge who attacked me in the last 1 day
         recommendedId = attackableRevenges[0].id;
-        randomId = randoms[0] ? randoms[0].id : null;
+        randomId = randoms[0]?.id;
       } else if (randoms.length == 2) {
         // 2nd: randoms length > 1, pick first one
         recommendedId = randoms[0].id;
-        randomId = randoms[1] ? randoms[1].id : null;
+        randomId = randoms[1].id;
       } else if (attackableRevenges.length > 0) {
         // 3rd: revenge
         recommendedId = attackableRevenges[0].id;
-        randomId = randoms[0] ? randoms[0].id : null;
-      } else if (friends.length > 0) {
-        // 4th: friend (random)
-        const idx = Math.floor(Math.random() * friends.length);
-        recommendedId = friends[idx].id;
-        randomId = randoms[0] ? randoms[0].id : null;
+        randomId = randoms[0]?.id;
+      } else {
+        recommendedId = friends[0]?.id || randoms[0]?.id;
+        randomId = null;
       }
 
       if (recommendedId === null) {
