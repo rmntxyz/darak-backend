@@ -128,7 +128,6 @@ export default {
 
     // optional. conditional topic
 
-    //Make the notification functions available everywhere
     strapi.notification = {
       subscribeTopic,
       unsubscribeTopic,
@@ -137,5 +136,28 @@ export default {
       sendMulticastNotification,
       sendEachNotification,
     };
+
+    if (process.env.NOTIFICATION === "false") {
+      strapi.notification = {
+        subscribeTopic: async (m) => {
+          console.log("subscribeTopic", m);
+        },
+        unsubscribeTopic: async (m) => {
+          console.log("unsubscribeTopic", m);
+        },
+        sendNotificationToTopic: async (m) => {
+          console.log("sendNotificationToTopic", m);
+        },
+        sendNotification: async (m) => {
+          console.log("sendNotification", m);
+        },
+        sendMulticastNotification: async (m) => {
+          console.log("sendMulticastNotification", m);
+        },
+        sendEachNotification: async (m) => {
+          console.log("sendEachNotification", m);
+        },
+      };
+    }
   },
 };
