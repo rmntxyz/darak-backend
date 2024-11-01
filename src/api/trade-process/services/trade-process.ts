@@ -544,7 +544,7 @@ offset ${pageNum - 1} * ${pageSize};
           throw ErrorCode.NOT_ENOUGH_PROPOSER_ITEMS;
         }
 
-        if (this.checkFirstItem(proposerRoom, id)) {
+        if (this.checkFirstItem(partnerRoom, id)) {
           partnerExp += EXP_BY_RARITY[rarity];
         }
       }
@@ -555,7 +555,7 @@ offset ${pageNum - 1} * ${pageSize};
           throw ErrorCode.NOT_ENOUGH_PARTNER_ITEMS;
         }
 
-        if (this.checkFirstItem(partnerRoom, id)) {
+        if (this.checkFirstItem(proposerRoom, id)) {
           proposerExp += EXP_BY_RARITY[rarity];
         }
       }
