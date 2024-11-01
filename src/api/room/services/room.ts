@@ -100,7 +100,7 @@ const roomsDefaultOptions = {
 };
 
 export default factories.createCoreService("api::room.room", ({ strapi }) => ({
-  async findRooomByRoomName(roomName: string) {
+  async findRoomByRoomName(roomName: string) {
     return await strapi.entityService.findMany("api::room.room", {
       ...roomsDefaultOptions,
       filters: {
@@ -219,8 +219,10 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
             "attribute",
             "current_serial_number",
           ],
-          localizations: {
-            fields: ["name", "desc", "locale"],
+          populate: {
+            localizations: {
+              fields: ["name", "desc", "locale"],
+            },
           },
         },
         creator: {

@@ -17,7 +17,7 @@ export default factories.createCoreController(
 
       const rooms = await strapi
         .service("api::room.room")
-        .findRooomByRoomName(roomName);
+        .findRoomByRoomName(roomName);
 
       if (rooms.length === 0) {
         return ctx.notFound("Room not found");
