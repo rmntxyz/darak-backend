@@ -85,33 +85,31 @@ export default factories.createCoreService(
     async verify(userId: number, progressId: number) {
       let progress = null;
 
-      await strapi.db.transaction(async () => {
-        const dailyQuestProgress = await strapi.entityService.findOne(
-          "api::daily-quest-progress.daily-quest-progress",
-          progressId,
-          progressDefaultOptions
+      const dailyQuestProgress = await strapi.entityService.findOne(
+        "api::daily-quest-progress.daily-quest-progress",
+        progressId,
+        progressDefaultOptions
+      );
+
+      if (!dailyQuestProgress) {
+        throw new Error("daily quest progress not found");
+      }
+
+      if (!dailyQuestProgress.is_completed) {
+        const user = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          userId,
+          {
+            fields: ["id"],
+          }
         );
 
-        if (!dailyQuestProgress) {
-          throw new Error("daily quest progress not found");
-        }
+        progress = await progressHandler.verify(user, dailyQuestProgress);
+      }
 
-        if (!dailyQuestProgress.is_completed) {
-          const user = await strapi.entityService.findOne(
-            "plugin::users-permissions.user",
-            userId,
-            {
-              fields: ["id"],
-            }
-          );
-
-          progress = await progressHandler.verify(user, dailyQuestProgress);
-        }
-
-        if (!progress) {
-          progress = dailyQuestProgress;
-        }
-      });
+      if (!progress) {
+        progress = dailyQuestProgress;
+      }
 
       return progress;
     },
@@ -155,6 +153,7 @@ export default factories.createCoreService(
       let results: any = null;
 
       await strapi.db.transaction(async () => {
+        // TODO: need lock
         const progress = await strapi.entityService.findOne(
           "api::daily-quest-progress.daily-quest-progress",
           progressId,

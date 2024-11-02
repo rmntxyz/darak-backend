@@ -31,6 +31,7 @@ export default {
 
   claimRewards: async (userId: number, relay: Relay) => {
     return (await strapi.db.transaction(async ({ trx }) => {
+      // TODO: need lock
       const userRelayToken: RelayToken = (
         await strapi.entityService.findMany(
           "api::user-relay-token.user-relay-token",
