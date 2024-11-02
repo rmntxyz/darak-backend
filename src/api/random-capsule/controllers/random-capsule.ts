@@ -87,6 +87,7 @@ export default {
 
         return result;
       } catch (error) {
+        console.error(error);
         return ctx.badRequest("draw with coin failed", error);
       }
     } else if (currency_type === "star_point") {
@@ -107,6 +108,7 @@ export default {
 
         return result;
       } catch (error) {
+        console.error(error);
         return ctx.badRequest("draw with star point failed", error);
       }
     }
