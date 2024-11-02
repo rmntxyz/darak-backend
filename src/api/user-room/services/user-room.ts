@@ -250,9 +250,14 @@ export default factories.createCoreService(
         );
 
         if (prev_completed !== completed) {
-          await strapi
-            .service("api::update-manager.update-manager")
-            .updateRoomCompletion(updatedUserRoom);
+          try {
+            await strapi
+              .service("api::update-manager.update-manager")
+              .updateRoomCompletion(updatedUserRoom);
+          } catch (e) {
+            // TEMP
+            console.error("update manager", e);
+          }
         }
       });
     },

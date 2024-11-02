@@ -456,8 +456,8 @@ offset ${pageNum - 1} * ${pageSize};
     const { proposer, partner, proposer_items, partner_items } = trade;
 
     // update inventory
-    await Promise.all([
-      ...proposer_items.map((item) => {
+    await Promise.all(
+      proposer_items.map((item) => {
         return strapi.entityService.update(
           "api::inventory.inventory",
           item.id,
@@ -467,8 +467,11 @@ offset ${pageNum - 1} * ${pageSize};
             },
           }
         );
-      }),
-      ...partner_items.map((item) => {
+      })
+    );
+
+    await Promise.all(
+      partner_items.map((item) => {
         return strapi.entityService.update(
           "api::inventory.inventory",
           item.id,
@@ -478,8 +481,8 @@ offset ${pageNum - 1} * ${pageSize};
             },
           }
         );
-      }),
-    ]);
+      })
+    );
 
     const tradeInfo: {
       [roomId: number]: {

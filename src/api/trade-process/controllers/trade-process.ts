@@ -166,14 +166,19 @@ export default {
       );
     }
 
-    const trade: Trade = (await strapi.db.transaction(async () => {
-      await strapi
-        .service("api::trading-credit.trading-credit")
-        .updateTradingCredit(userId, -1, "trade");
+    const trade: Trade = (await strapi.db.transaction(async ({ trx }) => {
+      try {
+        await strapi
+          .service("api::trading-credit.trading-credit")
+          .updateTradingCredit(userId, -1, "trade");
 
-      return await strapi
-        .service("api::trade-process.trade-process")
-        .proposeTrade(userId, partnerId, proposerItems, partnerItems);
+        return await strapi
+          .service("api::trade-process.trade-process")
+          .proposeTrade(userId, partnerId, proposerItems, partnerItems);
+      } catch (error) {
+        trx.rollback();
+        throw error;
+      }
     })) as Trade;
 
     // send notification to partner
@@ -388,18 +393,18 @@ export default {
       );
     }
 
-    const status = await strapi.db.transaction(async () => {
+    const status = await strapi.db.transaction(async ({ trx }) => {
       try {
         await strapi
           .service("api::trade-process.trade-process")
           .acceptTrade(trade);
-      } catch (errorCode) {
-        return ctx.badRequest("trading failed", errorCode);
+        return await strapi
+          .service("api::trade-process.trade-process")
+          .changeStatus(trade, "success", userId);
+      } catch (error) {
+        trx.rollback();
+        throw error;
       }
-
-      return await strapi
-        .service("api::trade-process.trade-process")
-        .changeStatus(trade, "success", userId);
     });
 
     // send notification to proposer
