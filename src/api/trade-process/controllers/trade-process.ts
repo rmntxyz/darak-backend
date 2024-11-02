@@ -185,6 +185,8 @@ export default {
     } catch (error) {
       console.error(error);
     }
+
+    return trade;
   },
 
   // deprecated
@@ -465,6 +467,10 @@ export default {
 
     const isUserProposer = trade.proposer.id === userId;
 
+    const status = await strapi
+      .service("api::trade-process.trade-process")
+      .changeStatus(trade, isUserProposer ? "canceled" : "rejected", userId);
+
     if (trade.status === "proposed") {
       // send notification to proposer or partner
       try {
@@ -480,11 +486,9 @@ export default {
       } catch (error) {
         console.error(error);
       }
-
-      return await strapi
-        .service("api::trade-process.trade-process")
-        .changeStatus(trade, isUserProposer ? "canceled" : "rejected", userId);
     }
+
+    return status;
     // else if (trade.status === "counter_proposed") {
     //   return await strapi
     //     .service("api::trade-process.trade-process")
