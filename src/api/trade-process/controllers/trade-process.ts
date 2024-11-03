@@ -392,19 +392,25 @@ export default {
       );
     }
 
-    const status = await strapi.db.transaction(async ({ trx }) => {
-      try {
-        await strapi
-          .service("api::trade-process.trade-process")
-          .acceptTrade(trade);
-        return await strapi
-          .service("api::trade-process.trade-process")
-          .changeStatus(trade, "success", userId);
-      } catch (error) {
-        trx.rollback();
-        throw error;
-      }
-    });
+    let status = null;
+    try {
+      status = await strapi.db.transaction(async ({ trx }) => {
+        try {
+          await strapi
+            .service("api::trade-process.trade-process")
+            .acceptTrade(trade);
+          return await strapi
+            .service("api::trade-process.trade-process")
+            .changeStatus(trade, "success", userId);
+        } catch (error) {
+          trx.rollback();
+          throw error;
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      return ctx.badRequest("trade accept failed", error);
+    }
 
     // send notification to proposer
     try {
