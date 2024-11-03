@@ -255,8 +255,8 @@ export default factories.createCoreService(
               .service("api::update-manager.update-manager")
               .updateRoomCompletion(updatedUserRoom);
           } catch (e) {
-            // TEMP
             console.error("update manager", e);
+            throw e;
           }
         }
       });

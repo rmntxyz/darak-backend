@@ -305,11 +305,9 @@ function drawItem(info: DrawInfo) {
 }
 
 async function deductStarPoint(user: User, cost: number, userItems: number[]) {
-  await strapi.db.transaction(async () => {
-    await strapi
-      .service("api::star-point.star-point")
-      .updateStarPoint(user.id, -cost, "item_draw", userItems);
-  });
+  await strapi
+    .service("api::star-point.star-point")
+    .updateStarPoint(user.id, -cost, "item_draw", userItems);
 }
 
 async function deductFreebie(user: User, cost: number) {

@@ -176,7 +176,6 @@ export default {
           .service("api::trade-process.trade-process")
           .proposeTrade(userId, partnerId, proposerItems, partnerItems);
       } catch (error) {
-        trx.rollback();
         throw error;
       }
     })) as Trade;
@@ -243,18 +242,18 @@ export default {
       );
 
       if (!trade) {
-        return ctx.badRequest("trade not found");
+        throw ctx.badRequest("trade not found");
       }
 
       if (userId !== trade.partner.id) {
-        return ctx.badRequest(
+        throw ctx.badRequest(
           "only partner can counter propose",
           ErrorCode.ONLY_PARTNER_CAN_COUNTER_PROPOSE
         );
       }
 
       if (trade.status !== "proposed") {
-        return ctx.badRequest(
+        throw ctx.badRequest(
           "trade is not in proposed status",
           ErrorCode.INVALID_TRADE_STATUS
         );
@@ -265,7 +264,7 @@ export default {
           .service("api::trade-process.trade-process")
           .changeStatus(trade, "expired", userId);
 
-        return ctx.badRequest("trade is expired", ErrorCode.TRADE_EXPIRED);
+        throw ctx.badRequest("trade is expired", ErrorCode.TRADE_EXPIRED);
       }
 
       // check if user has enough items in inventory to trade
@@ -274,7 +273,7 @@ export default {
         .checkUserItems(proposerItems, trade.proposer.id);
 
       if (!proposerItemsInInventory) {
-        return ctx.badRequest(
+        throw ctx.badRequest(
           "proposer's items are not in inventory",
           ErrorCode.PROPOSER_ITEMS_NOT_FOUND
         );
@@ -285,7 +284,7 @@ export default {
         .checkUserItems(partnerItems, userId);
 
       if (!partnerItemsInInventory) {
-        return ctx.badRequest(
+        throw ctx.badRequest(
           "partner's items are not in inventory",
           ErrorCode.PARTNER_ITEMS_NOT_FOUND
         );
