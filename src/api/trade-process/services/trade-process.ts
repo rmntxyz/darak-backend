@@ -31,45 +31,45 @@ export const tradeDetailOptions = {
     history: true,
     proposer: {
       fields: ["username"],
-      populate: {
-        status: {
-          fields: ["level"],
-        },
-        avatar: {
-          fields: ["id"],
-          populate: {
-            profile_picture: {
-              fields: ["id"],
-              populate: {
-                image: {
-                  fields: ["url"],
-                },
-              },
-            },
-          },
-        },
-      },
+      // populate: {
+      //   status: {
+      //     fields: ["level"],
+      //   },
+      //   avatar: {
+      //     fields: ["id"],
+      //     populate: {
+      //       profile_picture: {
+      //         fields: ["id"],
+      //         populate: {
+      //           image: {
+      //             fields: ["url"],
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
     },
     partner: {
       fields: ["username"],
-      populate: {
-        status: {
-          fields: ["level"],
-        },
-        avatar: {
-          fields: ["id"],
-          populate: {
-            profile_picture: {
-              fields: ["id"],
-              populate: {
-                image: {
-                  fields: ["url"],
-                },
-              },
-            },
-          },
-        },
-      },
+      // populate: {
+      //   status: {
+      //     fields: ["level"],
+      //   },
+      //   avatar: {
+      //     fields: ["id"],
+      //     populate: {
+      //       profile_picture: {
+      //         fields: ["id"],
+      //         populate: {
+      //           image: {
+      //             fields: ["url"],
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
     },
     proposer_items: {
       fields: ["serial_number", "status"],
