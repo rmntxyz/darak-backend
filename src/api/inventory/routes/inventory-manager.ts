@@ -6,7 +6,7 @@ export default {
       handler: "inventory.sell",
       config: {
         policies: [],
-        middlewares: ["global::mutex-by-user"],
+        middlewares: [],
       },
     },
     {
@@ -15,7 +15,7 @@ export default {
       handler: "inventory.sell-by-item-id",
       config: {
         policies: [],
-        middlewares: ["global::mutex-by-user"],
+        middlewares: [],
       },
     },
     {

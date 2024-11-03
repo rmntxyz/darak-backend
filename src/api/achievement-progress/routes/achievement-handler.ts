@@ -33,7 +33,7 @@ export default {
       handler: "achievement-progress.claim-rewards",
       config: {
         policies: [],
-        middlewares: ["global::mutex-by-user"],
+        middlewares: [],
       },
     },
     {

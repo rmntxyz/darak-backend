@@ -6,7 +6,7 @@ export default {
       handler: "event-coupon.redeem",
       config: {
         policies: [],
-        middlewares: ["global::mutex-by-user"],
+        middlewares: [],
       },
     },
   ],
