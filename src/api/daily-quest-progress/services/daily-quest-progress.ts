@@ -107,10 +107,11 @@ export default factories.createCoreService(
         return progress;
       }
 
-      await strapi.entityService.update(
+      const renew = await strapi.entityService.update(
         "api::daily-quest-progress.daily-quest-progress",
         progress.id,
         {
+          ...progressDefaultOptions,
           data: {
             progress: 0,
             is_reward_claimed: false,
@@ -120,6 +121,7 @@ export default factories.createCoreService(
           },
         }
       );
+      Object.assign(progress, renew);
     },
 
     async verify(userId: number, progressId: number) {
@@ -241,7 +243,13 @@ export default factories.createCoreService(
 );
 
 export const progressDefaultOptions = {
-  fields: ["progress", "is_completed", "is_reward_claimed", "completed_date"],
+  fields: [
+    "progress",
+    "ref_timestamp",
+    "is_completed",
+    "is_reward_claimed",
+    "completed_date",
+  ],
   populate: {
     daily_quest: {
       fields: ["qid", "total_progress", "name"],
