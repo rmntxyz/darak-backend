@@ -67,7 +67,7 @@ export default factories.createCoreService(
       detail: TradingCreditChangeDetail
     ) {
       return await strapi.db.transaction(async ({ trx }) => {
-        const [tradingCredit] = await strapi.db
+        let [tradingCredit] = await strapi.db
           .connection("trading_credits")
           .transacting(trx)
           .forUpdate()
@@ -79,21 +79,26 @@ export default factories.createCoreService(
           .where("trading_credits_user_links.user_id", userId)
           .select("trading_credits.*");
 
-        if (tradingCredit.current + change < 0) {
+        tradingCredit = this.recalculate(tradingCredit);
+
+        const { current, max } = tradingCredit;
+
+        if (current + change < 0) {
           throw ErrorCode.NOT_ENOUGH_TRADING_CREDITS;
+        }
+
+        const after = current + change;
+
+        const data: Partial<TradingCredit> = { current: after };
+
+        if (current >= max && after < max) {
+          data.last_charged_at = Math.floor(new Date().getTime() / 1000);
         }
 
         const updated = await strapi.entityService.update(
           "api::trading-credit.trading-credit",
           tradingCredit.id,
-          {
-            data: {
-              current: Math.min(
-                tradingCredit.current + change,
-                tradingCredit.max
-              ),
-            },
-          }
+          { data }
         );
 
         await strapi.entityService.create(
