@@ -79,7 +79,7 @@ export default factories.createCoreService(
           .where("trading_credits_user_links.user_id", userId)
           .select("trading_credits.*");
 
-        tradingCredit = this.recalculate(tradingCredit);
+        tradingCredit = recalculate(tradingCredit);
 
         const { current, max } = tradingCredit;
 
