@@ -217,6 +217,7 @@ type DailyQuestProgress = {
   is_reward_claimed: boolean;
   is_completed: boolean;
   completed_date: Date;
+  ref_timestamp: number;
   user_permissions_user: User;
 };
 

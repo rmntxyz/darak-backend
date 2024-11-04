@@ -1476,6 +1476,7 @@ export interface ApiDailyQuestProgressDailyQuestProgress
       'manyToOne',
       'api::daily-quest.daily-quest'
     >;
+    ref_timestamp: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

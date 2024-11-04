@@ -37,6 +37,9 @@
       "relation": "manyToOne",
       "target": "api::daily-quest.daily-quest",
       "inversedBy": "daily_quest_progresses"
+    },
+    "ref_timestamp": {
+      "type": "integer"
     }
   }
 }
