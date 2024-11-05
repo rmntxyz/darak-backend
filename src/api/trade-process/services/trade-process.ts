@@ -456,8 +456,8 @@ offset ${pageNum - 1} * ${pageSize};
     const { proposer, partner, proposer_items, partner_items } = trade;
 
     // update inventory
-    await Promise.all(
-      proposer_items.map((item) => {
+    await Promise.all([
+      ...proposer_items.map((item) => {
         return strapi.entityService.update(
           "api::inventory.inventory",
           item.id,
@@ -467,11 +467,8 @@ offset ${pageNum - 1} * ${pageSize};
             },
           }
         );
-      })
-    );
-
-    await Promise.all(
-      partner_items.map((item) => {
+      }),
+      ...partner_items.map((item) => {
         return strapi.entityService.update(
           "api::inventory.inventory",
           item.id,
@@ -481,8 +478,8 @@ offset ${pageNum - 1} * ${pageSize};
             },
           }
         );
-      })
-    );
+      }),
+    ]);
 
     const tradeInfo: {
       [roomId: number]: {
@@ -529,6 +526,8 @@ offset ${pageNum - 1} * ${pageSize};
         return acc;
       }, tradeInfo);
 
+    let partnerExp = 0;
+    let proposerExp = 0;
     for (const [roomId, { proposerItems, partnerItems }] of Object.entries(
       tradeInfo
     )) {
@@ -541,7 +540,6 @@ offset ${pageNum - 1} * ${pageSize};
         .getUserRoom(partner.id, roomId);
 
       // if item to trade is only item in room, throw error
-      let partnerExp = 0;
       for (const { id, rarity } of proposerItems!) {
         if (proposerRoom.owned_items[id] === 1) {
           throw ErrorCode.NOT_ENOUGH_PROPOSER_ITEMS;
@@ -552,7 +550,6 @@ offset ${pageNum - 1} * ${pageSize};
         }
       }
 
-      let proposerExp = 0;
       for (const { id, rarity } of partnerItems!) {
         if (partnerRoom.owned_items[id] === 1) {
           throw ErrorCode.NOT_ENOUGH_PARTNER_ITEMS;
@@ -561,17 +558,6 @@ offset ${pageNum - 1} * ${pageSize};
         if (this.checkFirstItem(proposerRoom, id)) {
           proposerExp += EXP_BY_RARITY[rarity];
         }
-      }
-
-      if (partnerExp !== 0) {
-        await strapi
-          .service("api::status.status")
-          .updateExp(partner.id, partnerExp);
-      }
-      if (proposerExp !== 0) {
-        await strapi
-          .service("api::status.status")
-          .updateExp(proposer.id, proposerExp);
       }
 
       const partnerItemIds = partnerItems!.map((x) => x.id);
@@ -584,6 +570,16 @@ offset ${pageNum - 1} * ${pageSize};
       await strapi
         .service("api::user-room.user-room")
         .updateItems(partnerRoom, proposerItemIds, partnerItemIds);
+    }
+    if (partnerExp !== 0) {
+      await strapi
+        .service("api::status.status")
+        .updateExp(partner.id, partnerExp);
+    }
+    if (proposerExp !== 0) {
+      await strapi
+        .service("api::status.status")
+        .updateExp(proposer.id, proposerExp);
     }
   },
 
