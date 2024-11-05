@@ -126,7 +126,7 @@ export default factories.createCoreService(
               relay.user_relay_tokens = [userToken];
             } else if (relay.type === "with_group_ranking") {
               // check tokens
-              const groups = await strapi.db
+              let groups = await strapi.db
                 .connection("relay_groups")
                 .transacting(trx)
                 .forUpdate()
@@ -137,6 +137,30 @@ export default factories.createCoreService(
                 )
                 .where("relay_groups_relay_links.relay_id", relay.id)
                 .select("relay_groups.*");
+
+              if (groups.length === 0) {
+                const userCount = await strapi.db
+                  .query("plugin::users-permissions.user")
+                  .count();
+
+                const willCreate = Math.ceil(userCount / 4 / relay.group_size);
+
+                const promises = Array.from({ length: willCreate }).map(
+                  async () => {
+                    return await strapi.entityService.create(
+                      "api::relay-group.relay-group",
+                      {
+                        data: {
+                          relay: { id: relay.id },
+                          num_members: 0,
+                          publishedAt: new Date(),
+                        },
+                      }
+                    );
+                  }
+                );
+                groups = await Promise.all(promises);
+              }
 
               let group;
 
@@ -171,6 +195,21 @@ export default factories.createCoreService(
                   populate: {
                     user: {
                       fields: ["id", "username"],
+                      populate: {
+                        avatar: {
+                          fields: ["id"],
+                          populate: {
+                            profile_picture: {
+                              fields: ["id"],
+                              populate: {
+                                image: {
+                                  fields: ["url"],
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                   data: {
@@ -197,6 +236,21 @@ export default factories.createCoreService(
                       populate: {
                         user: {
                           fields: ["id", "username"],
+                          populate: {
+                            avatar: {
+                              fields: ["id"],
+                              populate: {
+                                profile_picture: {
+                                  fields: ["id"],
+                                  populate: {
+                                    image: {
+                                      fields: ["url"],
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
                         },
                       },
                     },
@@ -260,6 +314,7 @@ export default factories.createCoreService(
 
         const promises = tokens.map(async (token) => {
           // update user-relay-token's result_settled
+          console.log(token);
           await strapi.entityService.update(
             "api::user-relay-token.user-relay-token",
             token.id,
@@ -270,7 +325,7 @@ export default factories.createCoreService(
             }
           );
 
-          if (token.relay.type === "relay_only") {
+          if (token.relay?.type !== "with_group_ranking") {
             return;
           }
 
@@ -308,20 +363,46 @@ export default factories.createCoreService(
             );
           }
 
-          for (const reward of rewards) {
-            await updateRewards(userId, reward);
-          }
-
           return {
             relay: token.relay,
             rewards,
           };
         });
 
-        return Promise.all(promises);
+        let results = (await Promise.all(promises)) as {
+          relay: Relay;
+          rewards: Reward[];
+        }[];
+        results = results.filter((result) => result);
+
+        const rewards = [];
+        for (const result of results) {
+          // reduce by reward type
+
+          if (!result) {
+            continue;
+          }
+
+          result.rewards.forEach((reward) => {
+            const found = rewards.find((r) => r.type === reward.type);
+            if (found) {
+              found.amount += reward.amount;
+            } else {
+              rewards.push(reward);
+            }
+          });
+        }
+
+        if (rewards.length > 0) {
+          await strapi
+            .service("api::reward.reward")
+            .claim(userId, rewards, "relay_ranking_reward");
+        }
+
+        return results;
       });
 
-      return results.filter((result) => result);
+      return results;
     },
 
     async verify(userId: number, relay: Relay, result: CapsuleResult) {
@@ -339,31 +420,3 @@ export default factories.createCoreService(
     },
   })
 );
-
-async function updateRewards(userId: number, reward: Reward) {
-  switch (reward.type) {
-    case "relay_token":
-      // do nothing
-      break;
-    case "freebie":
-      await strapi
-        .service("api::freebie.freebie")
-        .updateFreebie(userId, reward.amount);
-      break;
-    case "star_point":
-      await strapi
-        .service("api::star-point.star-point")
-        .updateStarPoint(userId, reward.amount, "relay_ranking_reward");
-      break;
-    case "wheel_spin":
-      await strapi
-        .service("api::wheel-spin.wheel-spin")
-        .updateWheelSpin(userId, reward.amount, "relay_ranking_reward");
-      break;
-    // case "trading_credit":
-    //   await strapi
-    //     .service("api::trading-credit.trading-credit")
-    //     .updateTradingCredit(userId, reward.amount, "relay_ranking_reward");
-    //   break;
-  }
-}
