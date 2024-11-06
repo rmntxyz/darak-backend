@@ -54,7 +54,7 @@ export default factories.createCoreService(
             if (relay) {
               await strapi
                 .service("api::user-relay-token.user-relay-token")
-                .updateRelayToken(userId, relay.id, reward.amount * multiply);
+                .updateRelayToken(userId, relay, reward.amount * multiply);
             }
             break;
 

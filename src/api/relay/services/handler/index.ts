@@ -23,7 +23,7 @@ export default {
       // update user relay token
       await strapi
         .service("api::user-relay-token.user-relay-token")
-        .updateRelayToken(userId, relay.id, tokens * result.multiply);
+        .updateRelayToken(userId, relay, tokens * result.multiply);
     }
 
     return tokens;

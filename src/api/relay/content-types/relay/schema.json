@@ -87,6 +87,9 @@
         "relay_only",
         "with_group_ranking"
       ]
+    },
+    "min_tokens": {
+      "type": "integer"
     }
   }
 }

@@ -21,78 +21,7 @@ export default factories.createCoreService(
             end_date: { $gt: now },
             publishedAt: { $ne: null },
           },
-          fields: [
-            "id",
-            "title",
-            "type",
-            "condition",
-            "start_date",
-            "end_date",
-            "group_size",
-            "detail",
-          ],
-          populate: {
-            reward_table: {
-              populate: {
-                rewards: true,
-              },
-            },
-            banner: { field: ["url"] },
-            token_image: { field: ["url"] },
-            user_relay_tokens: {
-              filters: {
-                user: {
-                  id: userId,
-                },
-              },
-              fields: ["amount"],
-              populate: {
-                user: {
-                  fields: ["id", "username"],
-                },
-              },
-            },
-            ranking_rewards: {
-              populate: {
-                rewards: true,
-              },
-            },
-            relay_groups: {
-              filters: {
-                tokens: {
-                  user: {
-                    id: userId,
-                  },
-                },
-              },
-              fields: ["id"],
-              populate: {
-                tokens: {
-                  fields: ["amount"],
-                  populate: {
-                    user: {
-                      fields: ["username"],
-                      populate: {
-                        avatar: {
-                          fields: ["id"],
-                          populate: {
-                            profile_picture: {
-                              fields: ["id"],
-                              populate: {
-                                image: {
-                                  fields: ["url"],
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+          ...defaultRelayOptions(userId),
         });
 
         for (const relay of relays) {
@@ -126,67 +55,6 @@ export default factories.createCoreService(
               relay.user_relay_tokens = [userToken];
             } else if (relay.type === "with_group_ranking") {
               // check tokens
-              let groups = await strapi.db
-                .connection("relay_groups")
-                .transacting(trx)
-                .forUpdate()
-                .join(
-                  "relay_groups_relay_links",
-                  "relay_groups.id",
-                  "relay_groups_relay_links.relay_group_id"
-                )
-                .where("relay_groups_relay_links.relay_id", relay.id)
-                .select("relay_groups.*");
-
-              if (groups.length === 0) {
-                const userCount = await strapi.db
-                  .query("plugin::users-permissions.user")
-                  .count();
-
-                const willCreate = Math.ceil(userCount / 4 / relay.group_size);
-
-                const promises = Array.from({ length: willCreate }).map(
-                  async () => {
-                    return await strapi.entityService.create(
-                      "api::relay-group.relay-group",
-                      {
-                        data: {
-                          relay: { id: relay.id },
-                          num_members: 0,
-                          publishedAt: new Date(),
-                        },
-                      }
-                    );
-                  }
-                );
-                groups = await Promise.all(promises);
-              }
-
-              let group;
-
-              const availableGroups = groups.filter((group) => {
-                return group.num_members < relay.group_size;
-              });
-
-              if (availableGroups.length === 0) {
-                //create group
-                group = await strapi.entityService.create(
-                  "api::relay-group.relay-group",
-                  {
-                    data: {
-                      relay: { id: relay.id },
-                      num_members: 0,
-                      publishedAt: new Date(),
-                    },
-                    fields: ["id", "num_members"],
-                  }
-                );
-              } else {
-                // find minimum group
-                group = availableGroups.reduce((prev, curr) =>
-                  prev.num_members < curr.num_members ? prev : curr
-                );
-              }
 
               const userToken = await strapi.entityService.create(
                 "api::user-relay-token.user-relay-token",
@@ -215,51 +83,35 @@ export default factories.createCoreService(
                   data: {
                     user: { id: userId },
                     relay: { id: relay.id },
-                    relay_group: { id: group.id },
                     amount: 0,
                     publishedAt: new Date(),
                   },
                 }
               );
 
-              const updated = await strapi.entityService.update(
-                "api::relay-group.relay-group",
-                group.id,
-                {
-                  data: {
-                    num_members: group.num_members + 1,
-                  },
-                  fields: ["id"],
-                  populate: {
-                    tokens: {
-                      fields: ["amount"],
-                      populate: {
-                        user: {
-                          fields: ["id", "username"],
-                          populate: {
-                            avatar: {
-                              fields: ["id"],
-                              populate: {
-                                profile_picture: {
-                                  fields: ["id"],
-                                  populate: {
-                                    image: {
-                                      fields: ["url"],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                }
-              );
-
               relay.user_relay_tokens = [userToken];
-              relay.relay_groups = [updated];
+              relay.relay_groups = [];
+            }
+          }
+
+          if (
+            relay.type === "with_group_ranking" &&
+            relay.relay_groups.length > 0
+          ) {
+            const relayGroup = relay.relay_groups[0];
+
+            let prevRank = 0;
+            let prevAmount = null;
+            for (let i = 0; i < relayGroup.tokens.length; i++) {
+              const token = relayGroup.tokens[i];
+
+              if (token.amount === prevAmount) {
+                token.rank = prevRank;
+              } else {
+                token.rank = i + 1;
+                prevRank = token.rank;
+                prevAmount = token.amount;
+              }
             }
           }
         }
@@ -295,72 +147,65 @@ export default factories.createCoreService(
                   end_date: { $lt: now },
                   publishedAt: { $ne: null },
                 },
-                populate: {
-                  ranking_rewards: {
-                    populate: {
-                      rewards: true,
-                    },
-                  },
-                },
-              },
-              relay_group: {
-                populate: {
-                  tokens: true,
-                },
+                ...defaultRelayOptions(userId, true),
               },
             },
           }
         );
 
         const promises = tokens.map(async (token) => {
-          // update user-relay-token's result_settled
-          console.log(token);
-          await strapi.entityService.update(
-            "api::user-relay-token.user-relay-token",
-            token.id,
-            {
-              data: {
-                result_settled: true,
-              },
-            }
-          );
+          // await strapi.entityService.update(
+          //   "api::user-relay-token.user-relay-token",
+          //   token.id,
+          //   {
+          //     data: {
+          //       result_settled: true,
+          //     },
+          //   }
+          // );
 
-          if (token.relay?.type !== "with_group_ranking") {
+          const { relay } = token;
+
+          if (relay?.type !== "with_group_ranking" || !relay?.relay_groups[0]) {
             return;
           }
 
-          // sort token.relay_group.tokens by amount
-          token.relay_group.tokens.sort((a, b) => b.amount - a.amount);
+          const relayGroup = relay.relay_groups[0];
 
-          let rank = 1;
-          const rankMap = token.relay_group.tokens.reduce((acc, cur, idx) => {
-            if (acc[cur.amount] === undefined) {
-              acc[cur.amount] = rank++;
-            }
-            return acc;
-          }, {});
+          let prevRank = 0;
+          let prevAmount = null;
+          for (let i = 0; i < relayGroup.tokens.length; i++) {
+            const token = relayGroup.tokens[i];
 
-          const rankOfUser = rankMap[token.amount];
-
-          // claim rewards
-          // 랭크에 매핑된 순위가 리워드에 존재하면 그 리워드를 받는다.
-          // 만약 ranking_rewards에 매칭되는 순위가 없다면, 해당 ranking_rewards의 마지막 리워드를 받는다.
-
-          token.relay.ranking_rewards.sort((a, b) => a.ranking - b.ranking);
-
-          const rewards: Reward[] = [];
-          for (const list of token.relay.ranking_rewards) {
-            if (list.ranking === rankOfUser) {
-              rewards.push(...list.rewards);
-              break;
+            if (token.amount === prevAmount) {
+              token.rank = prevRank;
+            } else {
+              token.rank = i + 1;
+              prevRank = token.rank;
+              prevAmount = token.amount;
             }
           }
-          if (rewards.length === 0) {
-            rewards.push(
-              ...token.relay.ranking_rewards[
-                token.relay.ranking_rewards.length - 1
-              ].rewards
-            );
+
+          const rankingRewards = relay.ranking_rewards;
+          const rankInRewards = rankingRewards.filter(
+            (r) => r.ranking !== null
+          );
+          const rankInRewardsMap = rankInRewards.reduce((acc, curr) => {
+            acc[curr.ranking] = curr.rewards;
+            return acc;
+          }, {});
+          const outOfRankRewards = rankingRewards.find(
+            (r) => r.ranking === null
+          );
+
+          const rewards: Reward[] = [];
+          const userToken = relayGroup.tokens.find((t) => t.user.id === userId);
+          if (userToken) {
+            if (userToken.rank in rankInRewardsMap) {
+              rewards.push(...rankInRewardsMap[userToken.rank]);
+            } else {
+              rewards.push(...outOfRankRewards.rewards);
+            }
           }
 
           return {
@@ -418,5 +263,213 @@ export default factories.createCoreService(
 
       return { rewards, total };
     },
+
+    async joinRelayGroup(relay: Relay, userRelayToken: RelayToken) {
+      return await strapi.db.transaction(async ({ trx }) => {
+        let groups = await strapi.db
+          .connection("relay_groups")
+          .transacting(trx)
+          .forUpdate()
+          .join(
+            "relay_groups_relay_links",
+            "relay_groups.id",
+            "relay_groups_relay_links.relay_group_id"
+          )
+          .where("relay_groups_relay_links.relay_id", relay.id)
+          .select("relay_groups.*");
+
+        if (groups.length === 0) {
+          const userCount = await strapi.db
+            .query("plugin::users-permissions.user")
+            .count();
+
+          const willCreate = Math.ceil(userCount / 4 / relay.group_size);
+
+          const promises = Array.from({ length: willCreate }).map(async () => {
+            return await strapi.entityService.create(
+              "api::relay-group.relay-group",
+              {
+                data: {
+                  relay: { id: relay.id },
+                  num_members: 0,
+                  publishedAt: new Date(),
+                },
+              }
+            );
+          });
+          groups = await Promise.all(promises);
+        }
+
+        let group;
+
+        const availableGroups = groups.filter((group) => {
+          return group.num_members < relay.group_size;
+        });
+
+        if (availableGroups.length === 0) {
+          //create group
+          group = await strapi.entityService.create(
+            "api::relay-group.relay-group",
+            {
+              data: {
+                relay: { id: relay.id },
+                num_members: 0,
+                publishedAt: new Date(),
+              },
+              fields: ["id", "num_members"],
+            }
+          );
+        } else {
+          // find minimum group
+          group = availableGroups.reduce((prev, curr) =>
+            prev.num_members < curr.num_members ? prev : curr
+          );
+        }
+
+        await strapi.entityService.update(
+          "api::relay-group.relay-group",
+          group.id,
+          {
+            data: {
+              num_members: group.num_members + 1,
+              tokens: {
+                connect: [userRelayToken.id],
+              },
+            },
+            fields: ["id"],
+            populate: {
+              tokens: {
+                fields: ["amount"],
+                populate: {
+                  user: {
+                    fields: ["id", "username"],
+                    populate: {
+                      avatar: {
+                        fields: ["id"],
+                        populate: {
+                          profile_picture: {
+                            fields: ["id"],
+                            populate: {
+                              image: {
+                                fields: ["url"],
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          }
+        );
+
+        return group;
+      });
+    },
   })
 );
+
+const defaultRelayOptions = (
+  userId: number,
+  noRewardTable: boolean = false
+) => {
+  const options = {
+    fields: [
+      "id",
+      "title",
+      "type",
+      "condition",
+      "start_date",
+      "end_date",
+      "group_size",
+      "detail",
+      "min_tokens",
+    ],
+    populate: {
+      reward_table: {
+        populate: {
+          rewards: true,
+        },
+      },
+      banner: { fields: ["url"] },
+      token_image: { fields: ["url"] },
+      user_relay_tokens: {
+        filters: {
+          user: {
+            id: userId,
+          },
+        },
+        fields: ["amount"],
+        populate: {
+          user: {
+            fields: ["username"],
+            populate: {
+              avatar: {
+                fields: ["id"],
+                populate: {
+                  profile_picture: {
+                    fields: ["id"],
+                    populate: {
+                      image: {
+                        fields: ["url"],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ranking_rewards: {
+        populate: {
+          rewards: true,
+        },
+      },
+      relay_groups: {
+        filters: {
+          tokens: {
+            user: {
+              id: userId,
+            },
+          },
+        },
+        fields: ["id"],
+        populate: {
+          tokens: {
+            sort: [{ amount: "desc" }],
+            fields: ["amount"],
+            populate: {
+              user: {
+                fields: ["username"],
+                populate: {
+                  avatar: {
+                    fields: ["id"],
+                    populate: {
+                      profile_picture: {
+                        fields: ["id"],
+                        populate: {
+                          image: {
+                            fields: ["url"],
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  if (noRewardTable) {
+    delete options.populate.reward_table;
+  }
+
+  return options;
+};

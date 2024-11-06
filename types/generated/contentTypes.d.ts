@@ -2432,6 +2432,7 @@ export interface ApiRelayRelay extends Schema.CollectionType {
       'api::user-relay-token.user-relay-token'
     >;
     type: Attribute.Enumeration<['relay_only', 'with_group_ranking']>;
+    min_tokens: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

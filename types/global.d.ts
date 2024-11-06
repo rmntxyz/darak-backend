@@ -301,10 +301,11 @@ type Relay = {
   end_date: Date;
   detail: RelayDetail;
   group_size: number;
+  min_tokens: number;
   banner: { url: string };
   token_image: { url: string };
   relay_groups: RelayGroup[];
-  ranking_reward: RelayRankingReward[];
+  ranking_rewards: RelayRankingReward[];
 };
 
 type RelayReward = {
