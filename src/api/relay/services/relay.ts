@@ -154,15 +154,15 @@ export default factories.createCoreService(
         );
 
         const promises = tokens.map(async (token) => {
-          // await strapi.entityService.update(
-          //   "api::user-relay-token.user-relay-token",
-          //   token.id,
-          //   {
-          //     data: {
-          //       result_settled: true,
-          //     },
-          //   }
-          // );
+          await strapi.entityService.update(
+            "api::user-relay-token.user-relay-token",
+            token.id,
+            {
+              data: {
+                result_settled: true,
+              },
+            }
+          );
 
           const { relay } = token;
 
