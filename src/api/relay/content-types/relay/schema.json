@@ -10,22 +10,46 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "reward_table": {
       "displayName": "relay",
       "type": "component",
       "repeatable": true,
-      "component": "reward.relay"
+      "component": "reward.relay",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "start_date": {
-      "type": "datetime"
+      "type": "datetime",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "end_date": {
-      "type": "datetime"
+      "type": "datetime",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "banner": {
       "type": "media",
@@ -36,7 +60,12 @@
         "files",
         "videos",
         "audios"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "token_image": {
       "type": "media",
@@ -47,16 +76,31 @@
         "files",
         "videos",
         "audios"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "group_size": {
-      "type": "integer"
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "ranking_rewards": {
       "displayName": "relay_ranking",
       "type": "component",
       "repeatable": true,
-      "component": "reward.relay-ranking"
+      "component": "reward.relay-ranking",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "relay_groups": {
       "type": "relation",
@@ -65,7 +109,12 @@
       "mappedBy": "relay"
     },
     "detail": {
-      "type": "json"
+      "type": "json",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "condition": {
       "type": "enumeration",
@@ -73,7 +122,12 @@
         "probability",
         "reward_related",
         "attack"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "user_relay_tokens": {
       "type": "relation",
@@ -86,10 +140,20 @@
       "enum": [
         "relay_only",
         "with_group_ranking"
-      ]
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "min_tokens": {
-      "type": "integer"
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

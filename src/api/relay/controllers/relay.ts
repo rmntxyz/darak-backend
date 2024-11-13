@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { applyLocalizations } from "../../../utils";
 
 export default factories.createCoreController(
   "api::relay.relay",
@@ -22,8 +23,14 @@ export default factories.createCoreController(
         return ctx.notFound("no current relay");
       }
 
+      const locale = ctx.request.query.locale || "en";
+      for (const relay of relays) {
+        applyLocalizations(relay, locale);
+      }
+
       return relays;
     },
+
     "settle-past-relay": async (ctx, next) => {
       const userId = ctx.state.user?.id;
 
@@ -31,12 +38,18 @@ export default factories.createCoreController(
         return ctx.unauthorized("user is not authenticated");
       }
 
-      const result = await strapi
-        .service("api::relay.relay")
-        .settlePastRelay(userId);
+      const results: {
+        relay: Relay;
+        rewards: Reward[];
+      }[] = await strapi.service("api::relay.relay").settlePastRelay(userId);
 
-      return result;
+      results.forEach((result) => {
+        applyLocalizations(result.relay, ctx.query.locale);
+      });
+
+      return results;
     },
+
     "claim-rewards": async (ctx, next) => {
       const userId = ctx.state.user?.id;
 

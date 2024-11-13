@@ -2408,31 +2408,96 @@ export interface ApiRelayRelay extends Schema.CollectionType {
   options: {
     draftAndPublish: true;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    title: Attribute.String;
-    reward_table: Attribute.Component<'reward.relay', true>;
-    start_date: Attribute.DateTime;
-    end_date: Attribute.DateTime;
-    banner: Attribute.Media;
-    token_image: Attribute.Media;
-    group_size: Attribute.Integer;
-    ranking_rewards: Attribute.Component<'reward.relay-ranking', true>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    reward_table: Attribute.Component<'reward.relay', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    start_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    end_date: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    banner: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    token_image: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    group_size: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    ranking_rewards: Attribute.Component<'reward.relay-ranking', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     relay_groups: Attribute.Relation<
       'api::relay.relay',
       'oneToMany',
       'api::relay-group.relay-group'
     >;
-    detail: Attribute.JSON;
+    detail: Attribute.JSON &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     condition: Attribute.Enumeration<
       ['probability', 'reward_related', 'attack']
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     user_relay_tokens: Attribute.Relation<
       'api::relay.relay',
       'oneToMany',
       'api::user-relay-token.user-relay-token'
     >;
-    type: Attribute.Enumeration<['relay_only', 'with_group_ranking']>;
-    min_tokens: Attribute.Integer;
+    type: Attribute.Enumeration<['relay_only', 'with_group_ranking']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    min_tokens: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2448,6 +2513,12 @@ export interface ApiRelayRelay extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::relay.relay',
+      'oneToMany',
+      'api::relay.relay'
+    >;
+    locale: Attribute.String;
   };
 }
 

@@ -496,6 +496,9 @@ const defaultRelayOptions = (
           },
         },
       },
+      localizations: {
+        fields: ["title", "locale"],
+      },
     },
   };
 

@@ -155,6 +155,10 @@ module.exports = (plugin) => {
       .service("api::relay.relay")
       .getCurrentRelays(user.id);
 
+    relays.forEach((relay) => {
+      applyLocalizations(relay, ctx.query.locale);
+    });
+
     const gachaInfo = await strapi
       .service("api::gacha-info.gacha-info")
       .getGachaInfo();
