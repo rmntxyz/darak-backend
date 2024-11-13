@@ -173,6 +173,10 @@ module.exports = (plugin) => {
       });
     });
 
+    const invocations = await strapi
+      .service("api::invocation.invocation")
+      .getInvocations(user.id);
+
     ctx.body = sanitizeOutput({
       ...user,
       freebie,
@@ -185,6 +189,7 @@ module.exports = (plugin) => {
       daily_draw_count: 0,
       gacha_info: gachaInfo,
       user_status_effects: statusEffects,
+      invocations,
     });
   };
 

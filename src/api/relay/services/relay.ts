@@ -122,6 +122,38 @@ export default factories.createCoreService(
       return relays;
     },
 
+    async hasUnsettledRelay(userId: number) {
+      const now = new Date().toISOString();
+      const tokens = await strapi.entityService.findMany(
+        "api::user-relay-token.user-relay-token",
+        {
+          filters: {
+            user: { id: userId },
+            relay: { $not: null },
+            $or: [
+              {
+                result_settled: false,
+              },
+              {
+                result_settled: { $null: true },
+              },
+            ],
+          },
+          populate: {
+            relay: {
+              fields: ["id"],
+              filters: {
+                end_date: { $lt: now },
+                publishedAt: { $ne: null },
+              },
+            },
+          },
+        }
+      );
+
+      return tokens.filter((t) => t.relay).length > 0;
+    },
+
     async settlePastRelay(userId: number) {
       const results = await strapi.db.transaction(async ({ trx }) => {
         const now = new Date().toISOString();

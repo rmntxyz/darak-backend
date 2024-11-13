@@ -538,3 +538,7 @@ interface UserStatusEffectHandler {
 }
 
 type StarReductionData = {};
+
+type Invocations = {
+  settle_relay: boolean;
+};
