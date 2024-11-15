@@ -315,7 +315,12 @@ export default factories.createCoreService(
             .query("plugin::users-permissions.user")
             .count();
 
-          const willCreate = Math.ceil(userCount / 4 / relay.group_size);
+          const { GROUP_DIVIDER } = await strapi
+            .service("api::config.config")
+            .getConfig();
+          const willCreate = Math.ceil(
+            userCount / GROUP_DIVIDER / relay.group_size
+          );
 
           const promises = Array.from({ length: willCreate }).map(async () => {
             return await strapi.entityService.create(

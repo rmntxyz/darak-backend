@@ -32,6 +32,9 @@
     },
     "REPAIR_COST": {
       "type": "json"
+    },
+    "GROUP_DIVIDER": {
+      "type": "integer"
     }
   }
 }

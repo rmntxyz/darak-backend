@@ -297,6 +297,8 @@ export const REPAIR_COST = {
   },
 };
 
+export const GROUP_DEVIDER = 4;
+
 // deprecated
 export const DAILY_DRAW_LIMIT = 5;
 export const RANKING_LIMIT = 10;

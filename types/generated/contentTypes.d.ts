@@ -1245,6 +1245,7 @@ export interface ApiConfigConfig extends Schema.SingleType {
     IOS_APP_VERSION: Attribute.String;
     ANDROID_APP_VERSION: Attribute.String;
     REPAIR_COST: Attribute.JSON;
+    GROUP_DIVIDER: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

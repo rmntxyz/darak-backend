@@ -16,6 +16,7 @@ import {
   EXP_BY_RARITY,
   ATTACK_REWARDS,
   REPAIR_COST,
+  GROUP_DEVIDER,
 } from "../../../constant";
 
 export default factories.createCoreService(
@@ -35,6 +36,7 @@ export default factories.createCoreService(
       config["EXP_BY_RARITY"] = config["EXP_BY_RARITY"] || EXP_BY_RARITY;
       config["ATTACK_REWARDS"] = config["ATTACK_REWARDS"] || ATTACK_REWARDS;
       config["REPAIR_COST"] = config["REPAIR_COST"] || REPAIR_COST;
+      config["GROUP_DEVIDER"] = config["GROUP_DEVIDER"] || GROUP_DEVIDER;
 
       CACHED_CONFIG = config;
       LAST_CACHE_TIME = Date.now();
