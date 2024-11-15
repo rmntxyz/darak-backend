@@ -156,6 +156,19 @@ export default factories.createCoreService(
 
     async settlePastRelay(userId: number) {
       const results = await strapi.db.transaction(async ({ trx }) => {
+        // lock all user-relay-tokens
+        await strapi.db
+          .connection("user_relay_tokens")
+          .transacting(trx)
+          .forUpdate()
+          .join(
+            "user_relay_tokens_user_links",
+            "user_relay_tokens.id",
+            "user_relay_tokens_user_links.user_relay_token_id"
+          )
+          .where("user_relay_tokens_user_links.user_id", userId)
+          .select("user_relay_tokens.*");
+
         const now = new Date().toISOString();
 
         const tokens = await strapi.entityService.findMany(
