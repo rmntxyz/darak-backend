@@ -541,4 +541,5 @@ type StarReductionData = {};
 
 type Invocations = {
   settle_relay: boolean;
+  claim_redeem_code: boolean;
 };

@@ -2398,6 +2398,43 @@ export interface ApiQuestProgressQuestProgress extends Schema.CollectionType {
   };
 }
 
+export interface ApiRedeemRedeem extends Schema.CollectionType {
+  collectionName: 'redeems';
+  info: {
+    singularName: 'redeem';
+    pluralName: 'redeems';
+    displayName: 'Redeem';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Attribute.String;
+    redeemed: Attribute.Boolean;
+    user: Attribute.Relation<
+      'api::redeem.redeem',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::redeem.redeem',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::redeem.redeem',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiRelayRelay extends Schema.CollectionType {
   collectionName: 'relays';
   info: {
@@ -3932,6 +3969,7 @@ declare module '@strapi/strapi' {
       'api::profile-picture.profile-picture': ApiProfilePictureProfilePicture;
       'api::quest.quest': ApiQuestQuest;
       'api::quest-progress.quest-progress': ApiQuestProgressQuestProgress;
+      'api::redeem.redeem': ApiRedeemRedeem;
       'api::relay.relay': ApiRelayRelay;
       'api::relay-group.relay-group': ApiRelayGroupRelayGroup;
       'api::reward.reward': ApiRewardReward;

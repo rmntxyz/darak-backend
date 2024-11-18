@@ -12,77 +12,131 @@ export default factories.createCoreController(
       const userId = ctx.state.user.id;
       const { code } = ctx.request.body;
 
-      const coupon = (
-        await strapi.entityService.findMany("api::event-coupon.event-coupon", {
-          filters: {
-            code,
-            publishedAt: { $ne: null },
-          },
-          fields: ["code", "start_date", "end_date"],
-          populate: {
-            rewards: true,
-            users: {
-              filters: {
-                id: userId,
-              },
-              fields: ["id"],
+      try {
+        const coupon = await strapi
+          .service("api::event-coupon.event-coupon")
+          .getCoupon(userId, code);
+
+        if (!coupon) {
+          throw ErrorCode.COUPON_CODE_NOT_FOUND;
+        }
+
+        const { start_date, end_date, users } = coupon;
+
+        let now = new Date().getTime();
+
+        if (start_date) {
+          const start = new Date(start_date).getTime();
+          if (start > now) {
+            throw ErrorCode.COUPON_NOT_STARTED;
+          }
+        }
+
+        if (end_date) {
+          const end = new Date(end_date).getTime();
+          if (end < now) {
+            throw ErrorCode.COUPON_EXPIRED;
+          }
+        }
+
+        if (users.length > 0) {
+          throw ErrorCode.COUPON_ALREADY_REDEEMED;
+        }
+
+        const { rewards } = coupon;
+
+        await strapi.entityService.update(
+          "api::event-coupon.event-coupon",
+          coupon.id,
+          {
+            data: {
+              users: { connect: [userId] },
             },
-          },
-        })
-      )[0];
-
-      if (!coupon) {
-        return ctx.notFound(
-          "coupon not found",
-          ErrorCode.COUPON_CODE_NOT_FOUND
+          }
         );
+
+        if (rewards.length > 0) {
+          await strapi
+            .service("api::reward.reward")
+            .claim(userId, rewards, "redeem");
+        }
+
+        return rewards;
+      } catch (error) {
+        return ctx.badRequest(error.message, error);
+      }
+    },
+
+    "claim-redeem-codes": async (ctx) => {
+      const userId = ctx.state.user.id;
+
+      const notRedeemed = await strapi
+        .service("api::event-coupon.event-coupon")
+        .checkNotRedeemed(userId);
+
+      if (notRedeemed.length === 0) {
+        return ctx.badRequest("No rewards to redeem", ErrorCode.NO_REWARDS);
       }
 
-      const { start_date, end_date, users, rewards } = coupon;
+      try {
+        const coupons = [];
 
-      let now = new Date().getTime();
+        for (const redeem of notRedeemed) {
+          const { code } = redeem;
 
-      if (start_date) {
-        const start = new Date(start_date).getTime();
-        if (start > now) {
-          return ctx.badRequest(
-            "coupon not started",
-            ErrorCode.COUPON_NOT_STARTED
+          const coupon = await strapi
+            .service("api::event-coupon.event-coupon")
+            .getCoupon(userId, code);
+
+          if (!coupon) {
+            throw ErrorCode.COUPON_CODE_NOT_FOUND;
+          }
+
+          const { start_date, end_date, users, createdAt } = coupon;
+
+          let redeemedAt = new Date(createdAt).getTime();
+
+          if (end_date) {
+            const end = new Date(end_date).getTime();
+            if (end < redeemedAt) {
+              throw ErrorCode.COUPON_EXPIRED;
+            }
+          }
+
+          if (users.length > 0) {
+            throw ErrorCode.COUPON_ALREADY_REDEEMED;
+          }
+
+          await strapi.entityService.update("api::redeem.redeem", redeem.id, {
+            data: {
+              redeemed: true,
+            },
+          });
+          await strapi.entityService.update(
+            "api::event-coupon.event-coupon",
+            coupon.id,
+            {
+              data: {
+                users: { connect: [userId] },
+              },
+            }
           );
+
+          const { rewards } = coupon;
+
+          if (rewards.length > 0) {
+            await strapi
+              .service("api::reward.reward")
+              .claim(userId, rewards, "redeem");
+          }
+
+          coupons.push(coupon);
         }
+
+        return coupons;
+      } catch (error) {
+        return ctx.badRequest(error.message, error);
       }
-
-      if (end_date) {
-        const end = new Date(end_date).getTime();
-        if (end < now) {
-          return ctx.badRequest("coupon expired", ErrorCode.COUPON_EXPIRED);
-        }
-      }
-
-      if (users.length > 0) {
-        return ctx.badRequest(
-          "coupon already redeemed",
-          ErrorCode.COUPON_ALREADY_REDEEMED
-        );
-      }
-
-      await strapi.entityService.update(
-        "api::event-coupon.event-coupon",
-        coupon.id,
-        {
-          data: {
-            users: { connect: [userId] },
-          },
-        }
-      );
-
-      if (rewards.length > 0) {
-        await strapi
-          .service("api::reward.reward")
-          .claim(userId, rewards, "redeem");
-      }
-
-      return rewards;
     },
   })
 );

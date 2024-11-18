@@ -1,0 +1,42 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coupon Redeem</title>
+    <link rel="stylesheet" href="/redeem/main.css" />
+    <link rel="icon" type="image/x-icon" href="/redeem/favicon.ico" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="dimmed-layer"></div>
+      <div class="content">
+        <h1>Redeem Your Coupon</h1>
+        <form id="redeemForm">
+          <label for="username">User Name</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+            required
+          />
+
+          <label for="code">Coupon Code</label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            placeholder="Enter your coupon code"
+            required
+          />
+
+          <button type="submit">Redeem</button>
+        </form>
+
+        <div id="resultMessage"></div>
+      </div>
+    </div>
+
+    <script src="/redeem/main.js"></script>
+  </body>
+</html>

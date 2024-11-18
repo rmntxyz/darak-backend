@@ -223,6 +223,14 @@ export const ErrorCode = {
     code: 8004,
     message: "Coupon expired",
   },
+  NO_REWARDS: {
+    code: 8005,
+    message: "No rewards to redeem",
+  },
+  INVALID_USERNAME: {
+    code: 8006,
+    message: "Invalid username",
+  },
 };
 
 export const REACTIVATION_PERIOD = 15 * 24 * 60 * 60 * 1000; // 15 days

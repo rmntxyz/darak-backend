@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+.container {
+  position: relative; /* 자식 요소의 위치를 기준으로 설정 */
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center; /* 세로 중앙 */
+  min-height: 100vh; /* 화면 전체 높이 */
+  background-image: url('https://storage.googleapis.com/rmnt/roomix/bg.png'); /* 배경 이미지 */
+  background-size: cover; /* 이미지 크기 맞춤 */
+  background-position: center; /
+}
+.dimmed-layer {
+  position: absolute; /* 부모 요소에 상대적인 위치 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* 검정색 + 50% 투명도 */
+  z-index: 1; /* 다른 컨텐츠보다 뒤에 배치되도록 설정 */
+}
+.content {
+  position: relative; /* dimmed-layer 위로 올림 */
+  z-index: 2; /* dimmed-layer 위에 표시 */
+  background: white; /* 컨텐츠 배경 */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 입력 필드 간격 */
+  min-height: 200px; /* 폼의 최소 높이 고정 */
+  justify-content: space-between; /* 요소 간격 균등 분배 */
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+input {
+  width: 100%; /* 입력 필드 너비를 100%로 */
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+
+#resultMessage {
+  font-size: 14px; /* 글씨 크기 통일 및 작게 설정 */
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 메시지 텍스트 중앙 정렬 */
+  gap: 8px;
+  min-height: 24px; /* 메시지 영역 높이 고정 */
+  text-align: center;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 16px; /* 크기를 약간 작게 조정 */
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+/* 스피너 애니메이션 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 성공/실패 메시지 색상 */
+.success {
+  color: green;
+}
+.error {
+  color: red;
+}
+.success, .error, .spinner {
+  font-size: 14px; /* 글씨 크기 통일 */
+  font-weight: bold;
+}

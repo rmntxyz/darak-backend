@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "redeems",
+  "info": {
+    "singularName": "redeem",
+    "pluralName": "redeems",
+    "displayName": "Redeem",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "redeemed": {
+      "type": "boolean"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
