@@ -4,14 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/link/favicon.ico" />
-    <title>Redirecting to Roomix</title>
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{og_title}" />
+    <meta property="og:description" content="{og_description}" />
+    <meta property="og:url" content="https://link.roomix.xyz" />
+    <meta
+      property="og:image"
+      content="https://storage.googleapis.com/rmnt/roomix/share.jpg"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="{og_locale}" />
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{twitter_title}" />
+    <meta name="twitter:description" content="{twitter_description}" />
+    <meta
+      name="twitter:image"
+      content="https://storage.googleapis.com/rmnt/roomix/share.jpg"
+    />
+
+    <title>{title}</title>
   </head>
   <body>
-    <h1>Redirecting...</h1>
-    <p>
-      If the app does not open automatically,
-      <a id="store-link" href="#">click here</a>.
-    </p>
+    <h1>{h1}</h1>
+    <p>{p}</p>
     <script src="/link/main.js"></script>
   </body>
 </html>

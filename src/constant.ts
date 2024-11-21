@@ -333,6 +333,45 @@ export const RANKING_LIMIT = 10;
 
 export const ACCOUNT_DELETION_GRACE_PERIOD = 15; // 15 days
 
+export const LINK_PAGE = {
+  en: {
+    og_title: "roomix: collect your world",
+    og_description:
+      "Join the fun in roomix! Discover and collect lovely characters. Play now!",
+    og_locale: "en_US",
+    twitter_title: "roomix: collect your world",
+    twitter_description:
+      "Join the fun in roomix! Discover and collect lovely characters. Play now!",
+    title: "Redirecting to roomix",
+    h1: "Redirecting...",
+    p: "If the app does not open automatically, <a id='store-link' href='#'>click here</a>.",
+  },
+  ko: {
+    og_title: "roomix: collect your world",
+    og_description:
+      "roomix와 함께 즐거운 시간을! 사랑스러운 캐릭터들을 발견하고 모아보세요. 지금 바로 플레이하세요!",
+    og_locale: "ko_KR",
+    twitter_title: "roomix: collect your world",
+    twitter_description:
+      "roomix와 함께 즐거운 시간을! 사랑스러운 캐릭터들을 발견하고 모아보세요. 지금 바로 플레이하세요!",
+    title: "roomix로 리디렉션 중",
+    h1: "리디렉션 중...",
+    p: "앱이 자동으로 열리지 않으면 <a id='store-link' href='#'>여기</a>를 클릭하세요.",
+  },
+  ja: {
+    og_title: "roomix: collect your world",
+    og_description:
+      "roomixで楽しい時間を過ごしましょう！かわいらしいキャラクターを見つけて集めてください。今すぐプレイ！",
+    og_locale: "ja_JP",
+    twitter_title: "roomix: collect your world",
+    twitter_description:
+      "roomixで楽しい時間を過ごしましょう！かわいらしいキャラクターを見つけて集めてください。今すぐプレイ！",
+    title: "roomixにリダイレクト中",
+    h1: "リダイレクト中...",
+    p: "アプリが自動的に開きませんでしたら、<a id='store-link' href='#'>こちら</a>をクリックしてください。",
+  },
+};
+
 export const TRADE_NOTIFICATIONS = {
   trade_proposed: {
     title: {

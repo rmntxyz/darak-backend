@@ -1,9 +1,14 @@
-/**
- * A set of functions called "actions" for `friend`
- */
-
-import { ErrorCode, MAX_FRIENDS } from "../../../constant";
+import { ErrorCode, LINK_PAGE, MAX_FRIENDS } from "../../../constant";
 import fs from "fs";
+import format from "string-template";
+
+const template = fs.readFileSync(`public/link/index.html`, "utf8");
+const LinkCache = {
+  en: format(template, LINK_PAGE.en),
+  ja: format(template, LINK_PAGE.ja),
+  ko: format(template, LINK_PAGE.ko),
+};
+
 export default {
   list: async (ctx) => {
     const userId = ctx.state.user.id;
@@ -213,8 +218,15 @@ export default {
       return ctx.badRequest(err.message, err);
     }
   },
+
   addByLink: async (ctx) => {
+    let { locale } = ctx.query;
+
+    if (!locale || !LINK_PAGE[locale]) {
+      locale = "en";
+    }
+
     ctx.set("Content-Type", "text/html");
-    ctx.body = fs.readFileSync(`public/link/index.html`, "utf8");
+    ctx.body = LinkCache[locale];
   },
 };
