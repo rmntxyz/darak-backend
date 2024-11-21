@@ -45,5 +45,14 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: "GET",
+      path: "/friend/add",
+      handler: "friend.addByLink",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

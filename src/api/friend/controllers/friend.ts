@@ -3,7 +3,7 @@
  */
 
 import { ErrorCode, MAX_FRIENDS } from "../../../constant";
-
+import fs from "fs";
 export default {
   list: async (ctx) => {
     const userId = ctx.state.user.id;
@@ -212,5 +212,9 @@ export default {
     } catch (err) {
       return ctx.badRequest(err.message, err);
     }
+  },
+  addByLink: async (ctx) => {
+    ctx.set("Content-Type", "text/html");
+    ctx.body = fs.readFileSync(`public/link/index.html`, "utf8");
   },
 };
