@@ -231,6 +231,24 @@ export const ErrorCode = {
     code: 8006,
     message: "Invalid username",
   },
+
+  // friend
+  FRIEND_ID_REQUIRED: {
+    code: 9001,
+    message: "FriendId is required",
+  },
+  FRIEND_ALREADY_EXIST: {
+    code: 9002,
+    message: "Friend already exist",
+  },
+  MAX_FRIENDS_REACHED: {
+    code: 9003,
+    message: "Max friends reached",
+  },
+  FRIEND_MAX_FRIENDS_REACHED: {
+    code: "FRIEND_MAX_FRIENDS_REACHED",
+    message: "Max friends reached",
+  },
 };
 
 export const REACTIVATION_PERIOD = 15 * 24 * 60 * 60 * 1000; // 15 days
@@ -240,6 +258,8 @@ export const ONE_DAY = 86400000;
 export const RESET_HOUR = 21; // 0 ~ 23
 
 export const RESET_DAY = 1; // 1 ~ 31
+
+export const MAX_FRIENDS = 50;
 
 export const REF_DATE = new Date(
   `June 16, 2024, ${RESET_HOUR}:00:00`

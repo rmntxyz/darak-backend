@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "friends",
+  "info": {
+    "singularName": "friend",
+    "pluralName": "friends",
+    "displayName": "Friend",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "friends"
+    },
+    "friend": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "accept_date": {
+      "type": "datetime"
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "request_date": {
+      "type": "datetime"
+    },
+    "pair": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::friend.friend"
+    }
+  }
+}

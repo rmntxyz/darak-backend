@@ -63,7 +63,7 @@ export default factories.createCoreService(
     },
 
     async updateExp(userId: number, expToAdd: number) {
-      return await strapi.db.transaction(async (trx) => {
+      return await strapi.db.transaction(async ({ trx }) => {
         // lock the row
         const [{ id, exp, level }] = await strapi.db
           .connection("statuses")

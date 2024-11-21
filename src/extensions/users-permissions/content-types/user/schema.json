@@ -215,6 +215,12 @@
       "relation": "oneToOne",
       "target": "api::shield.shield",
       "mappedBy": "user"
+    },
+    "friends": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::friend.friend",
+      "mappedBy": "user"
     }
   }
 }

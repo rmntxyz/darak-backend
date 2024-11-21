@@ -35,6 +35,9 @@
     },
     "GROUP_DIVIDER": {
       "type": "integer"
+    },
+    "MAX_FRIENDS": {
+      "type": "integer"
     }
   }
 }

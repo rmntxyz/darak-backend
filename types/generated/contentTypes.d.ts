@@ -811,6 +811,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::shield.shield'
     >;
+    friends: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::friend.friend'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1246,6 +1251,7 @@ export interface ApiConfigConfig extends Schema.SingleType {
     ANDROID_APP_VERSION: Attribute.String;
     REPAIR_COST: Attribute.JSON;
     GROUP_DIVIDER: Attribute.Integer;
+    MAX_FRIENDS: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1853,6 +1859,54 @@ export interface ApiFreebieFreebie extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::freebie.freebie',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiFriendFriend extends Schema.CollectionType {
+  collectionName: 'friends';
+  info: {
+    singularName: 'friend';
+    pluralName: 'friends';
+    displayName: 'Friend';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::friend.friend',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    friend: Attribute.Relation<
+      'api::friend.friend',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    accept_date: Attribute.DateTime;
+    accepted: Attribute.Boolean;
+    request_date: Attribute.DateTime;
+    pair: Attribute.Relation<
+      'api::friend.friend',
+      'oneToOne',
+      'api::friend.friend'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::friend.friend',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::friend.friend',
       'oneToOne',
       'admin::user'
     > &
@@ -3960,6 +4014,7 @@ declare module '@strapi/strapi' {
       'api::free-gift.free-gift': ApiFreeGiftFreeGift;
       'api::free-gift-reward.free-gift-reward': ApiFreeGiftRewardFreeGiftReward;
       'api::freebie.freebie': ApiFreebieFreebie;
+      'api::friend.friend': ApiFriendFriend;
       'api::gacha-info.gacha-info': ApiGachaInfoGachaInfo;
       'api::inventory.inventory': ApiInventoryInventory;
       'api::item.item': ApiItemItem;

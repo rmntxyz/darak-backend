@@ -17,6 +17,7 @@ import {
   ATTACK_REWARDS,
   REPAIR_COST,
   GROUP_DEVIDER,
+  MAX_FRIENDS,
 } from "../../../constant";
 
 export default factories.createCoreService(
@@ -37,6 +38,7 @@ export default factories.createCoreService(
       config["ATTACK_REWARDS"] = config["ATTACK_REWARDS"] || ATTACK_REWARDS;
       config["REPAIR_COST"] = config["REPAIR_COST"] || REPAIR_COST;
       config["GROUP_DEVIDER"] = config["GROUP_DEVIDER"] || GROUP_DEVIDER;
+      config["MAX_FRIENDS"] = config["MAX_FRIENDS"] || MAX_FRIENDS;
 
       CACHED_CONFIG = config;
       LAST_CACHE_TIME = Date.now();
