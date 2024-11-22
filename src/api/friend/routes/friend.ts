@@ -20,6 +20,15 @@ export default {
     },
     {
       method: "POST",
+      path: "/friend/connect",
+      handler: "friend.connect",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "POST",
       path: "/friend",
       handler: "friend.request",
       config: {

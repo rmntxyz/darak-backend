@@ -246,8 +246,12 @@ export const ErrorCode = {
     message: "Max friends reached",
   },
   FRIEND_MAX_FRIENDS_REACHED: {
-    code: "FRIEND_MAX_FRIENDS_REACHED",
+    code: 9004,
     message: "Max friends reached",
+  },
+  FRIEND_REQUEST_ALREADY_EXIST: {
+    code: 9005,
+    message: "Friend request already exist",
   },
 };
 

@@ -1,6 +1,7 @@
 import { ErrorCode, LINK_PAGE, MAX_FRIENDS } from "../../../constant";
 import fs from "fs";
 import format from "string-template";
+import { TargetUserOptions } from "../../attack/services/attack";
 
 const template = fs.readFileSync(`public/link/index.html`, "utf8");
 const LinkCache = {
@@ -30,6 +31,83 @@ export default {
       friends,
       requests,
     };
+  },
+
+  connect: async (ctx) => {
+    const { to } = ctx.request.body;
+    const userId = ctx.state.user.id;
+
+    try {
+      if (!to) {
+        throw ErrorCode.INVALID_REQUEST;
+      }
+
+      const isAlreadyFriend = await strapi
+        .service("api::friend.friend")
+        .isAlreadyFriend(userId, to);
+
+      if (isAlreadyFriend) {
+        throw ErrorCode.FRIEND_ALREADY_EXIST;
+      }
+
+      const isAlreadyRequested = await strapi
+        .service("api::friend.friend")
+        .isAlreadyRequested(userId, to);
+
+      if (isAlreadyRequested) {
+        throw ErrorCode.FRIEND_REQUEST_ALREADY_EXIST;
+      }
+
+      const date = new Date();
+
+      // create each friend connection using transaction
+      return strapi.db.transaction(async ({ trx }) => {
+        const forMe = await strapi.entityService.create("api::friend.friend", {
+          data: {
+            user: { id: userId },
+            friend: { id: to },
+            accept_date: date,
+            accepted: true,
+            publishedAt: date,
+          },
+          fields: ["id"],
+        });
+
+        const forFriend = await strapi.entityService.create(
+          "api::friend.friend",
+          {
+            data: {
+              user: { id: to },
+              friend: { id: userId },
+              request_date: date,
+              accept_date: date,
+              accepted: true,
+              publishedAt: date,
+              pair: { id: forMe.id },
+            },
+            fields: ["id"],
+          }
+        );
+
+        const updatedForMe = await strapi.entityService.update(
+          "api::friend.friend",
+          forMe.id,
+          {
+            data: {
+              pair: { id: forFriend.id },
+            },
+            fields: ["id"],
+            populate: {
+              friend: TargetUserOptions,
+            },
+          }
+        );
+
+        return updatedForMe;
+      });
+    } catch (err) {
+      return ctx.badRequest(err.message, err);
+    }
   },
 
   request: async (ctx) => {
