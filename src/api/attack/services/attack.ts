@@ -70,7 +70,7 @@ FROM (
         a.created_at AS attacked_at,
         SUM(CASE 
                 WHEN se.symbol IN ('tr_damage', 'tl_glass_damage', 'btn_damage', 'bl_damage')
-                    AND use.active = true THEN use.stack 
+                    AND use.active = true THEN COALESCE(use.stack, 0)
                 ELSE 0 
             END) AS total_stack
     FROM attacks AS a
@@ -88,9 +88,9 @@ FROM (
         al.user_id, a.created_at
     ORDER BY 
         al.user_id, a.created_at DESC
-    LIMIT ${count}
 ) AS subquery
-ORDER BY attacked_at DESC;`);
+ORDER BY attacked_at DESC
+LIMIT ${count};`);
 
       return rows;
     },
