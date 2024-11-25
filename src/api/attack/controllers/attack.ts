@@ -191,7 +191,7 @@ export default factories.createCoreController(
 
       // get friends
       const friends = await strapi
-        .service("api::attack.attack")
+        .service("api::friend.friend")
         .getFriends(userId);
       const friendsIds = friends.map((f) => f.id);
 

@@ -95,10 +95,6 @@ LIMIT ${count};`);
       return rows;
     },
 
-    async getFriends(userId) {
-      return [];
-    },
-
     async isAttackedin(userId, hours = 8) {
       const results = await strapi.entityService.findMany(
         "api::attack.attack",
