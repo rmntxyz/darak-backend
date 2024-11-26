@@ -3,7 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
-import attack, { TargetUserOptions } from "../services/attack";
+import { TargetUserOptions } from "../services/attack";
 import { UserStatusEffectOptions } from "../../user-status-effect/services/user-status-effect";
 import { ErrorCode } from "../../../constant";
 
@@ -190,9 +190,9 @@ export default factories.createCoreController(
       const userId = ctx.state.user.id;
 
       // get friends
-      const friends = await strapi
-        .service("api::friend.friend")
-        .getFriends(userId);
+      const friends = (
+        await strapi.service("api::friend.friend").getFriends(userId)
+      ).map((each) => each.friend);
       const friendsIds = friends.map((f) => f.id);
 
       // get revenges
@@ -259,12 +259,9 @@ export default factories.createCoreController(
         {
           filters: {
             id: {
-              $in: [
-                recommendedId,
-                randomId,
-                ...friendsIds,
-                ...revengesIds,
-              ].filter((id) => id !== null),
+              $in: [recommendedId, randomId, ...revengesIds].filter(
+                (id) => id !== null
+              ),
             },
           },
           ...TargetUserOptions,
@@ -291,15 +288,11 @@ export default factories.createCoreController(
         }
       });
 
-      const friendTargets = friends.map(
-        (id) => users.find((u) => u.id === id) || null
-      );
-
       return {
         recommended: recommendedTarget,
         random: randomTarget,
         revenges: revengeTargets,
-        friends: friendTargets,
+        friends: friends,
       };
     },
   })
