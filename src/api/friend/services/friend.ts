@@ -11,7 +11,7 @@ export default () => ({
       "api::friend.friend",
       {
         filters: {
-          user: userId,
+          user: { id: userId },
           accepted: true,
         },
         fields: ["id"],
@@ -52,7 +52,7 @@ export default () => ({
       "api::friend.friend",
       {
         filters: {
-          friend: userId,
+          friend: { id: userId },
           accepted: false,
         },
         fields: ["id"],
