@@ -42,6 +42,10 @@ export default {
         throw ErrorCode.INVALID_REQUEST;
       }
 
+      if (Number(to) === Number(userId)) {
+        throw ErrorCode.INVALID_REQUEST;
+      }
+
       const isAlreadyFriend = await strapi
         .service("api::friend.friend")
         .isAlreadyFriend(userId, to);
@@ -118,6 +122,11 @@ export default {
       if (!to) {
         throw ErrorCode.INVALID_REQUEST;
       }
+
+      if (Number(to) === Number(userId)) {
+        throw ErrorCode.INVALID_REQUEST;
+      }
+
       const isExist = await strapi.entityService.findMany(
         "api::friend.friend",
         {
