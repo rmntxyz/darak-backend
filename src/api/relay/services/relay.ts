@@ -301,7 +301,7 @@ export default factories.createCoreService(
             if (found) {
               found.amount += reward.amount;
             } else {
-              rewards.push(reward);
+              rewards.push({ ...reward });
             }
           });
         }
