@@ -34,6 +34,25 @@ export default factories.createCoreService(
               .where("id", relay.id)
               .select("relays.*");
 
+            // 한 번 더 확인한다.
+            const reFetchedRelay = await strapi.entityService.findOne(
+              "api::relay.relay",
+              relay.id,
+              {
+                fields: ["id"],
+                populate: {
+                  user_relay_tokens:
+                    defaultRelayOptions(userId).populate.user_relay_tokens,
+                },
+              }
+            );
+
+            // 만약 다시 확인했을 때 토큰이 있으면 넘어간다.
+            if (reFetchedRelay.user_relay_tokens.length > 0) {
+              relay.user_relay_tokens = reFetchedRelay.user_relay_tokens;
+              continue;
+            }
+
             if (relay.type === "relay_only") {
               const userToken = await strapi.entityService.create(
                 "api::user-relay-token.user-relay-token",
@@ -130,6 +149,7 @@ export default factories.createCoreService(
           filters: {
             user: { id: userId },
             relay: { $not: null },
+            relay_group: { $not: null },
             $or: [
               {
                 result_settled: false,
@@ -143,6 +163,7 @@ export default factories.createCoreService(
             relay: {
               fields: ["id"],
               filters: {
+                type: "with_group_ranking",
                 end_date: { $lt: now },
                 publishedAt: { $ne: null },
               },
@@ -177,6 +198,7 @@ export default factories.createCoreService(
             filters: {
               user: { id: userId },
               relay: { $not: null },
+              relay_group: { $not: null },
               $or: [
                 {
                   result_settled: false,
@@ -189,6 +211,7 @@ export default factories.createCoreService(
             populate: {
               relay: {
                 filters: {
+                  type: "with_group_ranking",
                   end_date: { $lt: now },
                   publishedAt: { $ne: null },
                 },
@@ -198,66 +221,66 @@ export default factories.createCoreService(
           }
         );
 
-        const promises = tokens.map(async (token) => {
-          await strapi.entityService.update(
-            "api::user-relay-token.user-relay-token",
-            token.id,
-            {
-              data: {
-                result_settled: true,
-              },
+        const promises = tokens
+          .filter((t) => t.relay)
+          .map(async (token) => {
+            await strapi.entityService.update(
+              "api::user-relay-token.user-relay-token",
+              token.id,
+              {
+                data: {
+                  result_settled: true,
+                },
+              }
+            );
+
+            const { relay } = token;
+
+            const relayGroup = relay.relay_groups[0];
+
+            let prevRank = 0;
+            let prevAmount = null;
+            for (let i = 0; i < relayGroup.tokens.length; i++) {
+              const token = relayGroup.tokens[i];
+
+              if (token.amount === prevAmount) {
+                token.rank = prevRank;
+              } else {
+                token.rank = i + 1;
+                prevRank = token.rank;
+                prevAmount = token.amount;
+              }
             }
-          );
 
-          const { relay } = token;
+            const rankingRewards = relay.ranking_rewards;
+            const rankInRewards = rankingRewards.filter(
+              (r) => r.ranking !== null
+            );
+            const rankInRewardsMap = rankInRewards.reduce((acc, curr) => {
+              acc[curr.ranking] = curr.rewards;
+              return acc;
+            }, {});
+            const outOfRankRewards = rankingRewards.find(
+              (r) => r.ranking === null
+            );
 
-          if (relay?.type !== "with_group_ranking" || !relay?.relay_groups[0]) {
-            return;
-          }
-
-          const relayGroup = relay.relay_groups[0];
-
-          let prevRank = 0;
-          let prevAmount = null;
-          for (let i = 0; i < relayGroup.tokens.length; i++) {
-            const token = relayGroup.tokens[i];
-
-            if (token.amount === prevAmount) {
-              token.rank = prevRank;
-            } else {
-              token.rank = i + 1;
-              prevRank = token.rank;
-              prevAmount = token.amount;
+            const rewards: Reward[] = [];
+            const userToken = relayGroup.tokens.find(
+              (t) => t.user.id === userId
+            );
+            if (userToken) {
+              if (userToken.rank in rankInRewardsMap) {
+                rewards.push(...rankInRewardsMap[userToken.rank]);
+              } else {
+                rewards.push(...outOfRankRewards.rewards);
+              }
             }
-          }
 
-          const rankingRewards = relay.ranking_rewards;
-          const rankInRewards = rankingRewards.filter(
-            (r) => r.ranking !== null
-          );
-          const rankInRewardsMap = rankInRewards.reduce((acc, curr) => {
-            acc[curr.ranking] = curr.rewards;
-            return acc;
-          }, {});
-          const outOfRankRewards = rankingRewards.find(
-            (r) => r.ranking === null
-          );
-
-          const rewards: Reward[] = [];
-          const userToken = relayGroup.tokens.find((t) => t.user.id === userId);
-          if (userToken) {
-            if (userToken.rank in rankInRewardsMap) {
-              rewards.push(...rankInRewardsMap[userToken.rank]);
-            } else {
-              rewards.push(...outOfRankRewards.rewards);
-            }
-          }
-
-          return {
-            relay: token.relay,
-            rewards,
-          };
-        });
+            return {
+              relay: token.relay,
+              rewards,
+            };
+          });
 
         let results = (await Promise.all(promises)) as {
           relay: Relay;
