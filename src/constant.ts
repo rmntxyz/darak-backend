@@ -253,6 +253,10 @@ export const ErrorCode = {
     code: 9005,
     message: "Friend request already exist",
   },
+  CANNOT_ADD_YOURSELF: {
+    code: 9006,
+    message: "You cannot add yourself as a friend",
+  },
 };
 
 export const REACTIVATION_PERIOD = 15 * 24 * 60 * 60 * 1000; // 15 days

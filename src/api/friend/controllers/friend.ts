@@ -43,7 +43,7 @@ export default {
       }
 
       if (Number(to) === Number(userId)) {
-        throw ErrorCode.INVALID_REQUEST;
+        throw ErrorCode.CANNOT_ADD_YOURSELF;
       }
 
       const isAlreadyFriend = await strapi
@@ -124,7 +124,7 @@ export default {
       }
 
       if (Number(to) === Number(userId)) {
-        throw ErrorCode.INVALID_REQUEST;
+        throw ErrorCode.CANNOT_ADD_YOURSELF;
       }
 
       const isExist = await strapi.entityService.findMany(
