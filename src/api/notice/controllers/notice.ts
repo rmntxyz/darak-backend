@@ -51,7 +51,7 @@ export default factories.createCoreController(
       });
 
       // it must be after applyLocalizations
-      const filteredNotices = notices.filter((notice) => notice.disabled);
+      const filteredNotices = notices.filter((notice) => !notice.disabled);
 
       return filteredNotices;
     },
