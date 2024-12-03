@@ -1039,6 +1039,51 @@ export interface ApiActivityActivity extends Schema.CollectionType {
   };
 }
 
+export interface ApiArtworkArtwork extends Schema.CollectionType {
+  collectionName: 'artworks';
+  info: {
+    singularName: 'artwork';
+    pluralName: 'artworks';
+    displayName: 'Artwork';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    image: Attribute.Media;
+    title: Attribute.String;
+    creator: Attribute.Relation<
+      'api::artwork.artwork',
+      'manyToOne',
+      'api::creator.creator'
+    >;
+    rarity: Attribute.Enumeration<
+      ['common', 'uncommon', 'rare', 'unique', 'secret']
+    >;
+    current_serial_number: Attribute.Integer;
+    user_artwork_collections: Attribute.Relation<
+      'api::artwork.artwork',
+      'oneToMany',
+      'api::user-artwork-collection.user-artwork-collection'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::artwork.artwork',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::artwork.artwork',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiAttackAttack extends Schema.CollectionType {
   collectionName: 'attacks';
   info: {
@@ -1360,6 +1405,11 @@ export interface ApiCreatorCreator extends Schema.CollectionType {
       'api::creator.creator',
       'oneToMany',
       'api::profile-picture.profile-picture'
+    >;
+    artworks: Attribute.Relation<
+      'api::creator.creator',
+      'oneToMany',
+      'api::artwork.artwork'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2291,6 +2341,12 @@ export interface ApiNoticeNotice extends Schema.CollectionType {
         };
       }>;
     text_color: Attribute.Enumeration<['black', 'white', 'mint']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    disabled: Attribute.Boolean &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -3476,6 +3532,45 @@ export interface ApiUpgradeUpgrade extends Schema.CollectionType {
   };
 }
 
+export interface ApiUserArtworkCollectionUserArtworkCollection
+  extends Schema.CollectionType {
+  collectionName: 'user_artwork_collections';
+  info: {
+    singularName: 'user-artwork-collection';
+    pluralName: 'user-artwork-collections';
+    displayName: 'UserArtworkCollection';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    artwork: Attribute.Relation<
+      'api::user-artwork-collection.user-artwork-collection',
+      'manyToOne',
+      'api::artwork.artwork'
+    >;
+    completion_date: Attribute.DateTime;
+    completed: Attribute.Boolean;
+    serial_number: Attribute.Integer;
+    progress: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-artwork-collection.user-artwork-collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-artwork-collection.user-artwork-collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserDecorationUserDecoration extends Schema.CollectionType {
   collectionName: 'user_decorations';
   info: {
@@ -3998,6 +4093,7 @@ declare module '@strapi/strapi' {
       'api::achievement.achievement': ApiAchievementAchievement;
       'api::achievement-progress.achievement-progress': ApiAchievementProgressAchievementProgress;
       'api::activity.activity': ApiActivityActivity;
+      'api::artwork.artwork': ApiArtworkArtwork;
       'api::attack.attack': ApiAttackAttack;
       'api::badge.badge': ApiBadgeBadge;
       'api::character.character': ApiCharacterCharacter;
@@ -4042,6 +4138,7 @@ declare module '@strapi/strapi' {
       'api::trading-credit.trading-credit': ApiTradingCreditTradingCredit;
       'api::trading-credit-history.trading-credit-history': ApiTradingCreditHistoryTradingCreditHistory;
       'api::upgrade.upgrade': ApiUpgradeUpgrade;
+      'api::user-artwork-collection.user-artwork-collection': ApiUserArtworkCollectionUserArtworkCollection;
       'api::user-decoration.user-decoration': ApiUserDecorationUserDecoration;
       'api::user-profile-picture.user-profile-picture': ApiUserProfilePictureUserProfilePicture;
       'api::user-relay-token.user-relay-token': ApiUserRelayTokenUserRelayToken;

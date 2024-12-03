@@ -29,7 +29,7 @@ export default factories.createCoreController(
               fields: ["url"],
             },
             localizations: {
-              fields: ["title", "content", "locale"],
+              fields: ["title", "content", "disabled", "locale"],
               populate: {
                 title_image: {
                   fields: ["url"],
@@ -50,7 +50,10 @@ export default factories.createCoreController(
         applyLocalizations(notice, locale);
       });
 
-      return notices;
+      // it must be after applyLocalizations
+      const filteredNotices = notices.filter((notice) => !notice.disabled);
+
+      return filteredNotices;
     },
   })
 );

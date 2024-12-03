@@ -103,6 +103,7 @@ export default factories.createCoreService(
                     user: { id: userId },
                     relay: { id: relay.id },
                     amount: 0,
+                    result_settled: false,
                     publishedAt: new Date(),
                   },
                 }

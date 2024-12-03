@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_artwork_collections",
+  "info": {
+    "singularName": "user-artwork-collection",
+    "pluralName": "user-artwork-collections",
+    "displayName": "UserArtworkCollection"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "artwork": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::artwork.artwork",
+      "inversedBy": "user_artwork_collections"
+    },
+    "completion_date": {
+      "type": "datetime"
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "serial_number": {
+      "type": "integer"
+    },
+    "progress": {
+      "type": "integer"
+    }
+  }
+}

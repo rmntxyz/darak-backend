@@ -130,6 +130,12 @@
       "relation": "oneToMany",
       "target": "api::profile-picture.profile-picture",
       "mappedBy": "creator"
+    },
+    "artworks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::artwork.artwork",
+      "mappedBy": "creator"
     }
   }
 }
