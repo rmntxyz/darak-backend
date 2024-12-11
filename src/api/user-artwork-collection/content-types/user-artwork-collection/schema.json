@@ -4,7 +4,8 @@
   "info": {
     "singularName": "user-artwork-collection",
     "pluralName": "user-artwork-collections",
-    "displayName": "UserArtworkCollection"
+    "displayName": "UserArtworkCollection",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -27,7 +28,7 @@
       "type": "integer"
     },
     "progress": {
-      "type": "integer"
+      "type": "json"
     }
   }
 }

@@ -119,6 +119,24 @@ export default factories.createCoreService("api::room.room", ({ strapi }) => ({
     });
   },
 
+  async getRoomByRoomNameWithUnpublished(roomName: string) {
+    return await strapi.entityService.findMany("api::room.room", {
+      ...roomsDefaultOptions,
+      fields: [
+        "name",
+        "desc",
+        "rid",
+        "start_date",
+        "end_date",
+        "unlock_conditions",
+        "publishedAt",
+      ],
+      filters: {
+        rid: roomName,
+      },
+    });
+  },
+
   async getAllRoomsWithUnpublished() {
     return await strapi.entityService.findMany(
       "api::room.room",

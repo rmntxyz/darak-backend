@@ -133,6 +133,18 @@ export default factories.createCoreController(
       return rooms;
     },
 
+    "get-room-by-name-with-unpublished": async (ctx) => {
+      const { roomName } = ctx.params;
+
+      if (!roomName) {
+        return ctx.badRequest("Room name is required");
+      }
+
+      return await strapi
+        .service("api::room.room")
+        .getRoomByRoomNameWithUnpublished(roomName);
+    },
+
     /**
      * @public
      * @param ctx

@@ -3539,6 +3539,7 @@ export interface ApiUserArtworkCollectionUserArtworkCollection
     singularName: 'user-artwork-collection';
     pluralName: 'user-artwork-collections';
     displayName: 'UserArtworkCollection';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -3552,7 +3553,7 @@ export interface ApiUserArtworkCollectionUserArtworkCollection
     completion_date: Attribute.DateTime;
     completed: Attribute.Boolean;
     serial_number: Attribute.Integer;
-    progress: Attribute.Integer;
+    progress: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -29,6 +29,15 @@ export default {
     },
     {
       method: "GET",
+      path: "/room/:roomName/unpublished",
+      handler: "room.get-room-by-name-with-unpublished",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/user-rooms/count",
       handler: "room.get-user-rooms-count",
       config: {
