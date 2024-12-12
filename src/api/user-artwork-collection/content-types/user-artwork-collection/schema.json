@@ -26,9 +26,6 @@
     },
     "serial_number": {
       "type": "integer"
-    },
-    "progress": {
-      "type": "json"
     }
   }
 }
